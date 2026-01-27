@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  ownerId     String   // Simplified for MVP, just a string ID
+  snLink      String?  @map("sn_link")
+  
+  center      String?
+  branch      String?
+  mador       String?
+  
+  dc          String?
+  network     String?
+  environment String?
+  
+  status      ProjectStatus @default(IN_PROCESS)
+  
+  requestLines RequestLine[]
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@map("projects")
+}
+
+model RequestLine {
+  id                String   @id @default(uuid())
+  projectId         String   @map("project_id")
+  project           Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  resourceType      String   @map("resource_type") // CPU, RAM, etc.
+  requestedQuantity Int      @map("requested_quantity")
+  approvedQuantity  Int?     @map("approved_quantity")
+  unit              String?  // e.g. "Cores", "GB"
+  purpose           String?
+  
+  status            RequestStatus @default(PENDING)
+  decisionReason    String?       @map("decision_reason")
+  
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+  
+  @@map("request_lines")
+}
+
+enum ProjectStatus {
+  IN_PROCESS
+  RESOLVED
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  PARTIALLY_APPROVED
+  REJECTED
+}
