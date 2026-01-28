@@ -1,20 +1,20 @@
 import { Router } from "express";
 
 // Organization routes
-import centerRoutes from "./center.routes";
-import branchRoutes from "./branch.routes";
-import sectionRoutes from "./section.routes";
+import centerRoutes from "./organization/center.routes";
+import branchRoutes from "./organization/branch.routes";
+import sectionRoutes from "./organization/section.routes";
 
 // Location routes
-import baseRoutes from "./base.routes";
-import environmentRoutes from "./environment.routes";
-import networkRoutes from "./network.routes";
-import locationRoutes from "./location.routes";
+import baseRoutes from "./location/base.routes";
+import environmentRoutes from "./location/environment.routes";
+import networkRoutes from "./location/network.routes";
+import locationRoutes from "./location/location.routes";
 
 // Service routes
-import serviceRoutes from "./service.routes";
-import resourceRoutes from "./resource.routes";
-import capacityRoutes from "./capacity.routes";
+import serviceRoutes from "./service/service.routes";
+import resourceRoutes from "./service/resource.routes";
+import capacityRoutes from "./service/capacity.routes";
 
 const router = Router();
 
