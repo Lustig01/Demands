@@ -66,7 +66,7 @@ model Network {
 }
 
 model Location {
-  id              Int     @id @default(autoincrement())
+  id              Int         @id @default(autoincrement())
   baseName        String
   environmentName String
   networkName     String
@@ -74,6 +74,8 @@ model Location {
   environment     Environment @relation(fields: [environmentName], references: [name], onDelete: Cascade)
   network         Network     @relation(fields: [networkName], references: [name], onDelete: Cascade)
   capacities      Capacity[]
+  projects        Project[]
+  demands         Demand[]
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
@@ -87,6 +89,7 @@ model Location {
 model Service {
   name      String     @id
   resources Resource[]
+  demands   Demand[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 }
@@ -97,6 +100,7 @@ model Resource {
   serviceName String
   service     Service    @relation(fields: [serviceName], references: [name], onDelete: Cascade)
   capacities  Capacity[]
+  demands     Demand[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
@@ -104,7 +108,7 @@ model Resource {
 }
 
 model Capacity {
-  id              Int   @id @default(autoincrement())
+  id              Int      @id @default(autoincrement())
   locationId      Int
   resourceName    String
   resourceService String
@@ -115,4 +119,70 @@ model Capacity {
   updatedAt       DateTime @updatedAt
 
   @@unique([locationId, resourceName, resourceService])
+}
+
+// ============================================
+// Request Models
+// ============================================
+
+enum ProjectType {
+  Emergency
+  Semiannual
+}
+
+enum ProjectKind {
+  App
+  Track
+}
+
+enum Median {
+  H1
+  H2
+}
+
+enum DemandType {
+  New
+  Extention
+}
+
+enum DemandStatus {
+  Pending
+  Approved
+  Rejected
+  PartiallyApproved
+}
+
+model Project {
+  name       String      @id
+  purpose    String
+  type       ProjectType
+  kind       ProjectKind
+  locationId Int
+  location   Location    @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  year       Int?
+  median     Median?
+  demands    Demand[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Demand {
+  id              Int           @id @default(autoincrement())
+  projectName     String
+  project         Project       @relation(fields: [projectName], references: [name], onDelete: Cascade)
+  serviceName     String
+  service         Service       @relation(fields: [serviceName], references: [name], onDelete: Cascade)
+  resourceName    String
+  resourceService String
+  resource        Resource      @relation(fields: [resourceName, resourceService], references: [name, serviceName], onDelete: Cascade)
+  value           Float
+  locationId      Int
+  location        Location      @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  type            DemandType
+  status          DemandStatus  @default(Pending)
+  clusterName     String?
+  approvedValue   Float?
+  approvedDate    DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }

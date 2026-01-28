@@ -16,6 +16,10 @@ import serviceRoutes from "./service/service.routes";
 import resourceRoutes from "./service/resource.routes";
 import capacityRoutes from "./service/capacity.routes";
 
+// Request routes
+import projectRoutes from "./request/project.routes";
+import demandRoutes from "./request/demand.routes";
+
 const router = Router();
 
 // Organization endpoints
@@ -33,5 +37,9 @@ router.use("/locations", locationRoutes);
 router.use("/services", serviceRoutes);
 router.use("/resources", resourceRoutes);
 router.use("/capacities", capacityRoutes);
+
+// Request endpoints
+router.use("/projects", projectRoutes);
+router.use("/demands", demandRoutes);
 
 export default router;
