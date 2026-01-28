@@ -3,7 +3,7 @@ import { Environment } from "./environment.model";
 import { Network } from "./network.model";
 
 export interface Location {
-    id: string;
+    id: number;
     base: Base;
     environment: Environment;
     network: Network;
