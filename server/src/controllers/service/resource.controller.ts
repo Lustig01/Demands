@@ -7,6 +7,7 @@ export const resourceController = {
       const resources = await resourceService.findAll();
       res.json(resources);
     } catch (error) {
+      console.error("resourceController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch resources" });
     }
   },
@@ -20,6 +21,7 @@ export const resourceController = {
       }
       res.json(resource);
     } catch (error) {
+      console.error("resourceController.getByKey error:", error);
       res.status(500).json({ error: "Failed to fetch resource" });
     }
   },
@@ -29,6 +31,7 @@ export const resourceController = {
       const resources = await resourceService.findByService(req.params.serviceName);
       res.json(resources);
     } catch (error) {
+      console.error("resourceController.getByService error:", error);
       res.status(500).json({ error: "Failed to fetch resources" });
     }
   },
@@ -39,6 +42,7 @@ export const resourceController = {
       const resource = await resourceService.create(name, unit, serviceName);
       res.status(201).json(resource);
     } catch (error) {
+      console.error("resourceController.create error:", error);
       res.status(400).json({ error: "Failed to create resource" });
     }
   },
@@ -53,6 +57,7 @@ export const resourceController = {
       });
       res.json(resource);
     } catch (error) {
+      console.error("resourceController.update error:", error);
       res.status(400).json({ error: "Failed to update resource" });
     }
   },
@@ -63,6 +68,7 @@ export const resourceController = {
       await resourceService.delete(name, serviceName);
       res.status(204).send();
     } catch (error) {
+      console.error("resourceController.delete error:", error);
       res.status(400).json({ error: "Failed to delete resource" });
     }
   },

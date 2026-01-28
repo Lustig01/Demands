@@ -8,6 +8,7 @@ export const projectController = {
       const projects = await projectService.findAll();
       res.json(projects);
     } catch (error) {
+      console.error("projectController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch projects" });
     }
   },
@@ -20,6 +21,7 @@ export const projectController = {
       }
       res.json(project);
     } catch (error) {
+      console.error("projectController.getByName error:", error);
       res.status(500).json({ error: "Failed to fetch project" });
     }
   },
@@ -49,6 +51,7 @@ export const projectController = {
       });
       res.status(201).json(project);
     } catch (error) {
+      console.error("projectController.create error:", error);
       res.status(400).json({ error: "Failed to create project" });
     }
   },
@@ -98,6 +101,7 @@ export const projectController = {
       const project = await projectService.update(req.params.name, updateData);
       res.json(project);
     } catch (error) {
+      console.error("projectController.update error:", error);
       res.status(400).json({ error: "Failed to update project" });
     }
   },
@@ -107,6 +111,7 @@ export const projectController = {
       await projectService.delete(req.params.name);
       res.status(204).send();
     } catch (error) {
+      console.error("projectController.delete error:", error);
       res.status(400).json({ error: "Failed to delete project" });
     }
   },

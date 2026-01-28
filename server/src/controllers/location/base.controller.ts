@@ -7,6 +7,7 @@ export const baseController = {
       const bases = await baseService.findAll();
       res.json(bases);
     } catch (error) {
+      console.error("baseController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch bases" });
     }
   },
@@ -19,6 +20,7 @@ export const baseController = {
       }
       res.json(base);
     } catch (error) {
+      console.error("baseController.getByName error:", error);
       res.status(500).json({ error: "Failed to fetch base" });
     }
   },
@@ -29,6 +31,7 @@ export const baseController = {
       const base = await baseService.create(name);
       res.status(201).json(base);
     } catch (error) {
+      console.error("baseController.create error:", error);
       res.status(400).json({ error: "Failed to create base" });
     }
   },
@@ -39,6 +42,7 @@ export const baseController = {
       const base = await baseService.update(req.params.name, newName);
       res.json(base);
     } catch (error) {
+      console.error("baseController.update error:", error);
       res.status(400).json({ error: "Failed to update base" });
     }
   },
@@ -48,6 +52,7 @@ export const baseController = {
       await baseService.delete(req.params.name);
       res.status(204).send();
     } catch (error) {
+      console.error("baseController.delete error:", error);
       res.status(400).json({ error: "Failed to delete base" });
     }
   },

@@ -7,6 +7,7 @@ export const capacityController = {
       const capacities = await capacityService.findAll();
       res.json(capacities);
     } catch (error) {
+      console.error("capacityController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch capacities" });
     }
   },
@@ -19,6 +20,7 @@ export const capacityController = {
       }
       res.json(capacity);
     } catch (error) {
+      console.error("capacityController.getById error:", error);
       res.status(500).json({ error: "Failed to fetch capacity" });
     }
   },
@@ -28,6 +30,7 @@ export const capacityController = {
       const capacities = await capacityService.findByLocation(Number(req.params.locationId));
       res.json(capacities);
     } catch (error) {
+      console.error("capacityController.getByLocation error:", error);
       res.status(500).json({ error: "Failed to fetch capacities" });
     }
   },
@@ -38,6 +41,7 @@ export const capacityController = {
       const capacities = await capacityService.findByResource(resourceName, serviceName);
       res.json(capacities);
     } catch (error) {
+      console.error("capacityController.getByResource error:", error);
       res.status(500).json({ error: "Failed to fetch capacities" });
     }
   },
@@ -53,6 +57,7 @@ export const capacityController = {
       );
       res.status(201).json(capacity);
     } catch (error) {
+      console.error("capacityController.create error:", error);
       res.status(400).json({ error: "Failed to create capacity" });
     }
   },
@@ -63,6 +68,7 @@ export const capacityController = {
       const capacity = await capacityService.update(Number(req.params.id), value);
       res.json(capacity);
     } catch (error) {
+      console.error("capacityController.update error:", error);
       res.status(400).json({ error: "Failed to update capacity" });
     }
   },
@@ -72,6 +78,7 @@ export const capacityController = {
       await capacityService.delete(Number(req.params.id));
       res.status(204).send();
     } catch (error) {
+      console.error("capacityController.delete error:", error);
       res.status(400).json({ error: "Failed to delete capacity" });
     }
   },

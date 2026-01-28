@@ -9,6 +9,7 @@ export const demandController = {
       const demands = await demandService.findAll();
       res.json(demands);
     } catch (error) {
+      console.error("demandController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch demands" });
     }
   },
@@ -21,6 +22,7 @@ export const demandController = {
       }
       res.json(demand);
     } catch (error) {
+      console.error("demandController.getById error:", error);
       res.status(500).json({ error: "Failed to fetch demand" });
     }
   },
@@ -52,6 +54,7 @@ export const demandController = {
       });
       res.json(demands);
     } catch (error) {
+      console.error("demandController.getByFilters error:", error);
       res.status(500).json({ error: "Failed to fetch demands" });
     }
   },
@@ -96,6 +99,7 @@ export const demandController = {
       });
       res.status(201).json(demand);
     } catch (error) {
+      console.error("demandController.create error:", error);
       res.status(400).json({ error: "Failed to create demand" });
     }
   },
@@ -131,6 +135,7 @@ export const demandController = {
       });
       res.json(demand);
     } catch (error) {
+      console.error("demandController.update error:", error);
       res.status(400).json({ error: "Failed to update demand" });
     }
   },
@@ -140,6 +145,7 @@ export const demandController = {
       await demandService.delete(Number(req.params.id));
       res.status(204).send();
     } catch (error) {
+      console.error("demandController.delete error:", error);
       res.status(400).json({ error: "Failed to delete demand" });
     }
   },
@@ -149,6 +155,7 @@ export const demandController = {
       const demand = await demandService.reject(Number(req.params.id));
       res.json(demand);
     } catch (error) {
+      console.error("demandController.reject error:", error);
       res.status(400).json({ error: "Failed to reject demand" });
     }
   },
@@ -173,6 +180,7 @@ export const demandController = {
       });
       res.json(demand);
     } catch (error) {
+      console.error("demandController.approve error:", error);
       res.status(400).json({ error: "Failed to approve demand" });
     }
   },

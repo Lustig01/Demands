@@ -7,6 +7,7 @@ export const centerController = {
       const centers = await centerService.findAll();
       res.json(centers);
     } catch (error) {
+      console.error("centerController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch centers" });
     }
   },
@@ -19,6 +20,7 @@ export const centerController = {
       }
       res.json(center);
     } catch (error) {
+      console.error("centerController.getByName error:", error);
       res.status(500).json({ error: "Failed to fetch center" });
     }
   },
@@ -29,6 +31,7 @@ export const centerController = {
       const center = await centerService.create(name);
       res.status(201).json(center);
     } catch (error) {
+      console.error("centerController.create error:", error);
       res.status(400).json({ error: "Failed to create center" });
     }
   },
@@ -39,6 +42,7 @@ export const centerController = {
       const center = await centerService.update(req.params.name, newName);
       res.json(center);
     } catch (error) {
+      console.error("centerController.update error:", error);
       res.status(400).json({ error: "Failed to update center" });
     }
   },
@@ -48,6 +52,7 @@ export const centerController = {
       await centerService.delete(req.params.name);
       res.status(204).send();
     } catch (error) {
+      console.error("centerController.delete error:", error);
       res.status(400).json({ error: "Failed to delete center" });
     }
   },

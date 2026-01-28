@@ -7,6 +7,7 @@ export const sectionController = {
       const sections = await sectionService.findAll();
       res.json(sections);
     } catch (error) {
+      console.error("sectionController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch sections" });
     }
   },
@@ -20,6 +21,7 @@ export const sectionController = {
       }
       res.json(section);
     } catch (error) {
+      console.error("sectionController.getByKey error:", error);
       res.status(500).json({ error: "Failed to fetch section" });
     }
   },
@@ -30,6 +32,7 @@ export const sectionController = {
       const sections = await sectionService.findByBranch(branchName, centerName);
       res.json(sections);
     } catch (error) {
+      console.error("sectionController.getByBranch error:", error);
       res.status(500).json({ error: "Failed to fetch sections" });
     }
   },
@@ -40,6 +43,7 @@ export const sectionController = {
       const section = await sectionService.create(name, branchName, branchCenter);
       res.status(201).json(section);
     } catch (error) {
+      console.error("sectionController.create error:", error);
       res.status(400).json({ error: "Failed to create section" });
     }
   },
@@ -51,6 +55,7 @@ export const sectionController = {
       const section = await sectionService.update(name, branchName, centerName, newName);
       res.json(section);
     } catch (error) {
+      console.error("sectionController.update error:", error);
       res.status(400).json({ error: "Failed to update section" });
     }
   },
@@ -61,6 +66,7 @@ export const sectionController = {
       await sectionService.delete(name, branchName, centerName);
       res.status(204).send();
     } catch (error) {
+      console.error("sectionController.delete error:", error);
       res.status(400).json({ error: "Failed to delete section" });
     }
   },

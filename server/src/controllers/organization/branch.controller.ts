@@ -7,6 +7,7 @@ export const branchController = {
       const branches = await branchService.findAll();
       res.json(branches);
     } catch (error) {
+      console.error("branchController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch branches" });
     }
   },
@@ -20,6 +21,7 @@ export const branchController = {
       }
       res.json(branch);
     } catch (error) {
+      console.error("branchController.getByKey error:", error);
       res.status(500).json({ error: "Failed to fetch branch" });
     }
   },
@@ -29,6 +31,7 @@ export const branchController = {
       const branches = await branchService.findByCenter(req.params.centerName);
       res.json(branches);
     } catch (error) {
+      console.error("branchController.getByCenter error:", error);
       res.status(500).json({ error: "Failed to fetch branches" });
     }
   },
@@ -39,6 +42,7 @@ export const branchController = {
       const branch = await branchService.create(name, centerName);
       res.status(201).json(branch);
     } catch (error) {
+      console.error("branchController.create error:", error);
       res.status(400).json({ error: "Failed to create branch" });
     }
   },
@@ -50,6 +54,7 @@ export const branchController = {
       const branch = await branchService.update(name, centerName, newName);
       res.json(branch);
     } catch (error) {
+      console.error("branchController.update error:", error);
       res.status(400).json({ error: "Failed to update branch" });
     }
   },
@@ -60,6 +65,7 @@ export const branchController = {
       await branchService.delete(name, centerName);
       res.status(204).send();
     } catch (error) {
+      console.error("branchController.delete error:", error);
       res.status(400).json({ error: "Failed to delete branch" });
     }
   },
