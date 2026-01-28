@@ -40,6 +40,20 @@ export const locationController = {
     }
   },
 
+  getByFilters: async (req: Request, res: Response) => {
+    try {
+      const { base, environment, network } = req.query;
+      const locations = await locationService.findByFilters({
+        baseName: base as string | undefined,
+        environmentName: environment as string | undefined,
+        networkName: network as string | undefined,
+      });
+      res.json(locations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch locations" });
+    }
+  },
+
   create: async (req: Request, res: Response) => {
     try {
       const { baseName, environmentName, networkName } = req.body;

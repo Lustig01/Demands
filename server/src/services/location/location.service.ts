@@ -23,6 +23,24 @@ export const locationService = {
     });
   },
 
+  findByFilters: async (filters: {
+    baseName?: string;
+    environmentName?: string;
+    networkName?: string;
+  }) => {
+    const where: {
+      baseName?: string;
+      environmentName?: string;
+      networkName?: string;
+    } = {};
+
+    if (filters.baseName) where.baseName = filters.baseName;
+    if (filters.environmentName) where.environmentName = filters.environmentName;
+    if (filters.networkName) where.networkName = filters.networkName;
+
+    return prisma.location.findMany({ where });
+  },
+
   create: async (
     baseName: string,
     environmentName: string,

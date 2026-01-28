@@ -4,6 +4,7 @@ import { locationController } from "../../controllers/location/location.controll
 const router = Router();
 
 router.get("/", locationController.getAll);
+router.get("/filter", locationController.getByFilters);
 router.get("/composite/:baseName/:environmentName/:networkName", locationController.getByComposite);
 router.get("/:id", locationController.getById);
 router.post("/", locationController.create);
