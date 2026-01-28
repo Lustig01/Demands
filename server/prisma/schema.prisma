@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// Organization Models
+// ============================================
+
+model Center {
+  name      String   @id
+  branches  Branch[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Branch {
+  name       String
+  centerName String
+  center     Center    @relation(fields: [centerName], references: [name], onDelete: Cascade)
+  sections   Section[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@id([name, centerName])
+}
+
+model Section {
+  name           String
+  branchName     String
+  branchCenter   String
+  branch         Branch   @relation(fields: [branchName, branchCenter], references: [name, centerName], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@id([name, branchName, branchCenter])
+}
+
+// ============================================
+// Location Models
+// ============================================
+
+model Base {
+  name      String     @id
+  locations Location[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Environment {
+  name      String     @id
+  locations Location[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Network {
+  name      String     @id
+  locations Location[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Location {
+  id              String     @id @default(cuid())
+  baseName        String
+  environmentName String
+  networkName     String
+  base            Base        @relation(fields: [baseName], references: [name], onDelete: Cascade)
+  environment     Environment @relation(fields: [environmentName], references: [name], onDelete: Cascade)
+  network         Network     @relation(fields: [networkName], references: [name], onDelete: Cascade)
+  capacities      Capacity[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@unique([baseName, environmentName, networkName])
+}
+
+// ============================================
+// Service Models
+// ============================================
+
+model Service {
+  name      String     @id
+  resources Resource[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Resource {
+  name        String
+  unit        String
+  serviceName String
+  service     Service    @relation(fields: [serviceName], references: [name], onDelete: Cascade)
+  capacities  Capacity[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@id([name, serviceName])
+}
+
+model Capacity {
+  id              String   @id @default(cuid())
+  locationId      String
+  resourceName    String
+  resourceService String
+  value           Float
+  location        Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  resource        Resource @relation(fields: [resourceName, resourceService], references: [name, serviceName], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([locationId, resourceName, resourceService])
+}
