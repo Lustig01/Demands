@@ -7,6 +7,7 @@ export const networkController = {
       const networks = await networkService.findAll();
       res.json(networks);
     } catch (error) {
+      console.error("networkController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch networks" });
     }
   },
@@ -19,6 +20,7 @@ export const networkController = {
       }
       res.json(network);
     } catch (error) {
+      console.error("networkController.getByName error:", error);
       res.status(500).json({ error: "Failed to fetch network" });
     }
   },
@@ -29,6 +31,7 @@ export const networkController = {
       const network = await networkService.create(name);
       res.status(201).json(network);
     } catch (error) {
+      console.error("networkController.create error:", error);
       res.status(400).json({ error: "Failed to create network" });
     }
   },
@@ -39,6 +42,7 @@ export const networkController = {
       const network = await networkService.update(req.params.name, newName);
       res.json(network);
     } catch (error) {
+      console.error("networkController.update error:", error);
       res.status(400).json({ error: "Failed to update network" });
     }
   },
@@ -48,6 +52,7 @@ export const networkController = {
       await networkService.delete(req.params.name);
       res.status(204).send();
     } catch (error) {
+      console.error("networkController.delete error:", error);
       res.status(400).json({ error: "Failed to delete network" });
     }
   },

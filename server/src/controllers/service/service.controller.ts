@@ -7,6 +7,7 @@ export const serviceController = {
       const services = await serviceService.findAll();
       res.json(services);
     } catch (error) {
+      console.error("serviceController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch services" });
     }
   },
@@ -19,6 +20,7 @@ export const serviceController = {
       }
       res.json(service);
     } catch (error) {
+      console.error("serviceController.getByName error:", error);
       res.status(500).json({ error: "Failed to fetch service" });
     }
   },
@@ -29,6 +31,7 @@ export const serviceController = {
       const service = await serviceService.create(name);
       res.status(201).json(service);
     } catch (error) {
+      console.error("serviceController.create error:", error);
       res.status(400).json({ error: "Failed to create service" });
     }
   },
@@ -39,6 +42,7 @@ export const serviceController = {
       const service = await serviceService.update(req.params.name, newName);
       res.json(service);
     } catch (error) {
+      console.error("serviceController.update error:", error);
       res.status(400).json({ error: "Failed to update service" });
     }
   },
@@ -48,6 +52,7 @@ export const serviceController = {
       await serviceService.delete(req.params.name);
       res.status(204).send();
     } catch (error) {
+      console.error("serviceController.delete error:", error);
       res.status(400).json({ error: "Failed to delete service" });
     }
   },

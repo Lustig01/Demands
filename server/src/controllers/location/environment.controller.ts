@@ -7,6 +7,7 @@ export const environmentController = {
       const environments = await environmentService.findAll();
       res.json(environments);
     } catch (error) {
+      console.error("environmentController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch environments" });
     }
   },
@@ -19,6 +20,7 @@ export const environmentController = {
       }
       res.json(environment);
     } catch (error) {
+      console.error("environmentController.getByName error:", error);
       res.status(500).json({ error: "Failed to fetch environment" });
     }
   },
@@ -29,6 +31,7 @@ export const environmentController = {
       const environment = await environmentService.create(name);
       res.status(201).json(environment);
     } catch (error) {
+      console.error("environmentController.create error:", error);
       res.status(400).json({ error: "Failed to create environment" });
     }
   },
@@ -39,6 +42,7 @@ export const environmentController = {
       const environment = await environmentService.update(req.params.name, newName);
       res.json(environment);
     } catch (error) {
+      console.error("environmentController.update error:", error);
       res.status(400).json({ error: "Failed to update environment" });
     }
   },
@@ -48,6 +52,7 @@ export const environmentController = {
       await environmentService.delete(req.params.name);
       res.status(204).send();
     } catch (error) {
+      console.error("environmentController.delete error:", error);
       res.status(400).json({ error: "Failed to delete environment" });
     }
   },

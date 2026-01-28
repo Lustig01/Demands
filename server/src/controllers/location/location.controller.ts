@@ -7,6 +7,7 @@ export const locationController = {
       const locations = await locationService.findAll();
       res.json(locations);
     } catch (error) {
+      console.error("locationController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch locations" });
     }
   },
@@ -19,6 +20,7 @@ export const locationController = {
       }
       res.json(location);
     } catch (error) {
+      console.error("locationController.getById error:", error);
       res.status(500).json({ error: "Failed to fetch location" });
     }
   },
@@ -36,6 +38,7 @@ export const locationController = {
       }
       res.json(location);
     } catch (error) {
+      console.error("locationController.getByComposite error:", error);
       res.status(500).json({ error: "Failed to fetch location" });
     }
   },
@@ -50,6 +53,7 @@ export const locationController = {
       });
       res.json(locations);
     } catch (error) {
+      console.error("locationController.getByFilters error:", error);
       res.status(500).json({ error: "Failed to fetch locations" });
     }
   },
@@ -64,6 +68,7 @@ export const locationController = {
       );
       res.status(201).json(location);
     } catch (error) {
+      console.error("locationController.create error:", error);
       res.status(400).json({ error: "Failed to create location" });
     }
   },
@@ -78,6 +83,7 @@ export const locationController = {
       });
       res.json(location);
     } catch (error) {
+      console.error("locationController.update error:", error);
       res.status(400).json({ error: "Failed to update location" });
     }
   },
@@ -87,6 +93,7 @@ export const locationController = {
       await locationService.delete(Number(req.params.id));
       res.status(204).send();
     } catch (error) {
+      console.error("locationController.delete error:", error);
       res.status(400).json({ error: "Failed to delete location" });
     }
   },
