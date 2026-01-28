@@ -1,5 +1,5 @@
 import prisma from "../../lib/prisma";
-import { DemandType, DemandStatus } from "../../models/request/demand.model";
+import { DemandType, DemandStatus } from "@prisma/client";
 
 export const demandService = {
   findAll: async () => {

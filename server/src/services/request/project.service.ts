@@ -1,5 +1,5 @@
 import prisma from "../../lib/prisma";
-import { ProjectType, ProjectKind, Median } from "../../models/request/project.model";
+import { ProjectType, ProjectKind, Median } from "@prisma/client";
 
 export const projectService = {
   findAll: async () => {

@@ -144,7 +144,7 @@ enum Median {
 
 enum DemandType {
   New
-  Extention
+  Extension
 }
 
 enum DemandStatus {

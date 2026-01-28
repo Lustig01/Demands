@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { projectService } from "../../services/request/project.service";
-import { ProjectType, ProjectKind, Median } from "../../models/request/project.model";
+import { ProjectType, ProjectKind, Median } from "@prisma/client";
 
 export const projectController = {
   getAll: async (_req: Request, res: Response) => {
