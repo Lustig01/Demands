@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { demandService } from "../../services/request/demand.service";
 import { projectService } from "../../services/request/project.service";
-import { DemandType, DemandStatus } from "../../models/request/demand.model";
+import { DemandType, DemandStatus } from "@prisma/client";
 
 export const demandController = {
   getAll: async (_req: Request, res: Response) => {
