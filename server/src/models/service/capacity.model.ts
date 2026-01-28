@@ -6,4 +6,6 @@ export interface Capacity {
     resource: string;
     service: string;
     value: number;
+    allocated: number;
+    available: number;
 }
