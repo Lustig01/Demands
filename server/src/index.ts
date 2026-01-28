@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import routes from './routes';
 
 dotenv.config();
 
@@ -15,14 +16,17 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan('dev'));
 
-// Routes
-app.get('/', (req, res) => {
+// Root routes
+app.get('/', (_req, res) => {
     res.json({ message: 'Resource Demand Management System API' });
 });
 
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// API routes
+app.use('/api', routes);
 
 // Start Server
 app.listen(port, () => {

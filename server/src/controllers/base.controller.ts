@@ -1,0 +1,54 @@
+import { Request, Response } from "express";
+import { baseService } from "../services/base.service";
+
+export const baseController = {
+  getAll: async (_req: Request, res: Response) => {
+    try {
+      const bases = await baseService.findAll();
+      res.json(bases);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch bases" });
+    }
+  },
+
+  getByName: async (req: Request, res: Response) => {
+    try {
+      const base = await baseService.findByName(req.params.name);
+      if (!base) {
+        return res.status(404).json({ error: "Base not found" });
+      }
+      res.json(base);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch base" });
+    }
+  },
+
+  create: async (req: Request, res: Response) => {
+    try {
+      const { name } = req.body;
+      const base = await baseService.create(name);
+      res.status(201).json(base);
+    } catch (error) {
+      res.status(400).json({ error: "Failed to create base" });
+    }
+  },
+
+  update: async (req: Request, res: Response) => {
+    try {
+      const { name: newName } = req.body;
+      const base = await baseService.update(req.params.name, newName);
+      res.json(base);
+    } catch (error) {
+      res.status(400).json({ error: "Failed to update base" });
+    }
+  },
+
+  delete: async (req: Request, res: Response) => {
+    try {
+      await baseService.delete(req.params.name);
+      res.status(204).send();
+    } catch (error) {
+      res.status(400).json({ error: "Failed to delete base" });
+    }
+  },
+};
