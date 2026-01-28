@@ -5,7 +5,7 @@ export const locationService = {
     return prisma.location.findMany();
   },
 
-  findById: async (id: string) => {
+  findById: async (id: number) => {
     return prisma.location.findUnique({
       where: { id },
     });
@@ -34,7 +34,7 @@ export const locationService = {
   },
 
   update: async (
-    id: string,
+    id: number,
     data: { baseName?: string; environmentName?: string; networkName?: string }
   ) => {
     return prisma.location.update({
@@ -43,7 +43,7 @@ export const locationService = {
     });
   },
 
-  delete: async (id: string) => {
+  delete: async (id: number) => {
     return prisma.location.delete({
       where: { id },
     });

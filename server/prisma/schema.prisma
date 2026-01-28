@@ -66,7 +66,7 @@ model Network {
 }
 
 model Location {
-  id              String     @id @default(cuid())
+  id              Int     @id @default(autoincrement())
   baseName        String
   environmentName String
   networkName     String
@@ -104,8 +104,8 @@ model Resource {
 }
 
 model Capacity {
-  id              String   @id @default(cuid())
-  locationId      String
+  id              Int   @id @default(autoincrement())
+  locationId      Int
   resourceName    String
   resourceService String
   value           Float

@@ -5,13 +5,13 @@ export const capacityService = {
     return prisma.capacity.findMany();
   },
 
-  findById: async (id: string) => {
+  findById: async (id: number) => {
     return prisma.capacity.findUnique({
       where: { id },
     });
   },
 
-  findByLocation: async (locationId: string) => {
+  findByLocation: async (locationId: number) => {
     return prisma.capacity.findMany({
       where: { locationId },
     });
@@ -24,7 +24,7 @@ export const capacityService = {
   },
 
   create: async (
-    locationId: string,
+    locationId: number,
     resourceName: string,
     resourceService: string,
     value: number
@@ -34,14 +34,14 @@ export const capacityService = {
     });
   },
 
-  update: async (id: string, value: number) => {
+  update: async (id: number, value: number) => {
     return prisma.capacity.update({
       where: { id },
       data: { value },
     });
   },
 
-  delete: async (id: string) => {
+  delete: async (id: number) => {
     return prisma.capacity.delete({
       where: { id },
     });

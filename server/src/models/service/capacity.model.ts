@@ -1,7 +1,7 @@
 import { Location } from "../location/location.model";
 
 export interface Capacity {
-    id: string;
+    id: number;
     location: Location;
     resource: string;
     service: string;

@@ -13,7 +13,7 @@ export const locationController = {
 
   getById: async (req: Request, res: Response) => {
     try {
-      const location = await locationService.findById(req.params.id);
+      const location = await locationService.findById(Number(req.params.id));
       if (!location) {
         return res.status(404).json({ error: "Location not found" });
       }
@@ -57,7 +57,7 @@ export const locationController = {
   update: async (req: Request, res: Response) => {
     try {
       const { baseName, environmentName, networkName } = req.body;
-      const location = await locationService.update(req.params.id, {
+      const location = await locationService.update(Number(req.params.id), {
         baseName,
         environmentName,
         networkName,
@@ -70,7 +70,7 @@ export const locationController = {
 
   delete: async (req: Request, res: Response) => {
     try {
-      await locationService.delete(req.params.id);
+      await locationService.delete(Number(req.params.id));
       res.status(204).send();
     } catch (error) {
       res.status(400).json({ error: "Failed to delete location" });
