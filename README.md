@@ -23,7 +23,7 @@ demands/
 
 ### Development
 
-Starts the server, PostgreSQL, OpenLDAP, and phpLDAPAdmin. Seeds the database automatically.
+Starts the server, PostgreSQL, and Keycloak. Seeds the database automatically.
 
 ```bash
 NODE_ENV=development docker compose --profile dev up --build
@@ -33,10 +33,9 @@ NODE_ENV=development docker compose --profile dev up --build
 |---------|-----|
 | Server | http://localhost:3001 |
 | PostgreSQL | localhost:5432 |
-| LDAP | localhost:389 |
-| phpLDAPAdmin | http://localhost:8080 |
+| Keycloak | http://localhost:8080 |
 
-LDAP credentials: `cn=admin,dc=example,dc=org` / `admin`
+Keycloak admin credentials: `admin` / `admin`
 
 ### Production
 
