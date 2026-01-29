@@ -37,6 +37,14 @@ NODE_ENV=development docker compose --profile dev up --build
 
 Keycloak admin credentials: `admin` / `admin`
 
+#### Seeded Users (realm: demands)
+
+| Group | Username | Password |
+|-------|----------|----------|
+| admin | admin1, admin2 | admin123 |
+| moderator | mod1, mod2 | mod123 |
+| user | user1, user2, user3 | user123 |
+
 ### Production
 
 Starts only the server. Requires an external database — pass the connection string via `DATABASE_URL`.
