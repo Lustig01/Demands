@@ -27,8 +27,8 @@ export const baseController = {
 
   create: async (req: Request, res: Response) => {
     try {
-      const { name } = req.body;
-      const base = await baseService.create(name);
+      const { name, displayName, sortOrder, isActive } = req.body;
+      const base = await baseService.create({ name, displayName, sortOrder, isActive });
       res.status(201).json(base);
     } catch (error) {
       console.error("baseController.create error:", error);
@@ -38,8 +38,8 @@ export const baseController = {
 
   update: async (req: Request, res: Response) => {
     try {
-      const { name: newName } = req.body;
-      const base = await baseService.update(req.params.name, newName);
+      const { name, displayName, sortOrder, isActive } = req.body;
+      const base = await baseService.update(req.params.name, { name, displayName, sortOrder, isActive });
       res.json(base);
     } catch (error) {
       console.error("baseController.update error:", error);

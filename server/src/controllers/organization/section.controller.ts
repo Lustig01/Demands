@@ -39,8 +39,8 @@ export const sectionController = {
 
   create: async (req: Request, res: Response) => {
     try {
-      const { name, branchName, branchCenter } = req.body;
-      const section = await sectionService.create(name, branchName, branchCenter);
+      const { name, branchName, branchCenter, displayName, sortOrder, isActive } = req.body;
+      const section = await sectionService.create({ name, branchName, branchCenter, displayName, sortOrder, isActive });
       res.status(201).json(section);
     } catch (error) {
       console.error("sectionController.create error:", error);
@@ -51,8 +51,8 @@ export const sectionController = {
   update: async (req: Request, res: Response) => {
     try {
       const { centerName, branchName, name } = req.params;
-      const { name: newName } = req.body;
-      const section = await sectionService.update(name, branchName, centerName, newName);
+      const { name: newName, displayName, sortOrder, isActive } = req.body;
+      const section = await sectionService.update(name, branchName, centerName, { name: newName, displayName, sortOrder, isActive });
       res.json(section);
     } catch (error) {
       console.error("sectionController.update error:", error);

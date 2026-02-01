@@ -24,6 +24,10 @@ import capacityRoutes from "./service/capacity.routes";
 import projectRoutes from "./request/project.routes";
 import demandRoutes from "./request/demand.routes";
 
+// Settings routes
+import decisionReasonRoutes from "./settings/decisionReason.routes";
+import projectTypeOptionRoutes from "./settings/projectTypeOption.routes";
+
 const router = Router();
 
 // Auth endpoints
@@ -49,5 +53,9 @@ router.use("/capacities", capacityRoutes);
 // Request endpoints
 router.use("/projects", projectRoutes);
 router.use("/demands", demandRoutes);
+
+// Settings endpoints
+router.use("/decision-reasons", decisionReasonRoutes);
+router.use("/project-type-options", projectTypeOptionRoutes);
 
 export default router;

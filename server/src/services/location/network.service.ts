@@ -2,7 +2,9 @@ import prisma from "../../lib/prisma";
 
 export const networkService = {
   findAll: async () => {
-    return prisma.network.findMany();
+    return prisma.network.findMany({
+      orderBy: { sortOrder: "asc" },
+    });
   },
 
   findByName: async (name: string) => {
@@ -11,16 +13,29 @@ export const networkService = {
     });
   },
 
-  create: async (name: string) => {
+  create: async (data: {
+    name: string;
+    displayName?: string;
+    sortOrder?: number;
+    isActive?: boolean;
+  }) => {
     return prisma.network.create({
-      data: { name },
+      data,
     });
   },
 
-  update: async (name: string, newName: string) => {
+  update: async (
+    name: string,
+    data: {
+      name?: string;
+      displayName?: string;
+      sortOrder?: number;
+      isActive?: boolean;
+    }
+  ) => {
     return prisma.network.update({
       where: { name },
-      data: { name: newName },
+      data,
     });
   },
 

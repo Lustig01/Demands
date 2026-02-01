@@ -38,8 +38,8 @@ export const resourceController = {
 
   create: async (req: Request, res: Response) => {
     try {
-      const { name, unit, serviceName } = req.body;
-      const resource = await resourceService.create(name, unit, serviceName);
+      const { name, unit, serviceName, displayName, sortOrder, isActive } = req.body;
+      const resource = await resourceService.create({ name, unit, serviceName, displayName, sortOrder, isActive });
       res.status(201).json(resource);
     } catch (error) {
       console.error("resourceController.create error:", error);
@@ -50,10 +50,13 @@ export const resourceController = {
   update: async (req: Request, res: Response) => {
     try {
       const { serviceName, name } = req.params;
-      const { name: newName, unit } = req.body;
+      const { name: newName, unit, displayName, sortOrder, isActive } = req.body;
       const resource = await resourceService.update(name, serviceName, {
         name: newName,
         unit,
+        displayName,
+        sortOrder,
+        isActive,
       });
       res.json(resource);
     } catch (error) {

@@ -27,8 +27,8 @@ export const serviceController = {
 
   create: async (req: Request, res: Response) => {
     try {
-      const { name } = req.body;
-      const service = await serviceService.create(name);
+      const { name, displayName, sortOrder, isActive } = req.body;
+      const service = await serviceService.create({ name, displayName, sortOrder, isActive });
       res.status(201).json(service);
     } catch (error) {
       console.error("serviceController.create error:", error);
@@ -38,8 +38,8 @@ export const serviceController = {
 
   update: async (req: Request, res: Response) => {
     try {
-      const { name: newName } = req.body;
-      const service = await serviceService.update(req.params.name, newName);
+      const { name, displayName, sortOrder, isActive } = req.body;
+      const service = await serviceService.update(req.params.name, { name, displayName, sortOrder, isActive });
       res.json(service);
     } catch (error) {
       console.error("serviceController.update error:", error);

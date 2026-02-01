@@ -12,30 +12,39 @@ datasource db {
 // ============================================
 
 model Center {
-  name      String   @id
-  branches  Branch[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  name        String   @id
+  displayName String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  branches    Branch[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Branch {
-  name       String
-  centerName String
-  center     Center    @relation(fields: [centerName], references: [name], onDelete: Cascade)
-  sections   Section[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  name        String
+  centerName  String
+  displayName String?
+  sortOrder   Int       @default(0)
+  isActive    Boolean   @default(true)
+  center      Center    @relation(fields: [centerName], references: [name], onDelete: Cascade)
+  sections    Section[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@id([name, centerName])
 }
 
 model Section {
-  name           String
-  branchName     String
-  branchCenter   String
-  branch         Branch   @relation(fields: [branchName, branchCenter], references: [name, centerName], onDelete: Cascade)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  name         String
+  branchName   String
+  branchCenter String
+  displayName  String?
+  sortOrder    Int      @default(0)
+  isActive     Boolean  @default(true)
+  branch       Branch   @relation(fields: [branchName, branchCenter], references: [name, centerName], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@id([name, branchName, branchCenter])
 }
@@ -45,24 +54,33 @@ model Section {
 // ============================================
 
 model Base {
-  name      String     @id
-  locations Location[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  name        String     @id
+  displayName String?
+  sortOrder   Int        @default(0)
+  isActive    Boolean    @default(true)
+  locations   Location[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Environment {
-  name      String     @id
-  locations Location[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  name        String     @id
+  displayName String?
+  sortOrder   Int        @default(0)
+  isActive    Boolean    @default(true)
+  locations   Location[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Network {
-  name      String     @id
-  locations Location[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  name        String     @id
+  displayName String?
+  sortOrder   Int        @default(0)
+  isActive    Boolean    @default(true)
+  locations   Location[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Location {
@@ -87,17 +105,23 @@ model Location {
 // ============================================
 
 model Service {
-  name      String     @id
-  resources Resource[]
-  demands   Demand[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  name        String     @id
+  displayName String?
+  sortOrder   Int        @default(0)
+  isActive    Boolean    @default(true)
+  resources   Resource[]
+  demands     Demand[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Resource {
   name        String
   unit        String
   serviceName String
+  displayName String?
+  sortOrder   Int        @default(0)
+  isActive    Boolean    @default(true)
   service     Service    @relation(fields: [serviceName], references: [name], onDelete: Cascade)
   capacities  Capacity[]
   demands     Demand[]
@@ -187,4 +211,26 @@ model Demand {
   approvedDate    DateTime?
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+}
+
+// ============================================
+// Settings/Lookup Models
+// ============================================
+
+model DecisionReason {
+  name        String   @id
+  displayName String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProjectTypeOption {
+  name        String   @id
+  displayName String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

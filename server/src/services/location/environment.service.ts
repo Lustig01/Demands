@@ -2,7 +2,9 @@ import prisma from "../../lib/prisma";
 
 export const environmentService = {
   findAll: async () => {
-    return prisma.environment.findMany();
+    return prisma.environment.findMany({
+      orderBy: { sortOrder: "asc" },
+    });
   },
 
   findByName: async (name: string) => {
@@ -11,16 +13,29 @@ export const environmentService = {
     });
   },
 
-  create: async (name: string) => {
+  create: async (data: {
+    name: string;
+    displayName?: string;
+    sortOrder?: number;
+    isActive?: boolean;
+  }) => {
     return prisma.environment.create({
-      data: { name },
+      data,
     });
   },
 
-  update: async (name: string, newName: string) => {
+  update: async (
+    name: string,
+    data: {
+      name?: string;
+      displayName?: string;
+      sortOrder?: number;
+      isActive?: boolean;
+    }
+  ) => {
     return prisma.environment.update({
       where: { name },
-      data: { name: newName },
+      data,
     });
   },
 

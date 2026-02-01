@@ -2,7 +2,9 @@ import prisma from "../../lib/prisma";
 
 export const branchService = {
   findAll: async () => {
-    return prisma.branch.findMany();
+    return prisma.branch.findMany({
+      orderBy: { sortOrder: "asc" },
+    });
   },
 
   findByKey: async (name: string, centerName: string) => {
@@ -14,19 +16,35 @@ export const branchService = {
   findByCenter: async (centerName: string) => {
     return prisma.branch.findMany({
       where: { centerName },
+      orderBy: { sortOrder: "asc" },
     });
   },
 
-  create: async (name: string, centerName: string) => {
+  create: async (data: {
+    name: string;
+    centerName: string;
+    displayName?: string;
+    sortOrder?: number;
+    isActive?: boolean;
+  }) => {
     return prisma.branch.create({
-      data: { name, centerName },
+      data,
     });
   },
 
-  update: async (name: string, centerName: string, newName: string) => {
+  update: async (
+    name: string,
+    centerName: string,
+    data: {
+      name?: string;
+      displayName?: string;
+      sortOrder?: number;
+      isActive?: boolean;
+    }
+  ) => {
     return prisma.branch.update({
       where: { name_centerName: { name, centerName } },
-      data: { name: newName },
+      data,
     });
   },
 

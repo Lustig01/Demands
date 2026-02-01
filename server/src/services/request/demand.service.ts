@@ -27,6 +27,7 @@ export const demandService = {
 
   findByFilters: async (filters: {
     projectName?: string;
+    serviceName?: string;
     resourceName?: string;
     resourceService?: string;
     locationId?: number;
@@ -38,6 +39,7 @@ export const demandService = {
   }) => {
     const where: {
       projectName?: string;
+      serviceName?: string;
       resourceName?: string;
       resourceService?: string;
       locationId?: number;
@@ -51,6 +53,7 @@ export const demandService = {
     } = {};
 
     if (filters.projectName) where.projectName = filters.projectName;
+    if (filters.serviceName) where.serviceName = filters.serviceName;
     if (filters.resourceName) where.resourceName = filters.resourceName;
     if (filters.resourceService) where.resourceService = filters.resourceService;
     if (filters.locationId) where.locationId = filters.locationId;

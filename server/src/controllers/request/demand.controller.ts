@@ -31,6 +31,8 @@ export const demandController = {
     try {
       const {
         project,
+        serviceName,
+        service,
         resource,
         resourceService,
         location,
@@ -43,6 +45,7 @@ export const demandController = {
 
       const demands = await demandService.findByFilters({
         projectName: project as string | undefined,
+        serviceName: (serviceName || service) as string | undefined,
         resourceName: resource as string | undefined,
         resourceService: resourceService as string | undefined,
         locationId: location ? Number(location) : undefined,
