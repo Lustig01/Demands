@@ -13,27 +13,27 @@ async function main() {
     prisma.center.upsert({
       where: { name: 'IT Center' },
       update: {},
-      create: { name: 'IT Center' },
+      create: { name: 'IT Center', displayName: 'Information Technology Center' },
     }),
     prisma.center.upsert({
       where: { name: 'Operations Center' },
       update: {},
-      create: { name: 'Operations Center' },
+      create: { name: 'Operations Center', displayName: 'Global Operations Center' },
     }),
     prisma.center.upsert({
       where: { name: 'Finance Center' },
       update: {},
-      create: { name: 'Finance Center' },
+      create: { name: 'Finance Center', displayName: 'Corporate Finance Center' },
     }),
     prisma.center.upsert({
       where: { name: 'HR Center' },
       update: {},
-      create: { name: 'HR Center' },
+      create: { name: 'HR Center', displayName: 'Human Resources Center' },
     }),
     prisma.center.upsert({
       where: { name: 'Research Center' },
       update: {},
-      create: { name: 'Research Center' },
+      create: { name: 'Research Center', displayName: 'R&D Center' },
     }),
   ]);
   console.log(`Created ${centers.length} centers`);
@@ -42,27 +42,27 @@ async function main() {
     prisma.branch.upsert({
       where: { name_centerName: { name: 'Development', centerName: 'IT Center' } },
       update: {},
-      create: { name: 'Development', centerName: 'IT Center' },
+      create: { name: 'Development', centerName: 'IT Center', displayName: 'Software Development' },
     }),
     prisma.branch.upsert({
       where: { name_centerName: { name: 'Infrastructure', centerName: 'IT Center' } },
       update: {},
-      create: { name: 'Infrastructure', centerName: 'IT Center' },
+      create: { name: 'Infrastructure', centerName: 'IT Center', displayName: 'IT Infrastructure' },
     }),
     prisma.branch.upsert({
       where: { name_centerName: { name: 'Logistics', centerName: 'Operations Center' } },
       update: {},
-      create: { name: 'Logistics', centerName: 'Operations Center' },
+      create: { name: 'Logistics', centerName: 'Operations Center', displayName: 'Global Logistics' },
     }),
     prisma.branch.upsert({
       where: { name_centerName: { name: 'Accounting', centerName: 'Finance Center' } },
       update: {},
-      create: { name: 'Accounting', centerName: 'Finance Center' },
+      create: { name: 'Accounting', centerName: 'Finance Center', displayName: 'Corporate Accounting' },
     }),
     prisma.branch.upsert({
       where: { name_centerName: { name: 'Recruitment', centerName: 'HR Center' } },
       update: {},
-      create: { name: 'Recruitment', centerName: 'HR Center' },
+      create: { name: 'Recruitment', centerName: 'HR Center', displayName: 'Talent Acquisition' },
     }),
   ]);
   console.log(`Created ${branches.length} branches`);
@@ -71,27 +71,27 @@ async function main() {
     prisma.section.upsert({
       where: { name_branchName_branchCenter: { name: 'Backend Team', branchName: 'Development', branchCenter: 'IT Center' } },
       update: {},
-      create: { name: 'Backend Team', branchName: 'Development', branchCenter: 'IT Center' },
+      create: { name: 'Backend Team', branchName: 'Development', branchCenter: 'IT Center', displayName: 'Backend Engineering' },
     }),
     prisma.section.upsert({
       where: { name_branchName_branchCenter: { name: 'Frontend Team', branchName: 'Development', branchCenter: 'IT Center' } },
       update: {},
-      create: { name: 'Frontend Team', branchName: 'Development', branchCenter: 'IT Center' },
+      create: { name: 'Frontend Team', branchName: 'Development', branchCenter: 'IT Center', displayName: 'Frontend Engineering' },
     }),
     prisma.section.upsert({
       where: { name_branchName_branchCenter: { name: 'Cloud Team', branchName: 'Infrastructure', branchCenter: 'IT Center' } },
       update: {},
-      create: { name: 'Cloud Team', branchName: 'Infrastructure', branchCenter: 'IT Center' },
+      create: { name: 'Cloud Team', branchName: 'Infrastructure', branchCenter: 'IT Center', displayName: 'Cloud Operations' },
     }),
     prisma.section.upsert({
       where: { name_branchName_branchCenter: { name: 'Warehouse', branchName: 'Logistics', branchCenter: 'Operations Center' } },
       update: {},
-      create: { name: 'Warehouse', branchName: 'Logistics', branchCenter: 'Operations Center' },
+      create: { name: 'Warehouse', branchName: 'Logistics', branchCenter: 'Operations Center', displayName: 'Central Warehouse' },
     }),
     prisma.section.upsert({
       where: { name_branchName_branchCenter: { name: 'Payroll', branchName: 'Accounting', branchCenter: 'Finance Center' } },
       update: {},
-      create: { name: 'Payroll', branchName: 'Accounting', branchCenter: 'Finance Center' },
+      create: { name: 'Payroll', branchName: 'Accounting', branchCenter: 'Finance Center', displayName: 'Global Payroll' },
     }),
   ]);
   console.log(`Created ${sections.length} sections`);
@@ -101,29 +101,29 @@ async function main() {
   // ============================================
 
   const bases = await Promise.all([
-    prisma.base.upsert({ where: { name: 'Datacenter A' }, update: {}, create: { name: 'Datacenter A' } }),
-    prisma.base.upsert({ where: { name: 'Datacenter B' }, update: {}, create: { name: 'Datacenter B' } }),
-    prisma.base.upsert({ where: { name: 'Cloud AWS' }, update: {}, create: { name: 'Cloud AWS' } }),
-    prisma.base.upsert({ where: { name: 'Cloud Azure' }, update: {}, create: { name: 'Cloud Azure' } }),
-    prisma.base.upsert({ where: { name: 'Edge Site' }, update: {}, create: { name: 'Edge Site' } }),
+    prisma.base.upsert({ where: { name: 'Datacenter A' }, update: {}, create: { name: 'Datacenter A', displayName: 'Primary DC A' } }),
+    prisma.base.upsert({ where: { name: 'Datacenter B' }, update: {}, create: { name: 'Datacenter B', displayName: 'Secondary DC B' } }),
+    prisma.base.upsert({ where: { name: 'Cloud AWS' }, update: {}, create: { name: 'Cloud AWS', displayName: 'Amazon Web Services' } }),
+    prisma.base.upsert({ where: { name: 'Cloud Azure' }, update: {}, create: { name: 'Cloud Azure', displayName: 'Microsoft Azure' } }),
+    prisma.base.upsert({ where: { name: 'Edge Site' }, update: {}, create: { name: 'Edge Site', displayName: 'Edge Location' } }),
   ]);
   console.log(`Created ${bases.length} bases`);
 
   const environments = await Promise.all([
-    prisma.environment.upsert({ where: { name: 'Production' }, update: {}, create: { name: 'Production' } }),
-    prisma.environment.upsert({ where: { name: 'Staging' }, update: {}, create: { name: 'Staging' } }),
-    prisma.environment.upsert({ where: { name: 'Development' }, update: {}, create: { name: 'Development' } }),
-    prisma.environment.upsert({ where: { name: 'QA' }, update: {}, create: { name: 'QA' } }),
-    prisma.environment.upsert({ where: { name: 'DR' }, update: {}, create: { name: 'DR' } }),
+    prisma.environment.upsert({ where: { name: 'Production' }, update: {}, create: { name: 'Production', displayName: 'Prod Env' } }),
+    prisma.environment.upsert({ where: { name: 'Staging' }, update: {}, create: { name: 'Staging', displayName: 'Stage Env' } }),
+    prisma.environment.upsert({ where: { name: 'Development' }, update: {}, create: { name: 'Development', displayName: 'Dev Env' } }),
+    prisma.environment.upsert({ where: { name: 'QA' }, update: {}, create: { name: 'QA', displayName: 'QA Env' } }),
+    prisma.environment.upsert({ where: { name: 'DR' }, update: {}, create: { name: 'DR', displayName: 'Disaster Recovery' } }),
   ]);
   console.log(`Created ${environments.length} environments`);
 
   const networks = await Promise.all([
-    prisma.network.upsert({ where: { name: 'Internal' }, update: {}, create: { name: 'Internal' } }),
-    prisma.network.upsert({ where: { name: 'DMZ' }, update: {}, create: { name: 'DMZ' } }),
-    prisma.network.upsert({ where: { name: 'Public' }, update: {}, create: { name: 'Public' } }),
-    prisma.network.upsert({ where: { name: 'Private VPC' }, update: {}, create: { name: 'Private VPC' } }),
-    prisma.network.upsert({ where: { name: 'Isolated' }, update: {}, create: { name: 'Isolated' } }),
+    prisma.network.upsert({ where: { name: 'Internal' }, update: {}, create: { name: 'Internal', displayName: 'Internal Network' } }),
+    prisma.network.upsert({ where: { name: 'DMZ' }, update: {}, create: { name: 'DMZ', displayName: 'Demilitarized Zone' } }),
+    prisma.network.upsert({ where: { name: 'Public' }, update: {}, create: { name: 'Public', displayName: 'Public Internet' } }),
+    prisma.network.upsert({ where: { name: 'Private VPC' }, update: {}, create: { name: 'Private VPC', displayName: 'Virtual Private Cloud' } }),
+    prisma.network.upsert({ where: { name: 'Isolated' }, update: {}, create: { name: 'Isolated', displayName: 'Air-gapped Network' } }),
   ]);
   console.log(`Created ${networks.length} networks`);
 
@@ -161,11 +161,11 @@ async function main() {
   // ============================================
 
   const services = await Promise.all([
-    prisma.service.upsert({ where: { name: 'Compute' }, update: {}, create: { name: 'Compute' } }),
-    prisma.service.upsert({ where: { name: 'Storage' }, update: {}, create: { name: 'Storage' } }),
-    prisma.service.upsert({ where: { name: 'Network' }, update: {}, create: { name: 'Network' } }),
-    prisma.service.upsert({ where: { name: 'Database' }, update: {}, create: { name: 'Database' } }),
-    prisma.service.upsert({ where: { name: 'Container' }, update: {}, create: { name: 'Container' } }),
+    prisma.service.upsert({ where: { name: 'Compute' }, update: {}, create: { name: 'Compute', displayName: 'Compute Services' } }),
+    prisma.service.upsert({ where: { name: 'Storage' }, update: {}, create: { name: 'Storage', displayName: 'Storage Services' } }),
+    prisma.service.upsert({ where: { name: 'Network' }, update: {}, create: { name: 'Network', displayName: 'Networking Services' } }),
+    prisma.service.upsert({ where: { name: 'Database' }, update: {}, create: { name: 'Database', displayName: 'Database Services' } }),
+    prisma.service.upsert({ where: { name: 'Container' }, update: {}, create: { name: 'Container', displayName: 'Container Services' } }),
   ]);
   console.log(`Created ${services.length} services`);
 
@@ -173,27 +173,27 @@ async function main() {
     prisma.resource.upsert({
       where: { name_serviceName: { name: 'CPU', serviceName: 'Compute' } },
       update: {},
-      create: { name: 'CPU', unit: 'vCPU', serviceName: 'Compute' },
+      create: { name: 'CPU', unit: 'vCPU', serviceName: 'Compute', displayName: 'Processing Core' },
     }),
     prisma.resource.upsert({
       where: { name_serviceName: { name: 'RAM', serviceName: 'Compute' } },
       update: {},
-      create: { name: 'RAM', unit: 'GB', serviceName: 'Compute' },
+      create: { name: 'RAM', unit: 'GB', serviceName: 'Compute', displayName: 'System Memory' },
     }),
     prisma.resource.upsert({
       where: { name_serviceName: { name: 'SSD', serviceName: 'Storage' } },
       update: {},
-      create: { name: 'SSD', unit: 'TB', serviceName: 'Storage' },
+      create: { name: 'SSD', unit: 'TB', serviceName: 'Storage', displayName: 'Solid State Drive' },
     }),
     prisma.resource.upsert({
       where: { name_serviceName: { name: 'Bandwidth', serviceName: 'Network' } },
       update: {},
-      create: { name: 'Bandwidth', unit: 'Gbps', serviceName: 'Network' },
+      create: { name: 'Bandwidth', unit: 'Gbps', serviceName: 'Network', displayName: 'Network Bandwidth' },
     }),
     prisma.resource.upsert({
       where: { name_serviceName: { name: 'Pods', serviceName: 'Container' } },
       update: {},
-      create: { name: 'Pods', unit: 'units', serviceName: 'Container' },
+      create: { name: 'Pods', unit: 'units', serviceName: 'Container', displayName: 'K8s Pods' },
     }),
   ]);
   console.log(`Created ${resources.length} resources`);
@@ -226,6 +226,19 @@ async function main() {
     }),
   ]);
   console.log(`Created ${capacities.length} capacities`);
+
+  // ============================================
+  // Settings/Lookup Models
+  // ============================================
+
+  const decisionReasons = await Promise.all([
+    prisma.decisionReason.upsert({ where: { name: 'Budget' }, update: {}, create: { name: 'Budget', displayName: 'Budget Constraints' } }),
+    prisma.decisionReason.upsert({ where: { name: 'Strategy' }, update: {}, create: { name: 'Strategy', displayName: 'Strategic Alignment' } }),
+    prisma.decisionReason.upsert({ where: { name: 'Legacy' }, update: {}, create: { name: 'Legacy', displayName: 'Legacy System Support' } }),
+    prisma.decisionReason.upsert({ where: { name: 'Performance' }, update: {}, create: { name: 'Performance', displayName: 'Performance Requirements' } }),
+    prisma.decisionReason.upsert({ where: { name: 'Security' }, update: {}, create: { name: 'Security', displayName: 'Security Compliance' } }),
+  ]);
+  console.log(`Created ${decisionReasons.length} decision reasons`);
 
   // ============================================
   // Request Models

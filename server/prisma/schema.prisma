@@ -14,7 +14,6 @@ datasource db {
 model Center {
   name        String   @id
   displayName String?
-  sortOrder   Int      @default(0)
   isActive    Boolean  @default(true)
   branches    Branch[]
   createdAt   DateTime @default(now())
@@ -25,7 +24,6 @@ model Branch {
   name        String
   centerName  String
   displayName String?
-  sortOrder   Int       @default(0)
   isActive    Boolean   @default(true)
   center      Center    @relation(fields: [centerName], references: [name], onDelete: Cascade)
   sections    Section[]
@@ -40,7 +38,6 @@ model Section {
   branchName   String
   branchCenter String
   displayName  String?
-  sortOrder    Int      @default(0)
   isActive     Boolean  @default(true)
   branch       Branch   @relation(fields: [branchName, branchCenter], references: [name, centerName], onDelete: Cascade)
   createdAt    DateTime @default(now())
@@ -56,7 +53,6 @@ model Section {
 model Base {
   name        String     @id
   displayName String?
-  sortOrder   Int        @default(0)
   isActive    Boolean    @default(true)
   locations   Location[]
   createdAt   DateTime   @default(now())
@@ -66,7 +62,6 @@ model Base {
 model Environment {
   name        String     @id
   displayName String?
-  sortOrder   Int        @default(0)
   isActive    Boolean    @default(true)
   locations   Location[]
   createdAt   DateTime   @default(now())
@@ -76,7 +71,6 @@ model Environment {
 model Network {
   name        String     @id
   displayName String?
-  sortOrder   Int        @default(0)
   isActive    Boolean    @default(true)
   locations   Location[]
   createdAt   DateTime   @default(now())
@@ -107,7 +101,6 @@ model Location {
 model Service {
   name        String     @id
   displayName String?
-  sortOrder   Int        @default(0)
   isActive    Boolean    @default(true)
   resources   Resource[]
   demands     Demand[]
@@ -120,7 +113,6 @@ model Resource {
   unit        String
   serviceName String
   displayName String?
-  sortOrder   Int        @default(0)
   isActive    Boolean    @default(true)
   service     Service    @relation(fields: [serviceName], references: [name], onDelete: Cascade)
   capacities  Capacity[]
@@ -193,24 +185,26 @@ model Project {
 }
 
 model Demand {
-  id              Int           @id @default(autoincrement())
-  projectName     String
-  project         Project       @relation(fields: [projectName], references: [name], onDelete: Cascade)
-  serviceName     String
-  service         Service       @relation(fields: [serviceName], references: [name], onDelete: Cascade)
-  resourceName    String
-  resourceService String
-  resource        Resource      @relation(fields: [resourceName, resourceService], references: [name, serviceName], onDelete: Cascade)
-  value           Float
-  locationId      Int
-  location        Location      @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  type            DemandType
-  status          DemandStatus  @default(Pending)
-  clusterName     String?
-  approvedValue   Float?
-  approvedDate    DateTime?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id                 Int             @id @default(autoincrement())
+  projectName        String
+  project            Project         @relation(fields: [projectName], references: [name], onDelete: Cascade)
+  serviceName        String
+  service            Service         @relation(fields: [serviceName], references: [name], onDelete: Cascade)
+  resourceName       String
+  resourceService    String
+  resource           Resource        @relation(fields: [resourceName, resourceService], references: [name, serviceName], onDelete: Cascade)
+  value              Float
+  locationId         Int
+  location           Location        @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  type               DemandType
+  status             DemandStatus    @default(Pending)
+  clusterName        String?
+  approvedValue      Float?
+  approvedDate       DateTime?
+  decisionReasonName String?
+  decisionReason     DecisionReason? @relation(fields: [decisionReasonName], references: [name])
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
 }
 
 // ============================================
@@ -220,17 +214,8 @@ model Demand {
 model DecisionReason {
   name        String   @id
   displayName String?
-  sortOrder   Int      @default(0)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-}
-
-model ProjectTypeOption {
-  name        String   @id
-  displayName String?
-  sortOrder   Int      @default(0)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  Demand      Demand[]
 }

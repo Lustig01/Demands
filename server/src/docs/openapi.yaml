@@ -158,6 +158,9 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -172,6 +175,9 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
+          nullable: true
         centerName:
           type: string
         center:
@@ -195,6 +201,9 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
+          nullable: true
         branchName:
           type: string
         branchCenter:
@@ -218,6 +227,9 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -232,6 +244,9 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -246,6 +261,9 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -284,6 +302,9 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -298,6 +319,9 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
+          nullable: true
         unit:
           type: string
         serviceName:
@@ -423,6 +447,9 @@ components:
         status:
           $ref: '#/components/schemas/DemandStatus'
         clusterName:
+          type: string
+          nullable: true
+        decisionReasonName:
           type: string
           nullable: true
         approvedValue:
@@ -664,6 +691,23 @@ components:
           format: float
       required:
         - status
+
+    DecisionReason:
+      type: object
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - name
 
 # ============================================================
 # Paths
