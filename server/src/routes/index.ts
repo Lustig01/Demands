@@ -1,5 +1,9 @@
 import { Router } from "express";
 
+// Auth routes
+import authRoutes from "./auth/auth.routes";
+import usersGroupsRoutes from "./usersGroups/usersGroups.routes";
+
 // Organization routes
 import centerRoutes from "./organization/center.routes";
 import branchRoutes from "./organization/branch.routes";
@@ -21,6 +25,10 @@ import projectRoutes from "./request/project.routes";
 import demandRoutes from "./request/demand.routes";
 
 const router = Router();
+
+// Auth endpoints
+router.use("/auth", authRoutes);
+router.use("/users-groups", usersGroupsRoutes);
 
 // Organization endpoints
 router.use("/centers", centerRoutes);

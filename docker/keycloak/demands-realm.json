@@ -124,6 +124,18 @@
         }
       ],
       "groups": ["user"]
+    },
+    {
+      "username": "service-account-demands-api",
+      "enabled": true,
+      "serviceAccountClientId": "demands-api",
+      "clientRoles": {
+        "realm-management": [
+          "view-users",
+          "query-users",
+          "query-groups"
+        ]
+      }
     }
   ],
   "clients": [
@@ -178,6 +190,17 @@
             "id.token.claim": "true",
             "access.token.claim": "true",
             "claim.name": "groups"
+          }
+        },
+        {
+          "name": "demands-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "demands-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
           }
         }
       ]
