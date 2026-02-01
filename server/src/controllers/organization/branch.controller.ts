@@ -38,8 +38,8 @@ export const branchController = {
 
   create: async (req: Request, res: Response) => {
     try {
-      const { name, centerName } = req.body;
-      const branch = await branchService.create(name, centerName);
+      const { name, centerName, displayName } = req.body;
+      const branch = await branchService.create(name, centerName, displayName);
       res.status(201).json(branch);
     } catch (error) {
       console.error("branchController.create error:", error);
@@ -50,8 +50,8 @@ export const branchController = {
   update: async (req: Request, res: Response) => {
     try {
       const { centerName, name } = req.params;
-      const { name: newName } = req.body;
-      const branch = await branchService.update(name, centerName, newName);
+      const { name: newName, displayName } = req.body;
+      const branch = await branchService.update(name, centerName, newName, displayName);
       res.json(branch);
     } catch (error) {
       console.error("branchController.update error:", error);

@@ -39,6 +39,8 @@ tags:
     description: Project/demand group management
   - name: Demands
     description: Individual resource demand management
+  - name: Decision Reasons
+    description: Reasons for demand decisions
 
 components:
   securitySchemes:
@@ -158,6 +160,8 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
         createdAt:
           type: string
           format: date-time
@@ -171,6 +175,8 @@ components:
       type: object
       properties:
         name:
+          type: string
+        displayName:
           type: string
         centerName:
           type: string
@@ -195,6 +201,8 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
         branchName:
           type: string
         branchCenter:
@@ -218,6 +226,8 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
         createdAt:
           type: string
           format: date-time
@@ -232,6 +242,8 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
         createdAt:
           type: string
           format: date-time
@@ -245,6 +257,8 @@ components:
       type: object
       properties:
         name:
+          type: string
+        displayName:
           type: string
         createdAt:
           type: string
@@ -450,11 +464,48 @@ components:
         - type
         - status
 
+    DecisionReason:
+      type: object
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - name
+        - displayName
+
     # ---- Request Bodies ----
+    CreateDecisionReason:
+      type: object
+      properties:
+        name:
+          type: string
+        displayName:
+          type: string
+      required:
+        - name
+        - displayName
+
+    UpdateDecisionReason:
+      type: object
+      properties:
+        displayName:
+          type: string
+      required:
+        - displayName
     CreateCenter:
       type: object
       properties:
         name:
+          type: string
+        displayName:
           type: string
       required:
         - name
@@ -466,6 +517,8 @@ components:
           type: string
         centerName:
           type: string
+        displayName:
+          type: string
       required:
         - name
         - centerName
@@ -474,6 +527,8 @@ components:
       type: object
       properties:
         name:
+          type: string
+        displayName:
           type: string
       required:
         - name
@@ -487,6 +542,8 @@ components:
           type: string
         branchCenter:
           type: string
+        displayName:
+          type: string
       required:
         - name
         - branchName
@@ -496,6 +553,8 @@ components:
       type: object
       properties:
         name:
+          type: string
+        displayName:
           type: string
       required:
         - name
@@ -3058,3 +3117,74 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  # ----------------------------------------------------------
+  # Decision Reasons
+  # ----------------------------------------------------------
+  /decision-reasons:
+    get:
+      tags:
+        - Decision Reasons
+      summary: Get all decision reasons
+      responses:
+        '200':
+          description: List of decision reasons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  : '#/components/schemas/DecisionReason'
+    post:
+      tags:
+        - Decision Reasons
+      summary: Create decision reason
+      requestBody:
+        content:
+          application/json:
+            schema:
+              : '#/components/schemas/CreateDecisionReason'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                : '#/components/schemas/DecisionReason'
+
+  /decision-reasons/{name}:
+    patch:
+      tags:
+        - Decision Reasons
+      summary: Update decision reason
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              : '#/components/schemas/UpdateDecisionReason'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                : '#/components/schemas/DecisionReason'
+    delete:
+      tags:
+        - Decision Reasons
+      summary: Delete decision reason
+      parameters:
+        - in: path
+          name: name
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted

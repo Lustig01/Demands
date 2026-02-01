@@ -27,8 +27,8 @@ export const networkController = {
 
   create: async (req: Request, res: Response) => {
     try {
-      const { name } = req.body;
-      const network = await networkService.create(name);
+      const { name, displayName } = req.body;
+      const network = await networkService.create(name, displayName);
       res.status(201).json(network);
     } catch (error) {
       console.error("networkController.create error:", error);
@@ -38,8 +38,8 @@ export const networkController = {
 
   update: async (req: Request, res: Response) => {
     try {
-      const { name: newName } = req.body;
-      const network = await networkService.update(req.params.name, newName);
+      const { name: newName, displayName } = req.body;
+      const network = await networkService.update(req.params.name, newName, displayName);
       res.json(network);
     } catch (error) {
       console.error("networkController.update error:", error);

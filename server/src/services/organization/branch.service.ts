@@ -17,16 +17,16 @@ export const branchService = {
     });
   },
 
-  create: async (name: string, centerName: string) => {
+  create: async (name: string, centerName: string, displayName?: string) => {
     return prisma.branch.create({
-      data: { name, centerName },
+      data: { name, centerName, displayName },
     });
   },
 
-  update: async (name: string, centerName: string, newName: string) => {
+  update: async (name: string, centerName: string, newName: string, displayName?: string) => {
     return prisma.branch.update({
       where: { name_centerName: { name, centerName } },
-      data: { name: newName },
+      data: { name: newName, displayName },
     });
   },
 

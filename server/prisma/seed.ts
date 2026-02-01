@@ -13,27 +13,27 @@ async function main() {
     prisma.center.upsert({
       where: { name: 'IT Center' },
       update: {},
-      create: { name: 'IT Center' },
+      create: { name: 'IT Center', displayName: 'Information Technology Center' },
     }),
     prisma.center.upsert({
       where: { name: 'Operations Center' },
       update: {},
-      create: { name: 'Operations Center' },
+      create: { name: 'Operations Center', displayName: 'Global Operations Center' },
     }),
     prisma.center.upsert({
       where: { name: 'Finance Center' },
       update: {},
-      create: { name: 'Finance Center' },
+      create: { name: 'Finance Center', displayName: 'Central Finance' },
     }),
     prisma.center.upsert({
       where: { name: 'HR Center' },
       update: {},
-      create: { name: 'HR Center' },
+      create: { name: 'HR Center', displayName: 'Human Resources' },
     }),
     prisma.center.upsert({
       where: { name: 'Research Center' },
       update: {},
-      create: { name: 'Research Center' },
+      create: { name: 'Research Center', displayName: 'R&D Center' },
     }),
   ]);
   console.log(`Created ${centers.length} centers`);
@@ -42,27 +42,27 @@ async function main() {
     prisma.branch.upsert({
       where: { name_centerName: { name: 'Development', centerName: 'IT Center' } },
       update: {},
-      create: { name: 'Development', centerName: 'IT Center' },
+      create: { name: 'Development', centerName: 'IT Center', displayName: 'Software Development' },
     }),
     prisma.branch.upsert({
       where: { name_centerName: { name: 'Infrastructure', centerName: 'IT Center' } },
       update: {},
-      create: { name: 'Infrastructure', centerName: 'IT Center' },
+      create: { name: 'Infrastructure', centerName: 'IT Center', displayName: 'IT Infrastructure' },
     }),
     prisma.branch.upsert({
       where: { name_centerName: { name: 'Logistics', centerName: 'Operations Center' } },
       update: {},
-      create: { name: 'Logistics', centerName: 'Operations Center' },
+      create: { name: 'Logistics', centerName: 'Operations Center', displayName: 'Supply Chain & Logistics' },
     }),
     prisma.branch.upsert({
       where: { name_centerName: { name: 'Accounting', centerName: 'Finance Center' } },
       update: {},
-      create: { name: 'Accounting', centerName: 'Finance Center' },
+      create: { name: 'Accounting', centerName: 'Finance Center', displayName: 'Corporate Accounting' },
     }),
     prisma.branch.upsert({
       where: { name_centerName: { name: 'Recruitment', centerName: 'HR Center' } },
       update: {},
-      create: { name: 'Recruitment', centerName: 'HR Center' },
+      create: { name: 'Recruitment', centerName: 'HR Center', displayName: 'Talent Acquisition' },
     }),
   ]);
   console.log(`Created ${branches.length} branches`);
@@ -71,27 +71,27 @@ async function main() {
     prisma.section.upsert({
       where: { name_branchName_branchCenter: { name: 'Backend Team', branchName: 'Development', branchCenter: 'IT Center' } },
       update: {},
-      create: { name: 'Backend Team', branchName: 'Development', branchCenter: 'IT Center' },
+      create: { name: 'Backend Team', branchName: 'Development', branchCenter: 'IT Center', displayName: 'Backend Engineering' },
     }),
     prisma.section.upsert({
       where: { name_branchName_branchCenter: { name: 'Frontend Team', branchName: 'Development', branchCenter: 'IT Center' } },
       update: {},
-      create: { name: 'Frontend Team', branchName: 'Development', branchCenter: 'IT Center' },
+      create: { name: 'Frontend Team', branchName: 'Development', branchCenter: 'IT Center', displayName: 'Frontend Engineering' },
     }),
     prisma.section.upsert({
       where: { name_branchName_branchCenter: { name: 'Cloud Team', branchName: 'Infrastructure', branchCenter: 'IT Center' } },
       update: {},
-      create: { name: 'Cloud Team', branchName: 'Infrastructure', branchCenter: 'IT Center' },
+      create: { name: 'Cloud Team', branchName: 'Infrastructure', branchCenter: 'IT Center', displayName: 'Cloud Operations' },
     }),
     prisma.section.upsert({
       where: { name_branchName_branchCenter: { name: 'Warehouse', branchName: 'Logistics', branchCenter: 'Operations Center' } },
       update: {},
-      create: { name: 'Warehouse', branchName: 'Logistics', branchCenter: 'Operations Center' },
+      create: { name: 'Warehouse', branchName: 'Logistics', branchCenter: 'Operations Center', displayName: 'Main Warehouse' },
     }),
     prisma.section.upsert({
       where: { name_branchName_branchCenter: { name: 'Payroll', branchName: 'Accounting', branchCenter: 'Finance Center' } },
       update: {},
-      create: { name: 'Payroll', branchName: 'Accounting', branchCenter: 'Finance Center' },
+      create: { name: 'Payroll', branchName: 'Accounting', branchCenter: 'Finance Center', displayName: 'Payroll Department' },
     }),
   ]);
   console.log(`Created ${sections.length} sections`);
@@ -101,29 +101,29 @@ async function main() {
   // ============================================
 
   const bases = await Promise.all([
-    prisma.base.upsert({ where: { name: 'Datacenter A' }, update: {}, create: { name: 'Datacenter A' } }),
-    prisma.base.upsert({ where: { name: 'Datacenter B' }, update: {}, create: { name: 'Datacenter B' } }),
-    prisma.base.upsert({ where: { name: 'Cloud AWS' }, update: {}, create: { name: 'Cloud AWS' } }),
-    prisma.base.upsert({ where: { name: 'Cloud Azure' }, update: {}, create: { name: 'Cloud Azure' } }),
-    prisma.base.upsert({ where: { name: 'Edge Site' }, update: {}, create: { name: 'Edge Site' } }),
+    prisma.base.upsert({ where: { name: 'Datacenter A' }, update: {}, create: { name: 'Datacenter A', displayName: 'Primary DC' } }),
+    prisma.base.upsert({ where: { name: 'Datacenter B' }, update: {}, create: { name: 'Datacenter B', displayName: 'Secondary DC' } }),
+    prisma.base.upsert({ where: { name: 'Cloud AWS' }, update: {}, create: { name: 'Cloud AWS', displayName: 'AWS Cloud Region' } }),
+    prisma.base.upsert({ where: { name: 'Cloud Azure' }, update: {}, create: { name: 'Cloud Azure', displayName: 'Azure Cloud Region' } }),
+    prisma.base.upsert({ where: { name: 'Edge Site' }, update: {}, create: { name: 'Edge Site', displayName: 'Remote Edge Location' } }),
   ]);
   console.log(`Created ${bases.length} bases`);
 
   const environments = await Promise.all([
-    prisma.environment.upsert({ where: { name: 'Production' }, update: {}, create: { name: 'Production' } }),
-    prisma.environment.upsert({ where: { name: 'Staging' }, update: {}, create: { name: 'Staging' } }),
-    prisma.environment.upsert({ where: { name: 'Development' }, update: {}, create: { name: 'Development' } }),
-    prisma.environment.upsert({ where: { name: 'QA' }, update: {}, create: { name: 'QA' } }),
-    prisma.environment.upsert({ where: { name: 'DR' }, update: {}, create: { name: 'DR' } }),
+    prisma.environment.upsert({ where: { name: 'Production' }, update: {}, create: { name: 'Production', displayName: 'Prod Env' } }),
+    prisma.environment.upsert({ where: { name: 'Staging' }, update: {}, create: { name: 'Staging', displayName: 'Staging Env' } }),
+    prisma.environment.upsert({ where: { name: 'Development' }, update: {}, create: { name: 'Development', displayName: 'Dev Env' } }),
+    prisma.environment.upsert({ where: { name: 'QA' }, update: {}, create: { name: 'QA', displayName: 'QA Env' } }),
+    prisma.environment.upsert({ where: { name: 'DR' }, update: {}, create: { name: 'DR', displayName: 'Disaster Recovery' } }),
   ]);
   console.log(`Created ${environments.length} environments`);
 
   const networks = await Promise.all([
-    prisma.network.upsert({ where: { name: 'Internal' }, update: {}, create: { name: 'Internal' } }),
-    prisma.network.upsert({ where: { name: 'DMZ' }, update: {}, create: { name: 'DMZ' } }),
-    prisma.network.upsert({ where: { name: 'Public' }, update: {}, create: { name: 'Public' } }),
-    prisma.network.upsert({ where: { name: 'Private VPC' }, update: {}, create: { name: 'Private VPC' } }),
-    prisma.network.upsert({ where: { name: 'Isolated' }, update: {}, create: { name: 'Isolated' } }),
+    prisma.network.upsert({ where: { name: 'Internal' }, update: {}, create: { name: 'Internal', displayName: 'Internal Network' } }),
+    prisma.network.upsert({ where: { name: 'DMZ' }, update: {}, create: { name: 'DMZ', displayName: 'De-Militarized Zone' } }),
+    prisma.network.upsert({ where: { name: 'Public' }, update: {}, create: { name: 'Public', displayName: 'Public Internet' } }),
+    prisma.network.upsert({ where: { name: 'Private VPC' }, update: {}, create: { name: 'Private VPC', displayName: 'Private VPC Network' } }),
+    prisma.network.upsert({ where: { name: 'Isolated' }, update: {}, create: { name: 'Isolated', displayName: 'Air-Gapped Network' } }),
   ]);
   console.log(`Created ${networks.length} networks`);
 
@@ -344,7 +344,46 @@ async function main() {
       "allocated" = calculate_allocated(id),
       "available" = calculate_available(id)
   `;
+
   console.log('Updated capacity allocated and available values');
+
+  // ============================================
+  // Decision Reason Models
+  // ============================================
+
+  const decisionReasons = await Promise.all([
+    prisma.decisionReason.upsert({
+      where: { name: 'Budget' },
+      update: {},
+      create: { name: 'Budget', displayName: 'Budget Constraints' },
+    }),
+    prisma.decisionReason.upsert({
+      where: { name: 'Capacity' },
+      update: {},
+      create: { name: 'Capacity', displayName: 'Capacity Constraints' },
+    }),
+    prisma.decisionReason.upsert({
+      where: { name: 'Strategic' },
+      update: {},
+      create: { name: 'Strategic', displayName: 'Strategic Decision' },
+    }),
+  ]);
+  console.log(`Created ${decisionReasons.length} decision reasons`);
+
+  // Link a demand to a decision reason
+  const demandToUpdate = await prisma.demand.findFirst({
+    where: {
+      status: 'Rejected'
+    }
+  });
+
+  if (demandToUpdate) {
+    await prisma.demand.update({
+      where: { id: demandToUpdate.id },
+      data: { decisionReasonName: 'Budget' }
+    });
+    console.log('Updated a demand with decision reason');
+  }
 
   console.log('Seeding completed.');
 }

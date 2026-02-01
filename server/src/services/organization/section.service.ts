@@ -17,9 +17,9 @@ export const sectionService = {
     });
   },
 
-  create: async (name: string, branchName: string, branchCenter: string) => {
+  create: async (name: string, branchName: string, branchCenter: string, displayName?: string) => {
     return prisma.section.create({
-      data: { name, branchName, branchCenter },
+      data: { name, branchName, branchCenter, displayName },
     });
   },
 
@@ -27,11 +27,12 @@ export const sectionService = {
     name: string,
     branchName: string,
     branchCenter: string,
-    newName: string
+    newName: string,
+    displayName?: string
   ) => {
     return prisma.section.update({
       where: { name_branchName_branchCenter: { name, branchName, branchCenter } },
-      data: { name: newName },
+      data: { name: newName, displayName },
     });
   },
 

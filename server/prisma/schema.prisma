@@ -13,6 +13,7 @@ datasource db {
 
 model Center {
   name      String   @id
+  displayName String?
   branches  Branch[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -20,6 +21,7 @@ model Center {
 
 model Branch {
   name       String
+  displayName String?
   centerName String
   center     Center    @relation(fields: [centerName], references: [name], onDelete: Cascade)
   sections   Section[]
@@ -31,6 +33,7 @@ model Branch {
 
 model Section {
   name           String
+  displayName    String?
   branchName     String
   branchCenter   String
   branch         Branch   @relation(fields: [branchName, branchCenter], references: [name, centerName], onDelete: Cascade)
@@ -46,6 +49,7 @@ model Section {
 
 model Base {
   name      String     @id
+  displayName String?
   locations Location[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -53,6 +57,7 @@ model Base {
 
 model Environment {
   name      String     @id
+  displayName String?
   locations Location[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -60,6 +65,7 @@ model Environment {
 
 model Network {
   name      String     @id
+  displayName String?
   locations Location[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -185,6 +191,16 @@ model Demand {
   clusterName     String?
   approvedValue   Float?
   approvedDate    DateTime?
+  decisionReasonName String?
+  decisionReason  DecisionReason? @relation(fields: [decisionReasonName], references: [name])
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+}
+
+model DecisionReason {
+  name        String   @id
+  displayName String
+  demands     Demand[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
