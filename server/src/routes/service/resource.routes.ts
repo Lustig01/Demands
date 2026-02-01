@@ -1,13 +1,17 @@
 import { Router } from "express";
 import { resourceController } from "../../controllers/service/resource.controller";
+import { authenticate } from "../../middleware/openIdConnect";
+import { requireAuth, requireRoles } from "../../middleware/authorization";
+
+const requireModerator = requireRoles('admin', 'moderator');
 
 const router = Router();
 
-router.get("/", resourceController.getAll);
-router.get("/service/:serviceName", resourceController.getByService);
-router.get("/:serviceName/:name", resourceController.getByKey);
-router.post("/", resourceController.create);
-router.put("/:serviceName/:name", resourceController.update);
-router.delete("/:serviceName/:name", resourceController.delete);
+router.get("/", authenticate, requireAuth, resourceController.getAll);
+router.get("/service/:serviceName", authenticate, requireAuth, resourceController.getByService);
+router.get("/:serviceName/:name", authenticate, requireAuth, resourceController.getByKey);
+router.post("/", authenticate, requireModerator, resourceController.create);
+router.put("/:serviceName/:name", authenticate, requireModerator, resourceController.update);
+router.delete("/:serviceName/:name", authenticate, requireModerator, resourceController.delete);
 
 export default router;

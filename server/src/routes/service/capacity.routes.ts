@@ -1,14 +1,18 @@
 import { Router } from "express";
 import { capacityController } from "../../controllers/service/capacity.controller";
+import { authenticate } from "../../middleware/openIdConnect";
+import { requireAuth, requireRoles } from "../../middleware/authorization";
+
+const requireModerator = requireRoles('admin', 'moderator');
 
 const router = Router();
 
-router.get("/", capacityController.getAll);
-router.get("/location/:locationId", capacityController.getByLocation);
-router.get("/resource/:serviceName/:resourceName", capacityController.getByResource);
-router.get("/:id", capacityController.getById);
-router.post("/", capacityController.create);
-router.put("/:id", capacityController.update);
-router.delete("/:id", capacityController.delete);
+router.get("/", authenticate, requireAuth, capacityController.getAll);
+router.get("/location/:locationId", authenticate, requireAuth, capacityController.getByLocation);
+router.get("/resource/:serviceName/:resourceName", authenticate, requireAuth, capacityController.getByResource);
+router.get("/:id", authenticate, requireAuth, capacityController.getById);
+router.post("/", authenticate, requireModerator, capacityController.create);
+router.put("/:id", authenticate, requireModerator, capacityController.update);
+router.delete("/:id", authenticate, requireModerator, capacityController.delete);
 
 export default router;

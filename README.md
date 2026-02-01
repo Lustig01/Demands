@@ -31,7 +31,7 @@ NODE_ENV=development docker compose --profile dev up --build
 
 | Service | URL |
 |---------|-----|
-| Server | http://localhost:3001 |
+| Server | http://localhost:3000 |
 | PostgreSQL | localhost:5432 |
 | Keycloak | http://localhost:8080 |
 
@@ -74,14 +74,14 @@ npm run dev:client
 #### server/.env
 
 ```
-PORT=3001
+PORT=3000
 DATABASE_URL=postgresql://user:password@localhost:5432/demands
 ```
 
 #### client/.env
 
 ```
-VITE_API_URL=http://localhost:3001
+VITE_API_URL=http://localhost:3000
 ```
 
 ## Building

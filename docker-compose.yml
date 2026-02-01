@@ -3,14 +3,28 @@ services:
     build:
       context: ./server
     ports:
-      - "${PORT:-3001}:${PORT:-3001}"
+      - "${PORT:-3000}:${PORT:-3000}"
     environment:
       - NODE_ENV=${NODE_ENV:-production}
-      - PORT=${PORT:-3001}
+      - PORT=${PORT:-3000}
       - DATABASE_URL=${DATABASE_URL:-postgresql://user:password@postgres:5432/demands}
+      # OIDC / Auth
+      - OIDC_DISCOVERY_URL=http://keycloak:8080/realms/demands/.well-known/openid-configuration
+      - AUTH_AUDIENCE=${AUTH_AUDIENCE:-demands-api}
+      - AUTH_GROUP_CLAIM_PATH=${AUTH_GROUP_CLAIM_PATH:-groups}
+      - AUTH_ADMIN_GROUP=${AUTH_ADMIN_GROUP:-admin}
+      - AUTH_CLIENT_TYPE=${AUTH_CLIENT_TYPE:-keycloak}
+      # Keycloak Auth Client
+      - KEYCLOAK_URL=http://keycloak:8080
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM:-demands}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:-demands-api}
+      - KEYCLOAK_CLIENT_SECRET=${KEYCLOAK_CLIENT_SECRET:-demands-api-secret}
     depends_on:
       postgres:
         condition: service_healthy
+        required: false
+      keycloak:
+        condition: service_started
         required: false
 
   postgres:
