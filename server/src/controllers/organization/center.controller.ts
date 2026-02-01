@@ -27,8 +27,8 @@ export const centerController = {
 
   create: async (req: Request, res: Response) => {
     try {
-      const { name } = req.body;
-      const center = await centerService.create(name);
+      const { name, displayName } = req.body;
+      const center = await centerService.create(name, displayName);
       res.status(201).json(center);
     } catch (error) {
       console.error("centerController.create error:", error);
@@ -38,8 +38,8 @@ export const centerController = {
 
   update: async (req: Request, res: Response) => {
     try {
-      const { name: newName } = req.body;
-      const center = await centerService.update(req.params.name, newName);
+      const { name: newName, displayName } = req.body;
+      const center = await centerService.update(req.params.name, newName, displayName);
       res.json(center);
     } catch (error) {
       console.error("centerController.update error:", error);

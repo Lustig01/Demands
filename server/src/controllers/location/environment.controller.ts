@@ -27,8 +27,8 @@ export const environmentController = {
 
   create: async (req: Request, res: Response) => {
     try {
-      const { name } = req.body;
-      const environment = await environmentService.create(name);
+      const { name, displayName } = req.body;
+      const environment = await environmentService.create(name, displayName);
       res.status(201).json(environment);
     } catch (error) {
       console.error("environmentController.create error:", error);
@@ -38,8 +38,8 @@ export const environmentController = {
 
   update: async (req: Request, res: Response) => {
     try {
-      const { name: newName } = req.body;
-      const environment = await environmentService.update(req.params.name, newName);
+      const { name: newName, displayName } = req.body;
+      const environment = await environmentService.update(req.params.name, newName, displayName);
       res.json(environment);
     } catch (error) {
       console.error("environmentController.update error:", error);

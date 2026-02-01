@@ -160,6 +160,8 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
         createdAt:
           type: string
           format: date-time
@@ -173,6 +175,8 @@ components:
       type: object
       properties:
         name:
+          type: string
+        displayName:
           type: string
         centerName:
           type: string
@@ -197,6 +201,8 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
         branchName:
           type: string
         branchCenter:
@@ -220,6 +226,8 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
         createdAt:
           type: string
           format: date-time
@@ -234,6 +242,8 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
         createdAt:
           type: string
           format: date-time
@@ -247,6 +257,8 @@ components:
       type: object
       properties:
         name:
+          type: string
+        displayName:
           type: string
         createdAt:
           type: string
@@ -493,6 +505,8 @@ components:
       properties:
         name:
           type: string
+        displayName:
+          type: string
       required:
         - name
 
@@ -503,6 +517,8 @@ components:
           type: string
         centerName:
           type: string
+        displayName:
+          type: string
       required:
         - name
         - centerName
@@ -511,6 +527,8 @@ components:
       type: object
       properties:
         name:
+          type: string
+        displayName:
           type: string
       required:
         - name
@@ -524,6 +542,8 @@ components:
           type: string
         branchCenter:
           type: string
+        displayName:
+          type: string
       required:
         - name
         - branchName
@@ -533,6 +553,8 @@ components:
       type: object
       properties:
         name:
+          type: string
+        displayName:
           type: string
       required:
         - name

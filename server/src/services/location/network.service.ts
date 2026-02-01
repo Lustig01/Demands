@@ -11,16 +11,16 @@ export const networkService = {
     });
   },
 
-  create: async (name: string) => {
+  create: async (name: string, displayName?: string) => {
     return prisma.network.create({
-      data: { name },
+      data: { name, displayName },
     });
   },
 
-  update: async (name: string, newName: string) => {
+  update: async (name: string, newName: string, displayName?: string) => {
     return prisma.network.update({
       where: { name },
-      data: { name: newName },
+      data: { name: newName, displayName },
     });
   },
 
