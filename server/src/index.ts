@@ -2,19 +2,18 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import routes from './routes';
-
-dotenv.config();
+import { setupSwagger } from './docs/swagger';
+import { settings } from './lib/settings';
 
 const app = express();
-const port = process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(morgan('dev'));
 
 // Root routes
@@ -26,10 +25,13 @@ app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Swagger docs
+setupSwagger(app);
+
 // API routes
 app.use('/api', routes);
 
 // Start Server
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+app.listen(settings.port, () => {
+    console.log(`Server is running on port ${settings.port}`);
 });

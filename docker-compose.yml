@@ -3,10 +3,10 @@ services:
     build:
       context: ./server
     ports:
-      - "${PORT:-3001}:${PORT:-3001}"
+      - "${PORT:-3000}:${PORT:-3000}"
     environment:
       - NODE_ENV=${NODE_ENV:-production}
-      - PORT=${PORT:-3001}
+      - PORT=${PORT:-3000}
       - DATABASE_URL=${DATABASE_URL:-postgresql://user:password@postgres:5432/demands}
       # OIDC / Auth
       - OIDC_DISCOVERY_URL=http://keycloak:8080/realms/demands/.well-known/openid-configuration
