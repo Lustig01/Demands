@@ -2,8 +2,9 @@ import { Router } from "express";
 import { capacityController } from "../../controllers/service/capacity.controller";
 import { authenticate } from "../../middleware/openIdConnect";
 import { requireAuth, requireRoles } from "../../middleware/authorization";
+import { settings } from "../../lib/settings";
 
-const requireModerator = requireRoles('admin', 'moderator');
+const requireModerator = requireRoles(settings.authAdminGroup, settings.authModeratorGroup);
 
 const router = Router();
 
