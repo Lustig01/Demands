@@ -185,6 +185,16 @@ model Demand {
   clusterName     String?
   approvedValue   Float?
   approvedDate    DateTime?
+  decisionReasonName String?
+  decisionReason  DecisionReason? @relation(fields: [decisionReasonName], references: [name])
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
+}
+
+model DecisionReason {
+  name        String   @id
+  displayName String
+  demands     Demand[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

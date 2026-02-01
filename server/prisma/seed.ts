@@ -344,7 +344,46 @@ async function main() {
       "allocated" = calculate_allocated(id),
       "available" = calculate_available(id)
   `;
+
   console.log('Updated capacity allocated and available values');
+
+  // ============================================
+  // Decision Reason Models
+  // ============================================
+
+  const decisionReasons = await Promise.all([
+    prisma.decisionReason.upsert({
+      where: { name: 'Budget' },
+      update: {},
+      create: { name: 'Budget', displayName: 'Budget Constraints' },
+    }),
+    prisma.decisionReason.upsert({
+      where: { name: 'Capacity' },
+      update: {},
+      create: { name: 'Capacity', displayName: 'Capacity Constraints' },
+    }),
+    prisma.decisionReason.upsert({
+      where: { name: 'Strategic' },
+      update: {},
+      create: { name: 'Strategic', displayName: 'Strategic Decision' },
+    }),
+  ]);
+  console.log(`Created ${decisionReasons.length} decision reasons`);
+
+  // Link a demand to a decision reason
+  const demandToUpdate = await prisma.demand.findFirst({
+    where: {
+      status: 'Rejected'
+    }
+  });
+
+  if (demandToUpdate) {
+    await prisma.demand.update({
+      where: { id: demandToUpdate.id },
+      data: { decisionReasonName: 'Budget' }
+    });
+    console.log('Updated a demand with decision reason');
+  }
 
   console.log('Seeding completed.');
 }
