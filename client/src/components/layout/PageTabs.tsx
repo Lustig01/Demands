@@ -1,7 +1,4 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import './PageTabs.css';
 
 export interface PageTab {
   label: string;
@@ -17,23 +14,24 @@ export default function PageTabs({ tabs, basePath }: PageTabsProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const currentTab = tabs.findIndex(
-    (tab) => location.pathname === `${basePath}${tab.path}`,
-  );
-
-  const handleChange = (_: React.SyntheticEvent, newValue: number) => {
-    navigate(`${basePath}${tabs[newValue].path}`);
-  };
-
   return (
-    <Tabs
-      value={currentTab === -1 ? 0 : currentTab}
-      onChange={handleChange}
-      className="page-tabs"
-    >
-      {tabs.map((tab) => (
-        <Tab key={tab.path} label={tab.label} />
-      ))}
-    </Tabs>
+    <nav className="flex border-b border-divider mb-6">
+      {tabs.map((tab) => {
+        const isActive = location.pathname === `${basePath}${tab.path}`;
+        return (
+          <button
+            key={tab.path}
+            onClick={() => navigate(`${basePath}${tab.path}`)}
+            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors bg-transparent cursor-pointer ${
+              isActive
+                ? 'border-primary text-primary'
+                : 'border-transparent text-text-secondary hover:text-text-primary'
+            }`}
+          >
+            {tab.label}
+          </button>
+        );
+      })}
+    </nav>
   );
 }

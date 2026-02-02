@@ -1,0 +1,24 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "demands": "Manage Demands",
+    "moderator": "Moderator View",
+    "import": "Import Excel",
+    "settings": "Settings"
+  },
+  "app": {
+    "title": "Resource Demand System"
+  },
+  "user": {
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "System Overview",
+    "placeholder": "Page content will appear here"
+  },
+  "notFound": {
+    "message": "The requested page was not found"
+  }
+}

@@ -1,17 +1,18 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import DashboardIcon from '@mui/icons-material/Dashboard';
+import { useTranslation } from 'react-i18next';
+import { MdDashboard } from 'react-icons/md';
 import PageHeader from '../components/layout/PageHeader';
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
+
   return (
-    <Box>
+    <div>
       <PageHeader
-        title="לוח בקרה"
-        subtitle="סקירה כללית של המערכת"
-        icon={DashboardIcon}
+        title={t('dashboard.title')}
+        subtitle={t('dashboard.subtitle')}
+        icon={MdDashboard}
       />
-      <Typography color="text.secondary">תוכן העמוד יופיע כאן</Typography>
-    </Box>
+      <p className="text-text-secondary">{t('dashboard.placeholder')}</p>
+    </div>
   );
 }

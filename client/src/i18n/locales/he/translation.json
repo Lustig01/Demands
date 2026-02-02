@@ -1,0 +1,24 @@
+{
+  "nav": {
+    "dashboard": "דשבורד",
+    "demands": "ניהול דרישות",
+    "moderator": "תצוגת מודריטור",
+    "import": "ייבוא אקסל",
+    "settings": "הגדרות"
+  },
+  "app": {
+    "title": "מערכת דרישות"
+  },
+  "user": {
+    "profile": "פרופיל",
+    "logout": "התנתק"
+  },
+  "dashboard": {
+    "title": "לוח בקרה",
+    "subtitle": "סקירה כללית של המערכת",
+    "placeholder": "תוכן העמוד יופיע כאן"
+  },
+  "notFound": {
+    "message": "העמוד המבוקש לא נמצא"
+  }
+}

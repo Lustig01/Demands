@@ -1,23 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import Drawer from '@mui/material/Drawer';
-import Box from '@mui/material/Box';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import StorageIcon from '@mui/icons-material/Storage';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import LogoutIcon from '@mui/icons-material/Logout';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useTranslation } from 'react-i18next';
+import { MdStorage, MdPersonOutline, MdLogout, MdExpandMore } from 'react-icons/md';
+import LanguageSwitcher from '../LanguageSwitcher';
 import type { NavSection, UserProfile } from '../../types/navigation';
-import './Sidebar.css';
 
 export const SIDEBAR_WIDTH = 260;
 
@@ -27,109 +13,114 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ sections, userProfile }: SidebarProps) {
-  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+  const { t } = useTranslation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [menuOpen]);
 
   return (
-    <Drawer
-      variant="permanent"
-      anchor="right"
-      className="sidebar"
-    >
+    <aside className="w-[260px] shrink-0 bg-bg-paper border-s border-divider flex flex-col h-screen sticky top-0">
       {/* App logo */}
-      <Box className="sidebar-logo">
-        <Box className="sidebar-logo-icon-box">
-          <StorageIcon className="sidebar-logo-icon" />
-        </Box>
-        <Typography variant="h6" fontWeight={700} color="text.primary">
-          מערכת דרישות
-        </Typography>
-      </Box>
+      <div className="flex items-center justify-center gap-3 p-5">
+        <div className="w-10 h-10 rounded-[10px] bg-primary flex items-center justify-center">
+          <MdStorage size={22} className="text-white" />
+        </div>
+        <h1 className="text-lg font-bold text-text-primary">{t('app.title')}</h1>
+      </div>
 
       {/* Navigation */}
-      <Box className="sidebar-nav">
+      <nav className="flex-1 overflow-y-auto px-3 py-2">
         {sections.map((section, sectionIndex) => (
-          <Box key={sectionIndex}>
+          <div key={sectionIndex}>
             {section.title && (
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                fontWeight={600}
-                className={`sidebar-section-title${sectionIndex > 0 ? ' sidebar-section-title-spaced' : ''}`}
+              <span
+                className={`block px-3 py-1 text-xs font-semibold text-text-secondary uppercase tracking-wide ${sectionIndex > 0 ? 'pt-5' : ''}`}
               >
                 {section.title}
-              </Typography>
+              </span>
             )}
-            <List disablePadding>
+            <ul className="list-none p-0 m-0">
               {section.items.map((item) => (
-                <ListItem key={item.path} disablePadding className="sidebar-nav-item">
-                  <ListItemButton
-                    component={NavLink}
+                <li key={item.path} className="mb-0.5">
+                  <NavLink
                     to={item.path}
-                    className="sidebar-nav-button"
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-3 py-2.5 rounded-xl text-[0.9rem] transition-colors no-underline ${
+                        isActive
+                          ? 'bg-primary-light text-primary font-semibold'
+                          : 'text-text-secondary hover:bg-gray-100 hover:text-text-primary'
+                      }`
+                    }
                   >
-                    <ListItemIcon>
-                      <item.icon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={item.label}
-                      slotProps={{ primary: { fontSize: '0.9rem' } }}
-                    />
-                  </ListItemButton>
-                </ListItem>
+                    <item.icon size={20} />
+                    <span>{item.label}</span>
+                  </NavLink>
+                </li>
               ))}
-            </List>
-          </Box>
+            </ul>
+          </div>
         ))}
-      </Box>
+      </nav>
+
+      {/* Language switcher */}
+      <div className="flex justify-center py-2">
+        <LanguageSwitcher />
+      </div>
 
       {/* User profile */}
-      <Box
-        className="sidebar-user-profile"
-        onClick={(e) => setMenuAnchor(e.currentTarget)}
-      >
-        <Avatar
-          src={userProfile.avatarUrl}
-          className="sidebar-avatar"
+      <div className="relative" ref={menuRef}>
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="w-full flex items-center gap-3 p-4 mx-3 mb-3 rounded-3xl cursor-pointer transition-colors hover:bg-gray-100 bg-transparent border-none text-start"
         >
-          {userProfile.name.charAt(0)}
-        </Avatar>
-        <Box className="sidebar-user-info">
-          <Typography variant="body2" fontWeight={600} noWrap>
-            {userProfile.name}
-          </Typography>
-          <Typography variant="caption" color="text.secondary" noWrap>
-            {userProfile.role}
-          </Typography>
-        </Box>
-        <IconButton size="small" className="sidebar-expand-btn">
-          <ExpandMoreIcon fontSize="small" />
-        </IconButton>
-      </Box>
+          {userProfile.avatarUrl ? (
+            <img
+              src={userProfile.avatarUrl}
+              alt=""
+              className="w-[38px] h-[38px] rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-[38px] h-[38px] rounded-full bg-primary-light text-primary flex items-center justify-center text-[0.95rem] font-semibold">
+              {userProfile.name.charAt(0)}
+            </div>
+          )}
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold truncate m-0">{userProfile.name}</p>
+            <p className="text-xs text-text-secondary truncate m-0">{userProfile.role}</p>
+          </div>
+          <MdExpandMore size={20} className="text-text-secondary" />
+        </button>
 
-      <Menu
-        anchorEl={menuAnchor}
-        open={Boolean(menuAnchor)}
-        onClose={() => setMenuAnchor(null)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        slotProps={{
-          paper: {
-            className: 'sidebar-menu-paper',
-          },
-        }}
-      >
-        <MenuItem onClick={() => setMenuAnchor(null)} className="sidebar-menu-item">
-          <PersonOutlineIcon fontSize="small" />
-          פרופיל
-        </MenuItem>
-        <MenuItem
-          onClick={() => setMenuAnchor(null)}
-          className="sidebar-menu-item-logout"
-        >
-          <LogoutIcon fontSize="small" />
-          התנתק
-        </MenuItem>
-      </Menu>
-    </Drawer>
+        {/* Dropdown menu */}
+        {menuOpen && (
+          <div className="absolute bottom-full mb-2 start-3 min-w-[180px] bg-bg-paper rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] border border-divider overflow-hidden">
+            <button
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-text-primary hover:bg-gray-100 transition-colors bg-transparent border-none cursor-pointer text-start"
+            >
+              <MdPersonOutline size={20} />
+              {t('user.profile')}
+            </button>
+            <button
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-danger hover:bg-gray-100 transition-colors bg-transparent border-none cursor-pointer text-start"
+            >
+              <MdLogout size={20} />
+              {t('user.logout')}
+            </button>
+          </div>
+        )}
+      </div>
+    </aside>
   );
 }

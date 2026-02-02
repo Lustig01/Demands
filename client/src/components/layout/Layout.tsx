@@ -1,8 +1,6 @@
 import { Outlet } from 'react-router-dom';
-import Box from '@mui/material/Box';
 import Sidebar from './Sidebar';
 import type { NavSection, UserProfile } from '../../types/navigation';
-import './Layout.css';
 
 interface LayoutProps {
   navSections: NavSection[];
@@ -11,14 +9,13 @@ interface LayoutProps {
 
 export default function Layout({ navSections, userProfile }: LayoutProps) {
   return (
-    <Box className="layout-root">
+    <div className="flex min-h-screen">
       <Sidebar sections={navSections} userProfile={userProfile} />
-
-      <Box component="main" className="layout-main">
-        <Box className="layout-content">
+      <main className="flex-1 bg-bg-default flex flex-col">
+        <div className="flex-1 p-6">
           <Outlet />
-        </Box>
-      </Box>
-    </Box>
+        </div>
+      </main>
+    </div>
   );
 }

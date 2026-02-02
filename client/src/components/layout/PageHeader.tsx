@@ -1,29 +1,19 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import type { ComponentType } from 'react';
-import type { SvgIconProps } from '@mui/material/SvgIcon';
-import './PageHeader.css';
+import type { IconType } from 'react-icons';
 
 interface PageHeaderProps {
   title: string;
   subtitle?: string;
-  icon?: ComponentType<SvgIconProps>;
+  icon?: IconType;
 }
 
 export default function PageHeader({ title, subtitle, icon: Icon }: PageHeaderProps) {
   return (
-    <Box className="page-header">
-      {Icon && <Icon className="page-header-icon" />}
-      <Box>
-        <Typography variant="h5" fontWeight="bold">
-          {title}
-        </Typography>
-        {subtitle && (
-          <Typography variant="body2" color="text.secondary">
-            {subtitle}
-          </Typography>
-        )}
-      </Box>
-    </Box>
+    <div className="flex items-center gap-4 mb-4">
+      {Icon && <Icon size={36} className="text-primary" />}
+      <div>
+        <h2 className="text-xl font-bold text-text-primary m-0">{title}</h2>
+        {subtitle && <p className="text-sm text-text-secondary m-0">{subtitle}</p>}
+      </div>
+    </div>
   );
 }
