@@ -1,35 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import DashboardIcon from '@mui/icons-material/BarChart';
+import ListAltIcon from '@mui/icons-material/Description';
+import VisibilityIcon from '@mui/icons-material/RemoveRedEye';
+import UploadFileIcon from '@mui/icons-material/GridOn';
+import SettingsIcon from '@mui/icons-material/Settings';
+import Layout from './components/layout/Layout';
+import DashboardPage from './pages/DashboardPage';
+import NotFoundPage from './pages/NotFoundPage';
+import type { NavSection, UserProfile } from './types/navigation';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Temporary static navigation -- will be replaced by role-based logic
+const navSections: NavSection[] = [
+  {
+    items: [
+      { label: 'דשבורד', path: '/dashboard', icon: DashboardIcon },
+      { label: 'ניהול דרישות', path: '/demands', icon: ListAltIcon },
+      { label: 'תצוגת מודריטור', path: '/moderator', icon: VisibilityIcon },
+      { label: 'ייבוא אקסל', path: '/import', icon: UploadFileIcon },
+      { label: 'הגדרות', path: '/settings', icon: SettingsIcon },
+    ],
+  },
+];
 
+// Temporary static user profile
+const userProfile: UserProfile = {
+  name: 'Raphael Lustig',
+  role: 'user',
+};
+
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route
+          element={
+            <Layout navSections={navSections} userProfile={userProfile} />
+          }
+        >
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App
