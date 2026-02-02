@@ -1,9 +1,10 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import './NotFoundPage.css';
 
 export default function NotFoundPage() {
   return (
-    <Box sx={{ textAlign: 'center', py: 8 }}>
+    <Box className="not-found">
       <Typography variant="h3" gutterBottom>
         404
       </Typography>

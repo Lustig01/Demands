@@ -1,0 +1,17 @@
+.layout-root {
+  display: flex;
+  min-height: 100vh;
+}
+
+.layout-main {
+  flex-grow: 1;
+  width: calc(100% - 260px);
+  background-color: #F8F9FA;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-content {
+  flex: 1;
+  padding: 24px;
+}

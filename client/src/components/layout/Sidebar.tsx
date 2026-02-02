@@ -17,6 +17,7 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import type { NavSection, UserProfile } from '../../types/navigation';
+import './Sidebar.css';
 
 export const SIDEBAR_WIDTH = 260;
 
@@ -32,39 +33,12 @@ export default function Sidebar({ sections, userProfile }: SidebarProps) {
     <Drawer
       variant="permanent"
       anchor="right"
-      sx={{
-        width: SIDEBAR_WIDTH,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: SIDEBAR_WIDTH,
-          boxSizing: 'border-box',
-          display: 'flex',
-          flexDirection: 'column',
-        },
-      }}
+      className="sidebar"
     >
       {/* App logo */}
-      <Box
-        sx={{
-          p: 2.5,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 1.5,
-        }}
-      >
-        <Box
-          sx={{
-            width: 40,
-            height: 40,
-            borderRadius: '10px',
-            bgcolor: 'primary.main',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <StorageIcon sx={{ color: 'white', fontSize: 22 }} />
+      <Box className="sidebar-logo">
+        <Box className="sidebar-logo-icon-box">
+          <StorageIcon className="sidebar-logo-icon" />
         </Box>
         <Typography variant="h6" fontWeight={700} color="text.primary">
           מערכת דרישות
@@ -72,7 +46,7 @@ export default function Sidebar({ sections, userProfile }: SidebarProps) {
       </Box>
 
       {/* Navigation */}
-      <Box sx={{ flex: 1, overflowY: 'auto', px: 1.5, py: 1 }}>
+      <Box className="sidebar-nav">
         {sections.map((section, sectionIndex) => (
           <Box key={sectionIndex}>
             {section.title && (
@@ -80,48 +54,18 @@ export default function Sidebar({ sections, userProfile }: SidebarProps) {
                 variant="caption"
                 color="text.secondary"
                 fontWeight={600}
-                sx={{
-                  px: 1.5,
-                  pt: sectionIndex > 0 ? 2.5 : 0.5,
-                  pb: 0.5,
-                  display: 'block',
-                  letterSpacing: '0.5px',
-                  textTransform: 'uppercase',
-                }}
+                className={`sidebar-section-title${sectionIndex > 0 ? ' sidebar-section-title-spaced' : ''}`}
               >
                 {section.title}
               </Typography>
             )}
             <List disablePadding>
               {section.items.map((item) => (
-                <ListItem key={item.path} disablePadding sx={{ mb: 0.25 }}>
+                <ListItem key={item.path} disablePadding className="sidebar-nav-item">
                   <ListItemButton
                     component={NavLink}
                     to={item.path}
-                    sx={{
-                      color: 'text.secondary',
-                      '& .MuiListItemIcon-root': {
-                        color: 'text.secondary',
-                      },
-                      '&:hover': {
-                        bgcolor: 'grey.100',
-                        color: 'text.primary',
-                        '& .MuiListItemIcon-root': {
-                          color: 'text.primary',
-                        },
-                      },
-                      '&.active': {
-                        bgcolor: 'primary.light',
-                        color: 'primary.main',
-                        fontWeight: 600,
-                        '& .MuiListItemIcon-root': {
-                          color: 'primary.main',
-                        },
-                        '& .MuiTypography-root': {
-                          fontWeight: 600,
-                        },
-                      },
-                    }}
+                    className="sidebar-nav-button"
                   >
                     <ListItemIcon>
                       <item.icon fontSize="small" />
@@ -140,34 +84,16 @@ export default function Sidebar({ sections, userProfile }: SidebarProps) {
 
       {/* User profile */}
       <Box
-        sx={{
-          p: 2,
-          mx: 1.5,
-          mb: 1.5,
-          borderRadius: 2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1.5,
-          cursor: 'pointer',
-          transition: 'background 0.15s ease',
-          '&:hover': { bgcolor: 'grey.100' },
-        }}
+        className="sidebar-user-profile"
         onClick={(e) => setMenuAnchor(e.currentTarget)}
       >
         <Avatar
           src={userProfile.avatarUrl}
-          sx={{
-            width: 38,
-            height: 38,
-            bgcolor: 'primary.light',
-            color: 'primary.main',
-            fontSize: '0.95rem',
-            fontWeight: 600,
-          }}
+          className="sidebar-avatar"
         >
           {userProfile.name.charAt(0)}
         </Avatar>
-        <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Box className="sidebar-user-info">
           <Typography variant="body2" fontWeight={600} noWrap>
             {userProfile.name}
           </Typography>
@@ -175,7 +101,7 @@ export default function Sidebar({ sections, userProfile }: SidebarProps) {
             {userProfile.role}
           </Typography>
         </Box>
-        <IconButton size="small" sx={{ color: 'text.secondary' }}>
+        <IconButton size="small" className="sidebar-expand-btn">
           <ExpandMoreIcon fontSize="small" />
         </IconButton>
       </Box>
@@ -188,22 +114,17 @@ export default function Sidebar({ sections, userProfile }: SidebarProps) {
         transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         slotProps={{
           paper: {
-            sx: {
-              minWidth: 180,
-              borderRadius: 2,
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-              mt: -1,
-            },
+            className: 'sidebar-menu-paper',
           },
         }}
       >
-        <MenuItem onClick={() => setMenuAnchor(null)} sx={{ gap: 1.5 }}>
+        <MenuItem onClick={() => setMenuAnchor(null)} className="sidebar-menu-item">
           <PersonOutlineIcon fontSize="small" />
           פרופיל
         </MenuItem>
         <MenuItem
           onClick={() => setMenuAnchor(null)}
-          sx={{ gap: 1.5, color: 'error.main' }}
+          className="sidebar-menu-item-logout"
         >
           <LogoutIcon fontSize="small" />
           התנתק

@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import './PageTabs.css';
 
 export interface PageTab {
   label: string;
@@ -28,7 +29,7 @@ export default function PageTabs({ tabs, basePath }: PageTabsProps) {
     <Tabs
       value={currentTab === -1 ? 0 : currentTab}
       onChange={handleChange}
-      sx={{ borderBottom: 1, borderColor: 'divider', mb: 3 }}
+      className="page-tabs"
     >
       {tabs.map((tab) => (
         <Tab key={tab.path} label={tab.label} />

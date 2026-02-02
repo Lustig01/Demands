@@ -1,7 +1,8 @@
 import { Outlet } from 'react-router-dom';
 import Box from '@mui/material/Box';
-import Sidebar, { SIDEBAR_WIDTH } from './Sidebar';
+import Sidebar from './Sidebar';
 import type { NavSection, UserProfile } from '../../types/navigation';
+import './Layout.css';
 
 interface LayoutProps {
   navSections: NavSection[];
@@ -10,23 +11,11 @@ interface LayoutProps {
 
 export default function Layout({ navSections, userProfile }: LayoutProps) {
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box className="layout-root">
       <Sidebar sections={navSections} userProfile={userProfile} />
 
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          width: `calc(100% - ${SIDEBAR_WIDTH}px)`,
-          bgcolor: 'background.default',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        {/* Top accent bar */}
-        <Box sx={{ height: 4, bgcolor: 'primary.dark' }} />
-
-        <Box sx={{ flex: 1, p: 3 }}>
+      <Box component="main" className="layout-main">
+        <Box className="layout-content">
           <Outlet />
         </Box>
       </Box>
