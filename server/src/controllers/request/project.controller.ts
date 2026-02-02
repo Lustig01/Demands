@@ -1,11 +1,29 @@
 import { Request, Response } from "express";
 import { projectService } from "../../services/request/project.service";
 import { ProjectType, ProjectKind, Median } from "@prisma/client";
+import { settings } from "../../lib/settings";
+import { NotFoundError } from "../../lib/errors";
+
+function getUserContext(req: Request) {
+  const user = req.auth!.user;
+  const isPrivileged = user.hasAnyRole([
+    settings.authAdminGroup,
+    settings.authModeratorGroup,
+  ]);
+  return {
+    username: user.username,
+    fullName: user.fullName ?? user.username ?? user.email ?? "Unknown",
+    isPrivileged,
+  };
+}
 
 export const projectController = {
-  getAll: async (_req: Request, res: Response) => {
+  getAll: async (req: Request, res: Response) => {
     try {
-      const projects = await projectService.findAll();
+      const { username, isPrivileged } = getUserContext(req);
+      const projects = await projectService.findAll(
+        isPrivileged ? undefined : username
+      );
       res.json(projects);
     } catch (error) {
       console.error("projectController.getAll error:", error);
@@ -15,8 +33,12 @@ export const projectController = {
 
   getByName: async (req: Request, res: Response) => {
     try {
+      const { username, isPrivileged } = getUserContext(req);
       const project = await projectService.findByName(req.params.name);
       if (!project) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+      if (!isPrivileged && project.createdBy !== username) {
         return res.status(404).json({ error: "Project not found" });
       }
       res.json(project);
@@ -28,15 +50,20 @@ export const projectController = {
 
   create: async (req: Request, res: Response) => {
     try {
+      const { username, fullName } = getUserContext(req);
       const { name, purpose, type, kind, locationId, year, median } = req.body;
 
       // Validate: year and median are required if type is Semiannual
       if (type === ProjectType.Semiannual) {
         if (year === undefined || year === null) {
-          return res.status(400).json({ error: "year is required for Semiannual projects" });
+          return res
+            .status(400)
+            .json({ error: "year is required for Semiannual projects" });
         }
         if (!median) {
-          return res.status(400).json({ error: "median is required for Semiannual projects" });
+          return res
+            .status(400)
+            .json({ error: "median is required for Semiannual projects" });
         }
       }
 
@@ -48,6 +75,8 @@ export const projectController = {
         locationId,
         year: type === ProjectType.Semiannual ? year : undefined,
         median: type === ProjectType.Semiannual ? median : undefined,
+        createdBy: username,
+        createdByName: fullName,
       });
       res.status(201).json(project);
     } catch (error) {
@@ -58,15 +87,20 @@ export const projectController = {
 
   update: async (req: Request, res: Response) => {
     try {
+      const { username, isPrivileged } = getUserContext(req);
       const { purpose, type, kind, locationId, year, median } = req.body;
 
       // If type is being updated to Semiannual, validate year and median
       if (type === ProjectType.Semiannual) {
         if (year === undefined || year === null) {
-          return res.status(400).json({ error: "year is required for Semiannual projects" });
+          return res
+            .status(400)
+            .json({ error: "year is required for Semiannual projects" });
         }
         if (!median) {
-          return res.status(400).json({ error: "median is required for Semiannual projects" });
+          return res
+            .status(400)
+            .json({ error: "median is required for Semiannual projects" });
         }
       }
 
@@ -98,9 +132,16 @@ export const projectController = {
         updateData.median = median;
       }
 
-      const project = await projectService.update(req.params.name, updateData);
+      const project = await projectService.update(
+        req.params.name,
+        updateData,
+        isPrivileged ? undefined : username
+      );
       res.json(project);
     } catch (error) {
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({ error: "Project not found" });
+      }
       console.error("projectController.update error:", error);
       res.status(400).json({ error: "Failed to update project" });
     }
@@ -108,9 +149,16 @@ export const projectController = {
 
   delete: async (req: Request, res: Response) => {
     try {
-      await projectService.delete(req.params.name);
+      const { username, isPrivileged } = getUserContext(req);
+      await projectService.delete(
+        req.params.name,
+        isPrivileged ? undefined : username
+      );
       res.status(204).send();
     } catch (error) {
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({ error: "Project not found" });
+      }
       console.error("projectController.delete error:", error);
       res.status(400).json({ error: "Failed to delete project" });
     }

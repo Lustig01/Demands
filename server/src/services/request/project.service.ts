@@ -1,9 +1,11 @@
 import prisma from "../../lib/prisma";
 import { ProjectType, ProjectKind, Median } from "@prisma/client";
+import { NotFoundError } from "../../lib/errors";
 
 export const projectService = {
-  findAll: async () => {
+  findAll: async (createdBy?: string) => {
     return prisma.project.findMany({
+      where: createdBy ? { createdBy } : undefined,
       include: { location: true },
     });
   },
@@ -23,6 +25,8 @@ export const projectService = {
     locationId: number;
     year?: number;
     median?: Median;
+    createdBy?: string;
+    createdByName?: string;
   }) => {
     return prisma.project.create({
       data,
@@ -39,8 +43,17 @@ export const projectService = {
       locationId?: number;
       year?: number | null;
       median?: Median | null;
-    }
+    },
+    createdBy?: string
   ) => {
+    if (createdBy) {
+      const existing = await prisma.project.findFirst({
+        where: { name, createdBy },
+      });
+      if (!existing) {
+        throw new NotFoundError("Project");
+      }
+    }
     return prisma.project.update({
       where: { name },
       data,
@@ -48,7 +61,15 @@ export const projectService = {
     });
   },
 
-  delete: async (name: string) => {
+  delete: async (name: string, createdBy?: string) => {
+    if (createdBy) {
+      const existing = await prisma.project.findFirst({
+        where: { name, createdBy },
+      });
+      if (!existing) {
+        throw new NotFoundError("Project");
+      }
+    }
     return prisma.project.delete({
       where: { name },
     });

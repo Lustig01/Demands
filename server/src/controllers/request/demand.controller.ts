@@ -2,11 +2,29 @@ import { Request, Response } from "express";
 import { demandService } from "../../services/request/demand.service";
 import { projectService } from "../../services/request/project.service";
 import { DemandType, DemandStatus } from "@prisma/client";
+import { settings } from "../../lib/settings";
+import { NotFoundError } from "../../lib/errors";
+
+function getUserContext(req: Request) {
+  const user = req.auth!.user;
+  const isPrivileged = user.hasAnyRole([
+    settings.authAdminGroup,
+    settings.authModeratorGroup,
+  ]);
+  return {
+    username: user.username,
+    fullName: user.fullName ?? user.username ?? user.email ?? "Unknown",
+    isPrivileged,
+  };
+}
 
 export const demandController = {
-  getAll: async (_req: Request, res: Response) => {
+  getAll: async (req: Request, res: Response) => {
     try {
-      const demands = await demandService.findAll();
+      const { username, isPrivileged } = getUserContext(req);
+      const demands = await demandService.findAll(
+        isPrivileged ? undefined : username
+      );
       res.json(demands);
     } catch (error) {
       console.error("demandController.getAll error:", error);
@@ -16,8 +34,12 @@ export const demandController = {
 
   getById: async (req: Request, res: Response) => {
     try {
+      const { username, isPrivileged } = getUserContext(req);
       const demand = await demandService.findById(Number(req.params.id));
       if (!demand) {
+        return res.status(404).json({ error: "Demand not found" });
+      }
+      if (!isPrivileged && demand.createdBy !== username) {
         return res.status(404).json({ error: "Demand not found" });
       }
       res.json(demand);
@@ -29,6 +51,7 @@ export const demandController = {
 
   getByFilters: async (req: Request, res: Response) => {
     try {
+      const { username, isPrivileged } = getUserContext(req);
       const {
         project,
         resource,
@@ -51,6 +74,7 @@ export const demandController = {
         networkName: network as string | undefined,
         type: type as DemandType | undefined,
         status: status as DemandStatus | undefined,
+        createdBy: isPrivileged ? undefined : username,
       });
       res.json(demands);
     } catch (error) {
@@ -61,6 +85,7 @@ export const demandController = {
 
   create: async (req: Request, res: Response) => {
     try {
+      const { username, fullName, isPrivileged } = getUserContext(req);
       const {
         projectName,
         serviceName,
@@ -77,15 +102,17 @@ export const demandController = {
         return res.status(400).json({ error: "clusterName is required for Extention demands" });
       }
 
-      // If locationId is not provided, use project's locationId
-      let finalLocationId = locationId;
-      if (!finalLocationId) {
-        const project = await projectService.findByName(projectName);
-        if (!project) {
-          return res.status(400).json({ error: "Project not found" });
-        }
-        finalLocationId = project.locationId;
+      // Verify the user has access to the project
+      const project = await projectService.findByName(projectName);
+      if (!project) {
+        return res.status(400).json({ error: "Project not found" });
       }
+      if (!isPrivileged && project.createdBy !== username) {
+        return res.status(400).json({ error: "Project not found" });
+      }
+
+      // If locationId is not provided, use project's locationId
+      const finalLocationId = locationId || project.locationId;
 
       const demand = await demandService.create({
         projectName,
@@ -96,6 +123,8 @@ export const demandController = {
         locationId: finalLocationId,
         type,
         clusterName: type === DemandType.Extension ? clusterName : undefined,
+        createdBy: username,
+        createdByName: fullName,
       });
       res.status(201).json(demand);
     } catch (error) {
@@ -106,6 +135,7 @@ export const demandController = {
 
   update: async (req: Request, res: Response) => {
     try {
+      const { username, isPrivileged } = getUserContext(req);
       const {
         serviceName,
         resourceName,
@@ -124,17 +154,24 @@ export const demandController = {
         }
       }
 
-      const demand = await demandService.update(Number(req.params.id), {
-        serviceName,
-        resourceName,
-        resourceService,
-        value,
-        locationId,
-        type,
-        clusterName,
-      });
+      const demand = await demandService.update(
+        Number(req.params.id),
+        {
+          serviceName,
+          resourceName,
+          resourceService,
+          value,
+          locationId,
+          type,
+          clusterName,
+        },
+        isPrivileged ? undefined : username
+      );
       res.json(demand);
     } catch (error) {
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({ error: "Demand not found" });
+      }
       console.error("demandController.update error:", error);
       res.status(400).json({ error: "Failed to update demand" });
     }
@@ -142,9 +179,16 @@ export const demandController = {
 
   delete: async (req: Request, res: Response) => {
     try {
-      await demandService.delete(Number(req.params.id));
+      const { username, isPrivileged } = getUserContext(req);
+      await demandService.delete(
+        Number(req.params.id),
+        isPrivileged ? undefined : username
+      );
       res.status(204).send();
     } catch (error) {
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({ error: "Demand not found" });
+      }
       console.error("demandController.delete error:", error);
       res.status(400).json({ error: "Failed to delete demand" });
     }
