@@ -14,8 +14,8 @@
     "logout": "Logout"
   },
   "dashboard": {
-    "title": "Dashboard",
-    "subtitle": "System Overview",
+    "title": "Dashboard - Comparisons & Trends",
+    "subtitle": "Data analysis and comparisons between periods - internal only",
     "placeholder": "Page content will appear here"
   },
   "notFound": {

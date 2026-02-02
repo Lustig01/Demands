@@ -1,19 +1,13 @@
-import type { IconType } from 'react-icons';
-
 interface PageHeaderProps {
   title: string;
   subtitle?: string;
-  icon?: IconType;
 }
 
-export default function PageHeader({ title, subtitle, icon: Icon }: PageHeaderProps) {
+export default function PageHeader({ title, subtitle }: PageHeaderProps) {
   return (
-    <div className="flex items-center gap-4 mb-4">
-      {Icon && <Icon size={36} className="text-primary" />}
-      <div>
-        <h2 className="text-xl font-bold text-text-primary m-0">{title}</h2>
-        {subtitle && <p className="text-sm text-text-secondary m-0">{subtitle}</p>}
-      </div>
+    <div className="mb-6">
+      <h2 className="text-3xl font-extrabold text-text-primary m-0">{title}</h2>
+      {subtitle && <p className="text-sm text-text-secondary mt-1 m-0">{subtitle}</p>}
     </div>
   );
 }
