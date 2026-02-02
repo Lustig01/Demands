@@ -1,6 +1,7 @@
 {
   "nav": {
     "dashboard": "דשבורד",
+    "projects": "פרוייקטים",
     "demands": "ניהול דרישות",
     "moderator": "תצוגת מודריטור",
     "import": "ייבוא אקסל",
@@ -17,6 +18,53 @@
     "title": "Dashboard - השוואות ומגמות",
     "subtitle": "ניתוח נתונים והשוואות בין תקופות - פנימי בלבד",
     "placeholder": "תוכן העמוד יופיע כאן"
+  },
+  "projects": {
+    "title": "הפרוייקטים שלי",
+    "subtitle": "צפייה וניהול דרישות הפרוייקטים שלך",
+    "demands": "דרישות",
+    "searchPlaceholder": "חיפוש...",
+    "showRemoved": "הצג דרישות שהוסרו",
+    "recordCount": "מציג {{shown}} מתוך {{total}} רשומות",
+    "noDemands": "אין דרישות להצגה",
+    "projectNotFound": "הפרוייקט לא נמצא",
+    "backToProjects": "חזרה לפרוייקטים",
+    "columns": {
+      "id": "מזהה",
+      "project": "פרוייקט",
+      "service": "שירות",
+      "resource": "משאב",
+      "value": "כמות",
+      "unit": "יחידה",
+      "type": "סוג",
+      "base": "בסיס",
+      "environment": "סביבה",
+      "network": "רשת",
+      "status": "סטטוס",
+      "approvedValue": "כמות מאושרת",
+      "approvedDate": "תאריך אישור",
+      "decisionReason": "סיבת החלטה",
+      "createdAt": "תאריך יצירה",
+      "createdBy": "נוצר ע\"י"
+    },
+    "status": {
+      "Pending": "ממתין",
+      "Approved": "מאושר",
+      "Rejected": "נדחה",
+      "PartiallyApproved": "אושר חלקית"
+    },
+    "type": {
+      "Semiannual": "חצי שנתי",
+      "Emergency": "חירום"
+    },
+    "kind": {
+      "App": "אפליקציה",
+      "Track": "מסלול"
+    },
+    "demandType": {
+      "New": "חדש",
+      "Extension": "הרחבה"
+    }
   },
   "notFound": {
     "message": "העמוד המבוקש לא נמצא"

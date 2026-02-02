@@ -1,6 +1,7 @@
 {
   "nav": {
     "dashboard": "Dashboard",
+    "projects": "Projects",
     "demands": "Manage Demands",
     "moderator": "Moderator View",
     "import": "Import Excel",
@@ -17,6 +18,53 @@
     "title": "Dashboard - Comparisons & Trends",
     "subtitle": "Data analysis and comparisons between periods - internal only",
     "placeholder": "Page content will appear here"
+  },
+  "projects": {
+    "title": "My Projects",
+    "subtitle": "View and manage your project demands",
+    "demands": "demands",
+    "searchPlaceholder": "Search...",
+    "showRemoved": "Show removed demands",
+    "recordCount": "Showing {{shown}} of {{total}} records",
+    "noDemands": "No demands to display",
+    "projectNotFound": "Project not found",
+    "backToProjects": "Back to Projects",
+    "columns": {
+      "id": "ID",
+      "project": "Project",
+      "service": "Service",
+      "resource": "Resource",
+      "value": "Value",
+      "unit": "Unit",
+      "type": "Type",
+      "base": "Base",
+      "environment": "Environment",
+      "network": "Network",
+      "status": "Status",
+      "approvedValue": "Approved Value",
+      "approvedDate": "Approved Date",
+      "decisionReason": "Decision Reason",
+      "createdAt": "Created At",
+      "createdBy": "Created By"
+    },
+    "status": {
+      "Pending": "Pending",
+      "Approved": "Approved",
+      "Rejected": "Rejected",
+      "PartiallyApproved": "Partially Approved"
+    },
+    "type": {
+      "Semiannual": "Semiannual",
+      "Emergency": "Emergency"
+    },
+    "kind": {
+      "App": "Application",
+      "Track": "Track"
+    },
+    "demandType": {
+      "New": "New",
+      "Extension": "Extension"
+    }
   },
   "notFound": {
     "message": "The requested page was not found"

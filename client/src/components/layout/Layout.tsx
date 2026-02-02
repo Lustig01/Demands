@@ -15,7 +15,7 @@ export default function Layout({ navSections, userProfile }: LayoutProps) {
 
       <div className="flex flex-1">
         <Sidebar sections={navSections} userProfile={userProfile} />
-        <main className="flex-1 bg-bg-default flex flex-col">
+        <main className="flex-1 min-w-0 bg-bg-default flex flex-col">
           <div className="flex-1 p-8">
             <Outlet />
           </div>
