@@ -20,11 +20,5 @@
   },
   "notFound": {
     "message": "The requested page was not found"
-  },
-  "auth": {
-    "loading": "Loading...",
-    "loginError": "Authentication failed. Please try again.",
-    "sessionExpired": "Your session has expired. Please log in again.",
-    "callbackError": "Authentication callback failed."
   }
 }
