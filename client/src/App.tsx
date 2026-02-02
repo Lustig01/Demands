@@ -1,20 +1,19 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MdBarChart, MdDescription, MdRemoveRedEye, MdGridOn, MdSettings } from 'react-icons/md';
 import Layout from './components/layout/Layout';
 import DashboardPage from './pages/DashboardPage';
 import NotFoundPage from './pages/NotFoundPage';
 import type { NavSection, UserProfile } from './types/navigation';
-
-// Temporary static user profile
-const userProfile: UserProfile = {
-  name: 'Raphael Lustig',
-  role: 'user',
-};
+import { useAuth } from './auth/AuthContext';
+import ProtectedRoute from './auth/ProtectedRoute';
+import AuthCallback from './auth/AuthCallback';
+import LoadingScreen from './auth/LoadingScreen';
 
 export default function App() {
   const { t, i18n } = useTranslation();
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
     const dir = i18n.language === 'he' ? 'rtl' : 'ltr';
@@ -23,7 +22,19 @@ export default function App() {
     document.title = t('app.title');
   }, [i18n.language, t]);
 
-  // Temporary static navigation -- will be replaced by role-based logic
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  // Create user profile from auth user
+  const userProfile: UserProfile = user
+    ? {
+      name: user.fullName || user.username,
+      role: user.roles[0] || 'user',
+      avatarUrl: undefined, // Add if available in future
+    }
+    : { name: '', role: '' };
+
   const navSections: NavSection[] = [
     {
       items: [
@@ -37,18 +48,24 @@ export default function App() {
   ];
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          element={
+    <Routes>
+      <Route path="/auth/callback" element={<AuthCallback />} />
+
+      <Route
+        element={
+          <ProtectedRoute>
             <Layout navSections={navSections} userProfile={userProfile} />
-          }
-        >
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/demands" element={<div>Demands Page (Placeholder)</div>} />
+        <Route path="/moderator" element={<div>Moderator Page (Placeholder)</div>} />
+        <Route path="/import" element={<div>Import Page (Placeholder)</div>} />
+        <Route path="/settings" element={<div>Settings Page (Placeholder)</div>} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   );
 }

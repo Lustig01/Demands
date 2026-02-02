@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { MdStorage, MdPersonOutline, MdLogout, MdExpandMore } from 'react-icons/md';
 import LanguageSwitcher from '../LanguageSwitcher';
 import type { NavSection, UserProfile } from '../../types/navigation';
+import { useAuth } from '../../auth/AuthContext';
 
 export const SIDEBAR_WIDTH = 280;
 
@@ -14,6 +15,7 @@ interface SidebarProps {
 
 export default function Sidebar({ sections, userProfile }: SidebarProps) {
   const { t } = useTranslation();
+  const { logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -55,10 +57,9 @@ export default function Sidebar({ sections, userProfile }: SidebarProps) {
                   <NavLink
                     to={item.path}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 px-4 py-3 rounded-2xl text-[0.95rem] transition-colors no-underline ${
-                        isActive
-                          ? 'bg-primary-light text-primary font-semibold'
-                          : 'text-text-secondary hover:bg-gray-50 hover:text-text-primary'
+                      `flex items-center gap-3 px-4 py-3 rounded-2xl text-[0.95rem] transition-colors no-underline ${isActive
+                        ? 'bg-primary-light text-primary font-semibold'
+                        : 'text-text-secondary hover:bg-gray-50 hover:text-text-primary'
                       }`
                     }
                   >
@@ -90,7 +91,10 @@ export default function Sidebar({ sections, userProfile }: SidebarProps) {
               {t('user.profile')}
             </button>
             <button
-              onClick={() => setMenuOpen(false)}
+              onClick={() => {
+                setMenuOpen(false);
+                logout();
+              }}
               className="flex items-center gap-3 w-full px-4 py-3 text-sm text-danger hover:bg-gray-50 transition-colors bg-transparent border-none cursor-pointer text-start"
             >
               <MdLogout size={20} />
