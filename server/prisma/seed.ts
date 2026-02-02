@@ -231,31 +231,42 @@ async function main() {
   // Request Models
   // ============================================
 
+  // Keycloak users (username = username, since UUIDs are generated at realm import)
+  const USERS = {
+    admin1: { username: 'admin1', name: 'Admin One' },
+    admin2: { username: 'admin2', name: 'Admin Two' },
+    mod1:   { username: 'mod1',   name: 'Moderator One' },
+    mod2:   { username: 'mod2',   name: 'Moderator Two' },
+    user1:  { username: 'user1',  name: 'User One' },
+    user2:  { username: 'user2',  name: 'User Two' },
+    user3:  { username: 'user3',  name: 'User Three' },
+  };
+
   const projects = await Promise.all([
     prisma.project.upsert({
       where: { name: 'Cloud Migration' },
       update: {},
-      create: { name: 'Cloud Migration', purpose: 'Migrate legacy apps to cloud', type: 'Semiannual', kind: 'App', locationId: locations[2].id, year: 2026, median: 'H1' },
+      create: { name: 'Cloud Migration', purpose: 'Migrate legacy apps to cloud', type: 'Semiannual', kind: 'App', locationId: locations[2].id, year: 2026, median: 'H1', createdBy: USERS.user1.username, createdByName: USERS.user1.name },
     }),
     prisma.project.upsert({
       where: { name: 'Database Upgrade' },
       update: {},
-      create: { name: 'Database Upgrade', purpose: 'Upgrade PostgreSQL clusters', type: 'Emergency', kind: 'Track', locationId: locations[0].id },
+      create: { name: 'Database Upgrade', purpose: 'Upgrade PostgreSQL clusters', type: 'Emergency', kind: 'Track', locationId: locations[0].id, createdBy: USERS.user2.username, createdByName: USERS.user2.name },
     }),
     prisma.project.upsert({
       where: { name: 'New API Platform' },
       update: {},
-      create: { name: 'New API Platform', purpose: 'Build new API gateway', type: 'Semiannual', kind: 'App', locationId: locations[0].id, year: 2026, median: 'H2' },
+      create: { name: 'New API Platform', purpose: 'Build new API gateway', type: 'Semiannual', kind: 'App', locationId: locations[0].id, year: 2026, median: 'H2', createdBy: USERS.user3.username, createdByName: USERS.user3.name },
     }),
     prisma.project.upsert({
       where: { name: 'DR Setup' },
       update: {},
-      create: { name: 'DR Setup', purpose: 'Setup disaster recovery site', type: 'Semiannual', kind: 'Track', locationId: locations[4].id, year: 2026, median: 'H1' },
+      create: { name: 'DR Setup', purpose: 'Setup disaster recovery site', type: 'Semiannual', kind: 'Track', locationId: locations[4].id, year: 2026, median: 'H1', createdBy: USERS.mod1.username, createdByName: USERS.mod1.name },
     }),
     prisma.project.upsert({
       where: { name: 'Dev Environment' },
       update: {},
-      create: { name: 'Dev Environment', purpose: 'New development environment', type: 'Emergency', kind: 'App', locationId: locations[3].id },
+      create: { name: 'Dev Environment', purpose: 'New development environment', type: 'Emergency', kind: 'App', locationId: locations[3].id, createdBy: USERS.user1.username, createdByName: USERS.user1.name },
     }),
   ]);
   console.log(`Created ${projects.length} projects`);
@@ -278,6 +289,8 @@ async function main() {
         locationId: locations[2].id,
         type: 'New',
         status: 'Pending',
+        createdBy: USERS.user1.username,
+        createdByName: USERS.user1.name,
       },
     }),
     prisma.demand.create({
@@ -292,6 +305,8 @@ async function main() {
         status: 'Approved',
         approvedValue: 512,
         approvedDate: new Date(),
+        createdBy: USERS.user1.username,
+        createdByName: USERS.user1.name,
       },
     }),
     prisma.demand.create({
@@ -306,6 +321,8 @@ async function main() {
         status: 'Approved',
         approvedValue: 50,
         approvedDate: new Date(),
+        createdBy: USERS.user2.username,
+        createdByName: USERS.user2.name,
       },
     }),
     prisma.demand.create({
@@ -320,6 +337,8 @@ async function main() {
         status: 'PartiallyApproved',
         approvedValue: 80,
         approvedDate: new Date(),
+        createdBy: USERS.user3.username,
+        createdByName: USERS.user3.name,
       },
     }),
     prisma.demand.create({
@@ -332,6 +351,8 @@ async function main() {
         locationId: locations[4].id,
         type: 'New',
         status: 'Rejected',
+        createdBy: USERS.mod1.username,
+        createdByName: USERS.mod1.name,
       },
     }),
   ]);

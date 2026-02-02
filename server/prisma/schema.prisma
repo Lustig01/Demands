@@ -161,40 +161,48 @@ enum DemandStatus {
 }
 
 model Project {
-  name       String      @id
-  purpose    String
-  type       ProjectType
-  kind       ProjectKind
-  locationId Int
-  location   Location    @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  year       Int?
-  median     Median?
-  demands    Demand[]
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  name          String      @id
+  purpose       String
+  type          ProjectType
+  kind          ProjectKind
+  locationId    Int
+  location      Location    @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  year          Int?
+  median        Median?
+  demands       Demand[]
+  createdBy     String?
+  createdByName String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([createdBy])
 }
 
 model Demand {
-  id              Int           @id @default(autoincrement())
-  projectName     String
-  project         Project       @relation(fields: [projectName], references: [name], onDelete: Cascade)
-  serviceName     String
-  service         Service       @relation(fields: [serviceName], references: [name], onDelete: Cascade)
-  resourceName    String
-  resourceService String
-  resource        Resource      @relation(fields: [resourceName, resourceService], references: [name, serviceName], onDelete: Cascade)
-  value           Float
-  locationId      Int
-  location        Location      @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  type            DemandType
-  status          DemandStatus  @default(Pending)
-  clusterName     String?
-  approvedValue   Float?
-  approvedDate    DateTime?
+  id                 Int              @id @default(autoincrement())
+  projectName        String
+  project            Project          @relation(fields: [projectName], references: [name], onDelete: Cascade)
+  serviceName        String
+  service            Service          @relation(fields: [serviceName], references: [name], onDelete: Cascade)
+  resourceName       String
+  resourceService    String
+  resource           Resource         @relation(fields: [resourceName, resourceService], references: [name, serviceName], onDelete: Cascade)
+  value              Float
+  locationId         Int
+  location           Location         @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  type               DemandType
+  status             DemandStatus     @default(Pending)
+  clusterName        String?
+  approvedValue      Float?
+  approvedDate       DateTime?
   decisionReasonName String?
-  decisionReason  DecisionReason? @relation(fields: [decisionReasonName], references: [name])
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  decisionReason     DecisionReason?  @relation(fields: [decisionReasonName], references: [name])
+  createdBy          String?
+  createdByName      String?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  @@index([createdBy])
 }
 
 model DecisionReason {

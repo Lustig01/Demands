@@ -1,9 +1,11 @@
 import prisma from "../../lib/prisma";
 import { DemandType, DemandStatus } from "@prisma/client";
+import { NotFoundError } from "../../lib/errors";
 
 export const demandService = {
-  findAll: async () => {
+  findAll: async (createdBy?: string) => {
     return prisma.demand.findMany({
+      where: createdBy ? { createdBy } : undefined,
       include: {
         project: true,
         service: true,
@@ -35,6 +37,7 @@ export const demandService = {
     networkName?: string;
     type?: DemandType;
     status?: DemandStatus;
+    createdBy?: string;
   }) => {
     const where: {
       projectName?: string;
@@ -43,6 +46,7 @@ export const demandService = {
       locationId?: number;
       type?: DemandType;
       status?: DemandStatus;
+      createdBy?: string;
       location?: {
         baseName?: string;
         environmentName?: string;
@@ -56,6 +60,7 @@ export const demandService = {
     if (filters.locationId) where.locationId = filters.locationId;
     if (filters.type) where.type = filters.type;
     if (filters.status) where.status = filters.status;
+    if (filters.createdBy) where.createdBy = filters.createdBy;
 
     if (filters.baseName || filters.environmentName || filters.networkName) {
       where.location = {};
@@ -84,6 +89,8 @@ export const demandService = {
     locationId: number;
     type: DemandType;
     clusterName?: string;
+    createdBy?: string;
+    createdByName?: string;
   }) => {
     return prisma.demand.create({
       data: {
@@ -109,8 +116,17 @@ export const demandService = {
       locationId?: number;
       type?: DemandType;
       clusterName?: string;
-    }
+    },
+    createdBy?: string
   ) => {
+    if (createdBy) {
+      const existing = await prisma.demand.findFirst({
+        where: { id, createdBy },
+      });
+      if (!existing) {
+        throw new NotFoundError("Demand");
+      }
+    }
     return prisma.demand.update({
       where: { id },
       data,
@@ -123,7 +139,15 @@ export const demandService = {
     });
   },
 
-  delete: async (id: number) => {
+  delete: async (id: number, createdBy?: string) => {
+    if (createdBy) {
+      const existing = await prisma.demand.findFirst({
+        where: { id, createdBy },
+      });
+      if (!existing) {
+        throw new NotFoundError("Demand");
+      }
+    }
     return prisma.demand.delete({
       where: { id },
     });
