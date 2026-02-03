@@ -1,5 +1,5 @@
 import prisma from "../../lib/prisma";
-import { DemandType, DemandStatus } from "@prisma/client";
+import { DemandType, DemandStatus, ProjectType, Median } from "@prisma/client";
 import { NotFoundError } from "../../lib/errors";
 
 export const demandService = {
@@ -62,26 +62,17 @@ export const demandService = {
       type?: DemandType;
       status?: DemandStatus;
       createdBy?: string;
+      projectType?: ProjectType;
+      projectMedian?: Median;
+      projectYear?: number;
+      projectRelatedTo?: string;
     },
     pagination?: { page: number; limit: number }
   ) => {
     const { page = 1, limit = 10 } = pagination || {};
     const skip = (page - 1) * limit;
 
-    const where: {
-      projectName?: string;
-      resourceName?: string;
-      resourceService?: string;
-      locationId?: number;
-      type?: DemandType;
-      status?: DemandStatus;
-      createdBy?: string;
-      location?: {
-        baseName?: string;
-        environmentName?: string;
-        networkName?: string;
-      };
-    } = {};
+    const where: any = {};
 
     if (filters.projectName) where.projectName = filters.projectName;
     if (filters.resourceName) where.resourceName = filters.resourceName;
@@ -96,6 +87,16 @@ export const demandService = {
       if (filters.baseName) where.location.baseName = filters.baseName;
       if (filters.environmentName) where.location.environmentName = filters.environmentName;
       if (filters.networkName) where.location.networkName = filters.networkName;
+    }
+
+    if (filters.projectType || filters.projectMedian || filters.projectYear || filters.projectRelatedTo) {
+      where.project = {};
+      if (filters.projectType) where.project.type = filters.projectType;
+      if (filters.projectMedian) where.project.median = filters.projectMedian;
+      if (filters.projectYear) where.project.year = filters.projectYear;
+      if (filters.projectRelatedTo) {
+        where.project.relatedTo = { contains: filters.projectRelatedTo, mode: 'insensitive' };
+      }
     }
 
     const [data, total] = await Promise.all([

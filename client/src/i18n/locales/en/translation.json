@@ -59,7 +59,11 @@
       "decisionReason": "Decision Reason",
       "createdAt": "Created At",
       "createdBy": "Created By",
-      "resourceService": "Resource Service"
+      "resourceService": "Resource Service",
+      "year": "Year",
+      "relatedTo": "Related To",
+      "median": "Median",
+      "projectType": "Project Type"
     },
     "status": {
       "Pending": "Pending",

@@ -65,4 +65,8 @@ export interface DemandFilterParams {
   networkName?: string;
   type?: DemandType;
   status?: DemandStatus;
+  projectType?: ProjectType;
+  median?: Median;
+  year?: number;
+  relatedTo?: string;
 }
