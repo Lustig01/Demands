@@ -7,6 +7,19 @@
     "import": "Import Excel",
     "settings": "Settings"
   },
+  "common": {
+    "search": "Search...",
+    "noResults": "No results found",
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "results": "results",
+    "previous": "Previous",
+    "next": "Next",
+    "all": "All",
+    "clearFilters": "Clear all filters",
+    "filters": "Filters"
+  },
   "app": {
     "title": "Resource Demand System"
   },
@@ -45,7 +58,8 @@
       "approvedDate": "Approved Date",
       "decisionReason": "Decision Reason",
       "createdAt": "Created At",
-      "createdBy": "Created By"
+      "createdBy": "Created By",
+      "resourceService": "Resource Service"
     },
     "status": {
       "Pending": "Pending",

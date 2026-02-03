@@ -7,6 +7,19 @@
     "import": "ייבוא אקסל",
     "settings": "הגדרות"
   },
+  "common": {
+    "search": "חיפוש...",
+    "noResults": "לא נמצאו תוצאות",
+    "showing": "מציג",
+    "to": "עד",
+    "of": "מתוך",
+    "results": "תוצאות",
+    "previous": "הקודם",
+    "next": "הבא",
+    "all": "הכל",
+    "clearFilters": "נקה סינונים",
+    "filters": "סינון"
+  },
   "app": {
     "title": "מערכת דרישות"
   },
@@ -45,7 +58,8 @@
       "approvedDate": "תאריך אישור",
       "decisionReason": "סיבת החלטה",
       "createdAt": "תאריך יצירה",
-      "createdBy": "נוצר ע\"י"
+      "createdBy": "נוצר ע\"י",
+      "resourceService": "שירות משאב"
     },
     "status": {
       "Pending": "ממתין",

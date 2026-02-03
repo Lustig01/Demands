@@ -6,6 +6,7 @@ import Layout from './components/layout/Layout';
 import DashboardPage from './pages/DashboardPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
+import DemandsPage from './pages/DemandsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import type { NavSection, UserProfile } from './types/navigation';
 
@@ -51,9 +52,11 @@ export default function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/projects/:name" element={<ProjectDetailPage />} />
+          <Route path="/demands" element={<DemandsPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
   );
 }
+
