@@ -10,7 +10,7 @@ export interface Project {
   relatedTo?: string;
   type: ProjectType;
   kind: ProjectKind;
-  locationId: number;
+  location: DemandLocation;
   year?: number;
   median?: Median;
   createdBy: string;

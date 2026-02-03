@@ -69,7 +69,7 @@ export default function Pagination({
                         }`}
                     aria-label={t('common.previous', 'Previous')}
                 >
-                    <MdChevronLeft size={20} />
+                    <MdChevronLeft size={20} className="rtl:rotate-180" />
                 </button>
 
                 <div className="flex items-center gap-1">
@@ -100,7 +100,7 @@ export default function Pagination({
                         }`}
                     aria-label={t('common.next', 'Next')}
                 >
-                    <MdChevronRight size={20} />
+                    <MdChevronRight size={20} className="rtl:rotate-180" />
                 </button>
             </div>
         </div>

@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MdAdd, MdFileDownload, MdSearch } from 'react-icons/md';
 import PageHeader from '../components/layout/PageHeader';
-import ProjectCard from '../components/projects/ProjectCard';
+import ProjectsTable from '../components/projects/ProjectsTable';
 import CreateProjectModal from '../components/projects/CreateProjectModal';
 import { useProjects } from '../hooks/useProjects';
 import { useDebounce } from '../hooks/useDebounce';
@@ -14,7 +14,7 @@ export default function ProjectsPage() {
 
   // Pagination & Filter State
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 9; // Grid layout usually nice with 9 or 12
+  const itemsPerPage = 10;
   const [searchName, setSearchName] = useState('');
   const debouncedSearchName = useDebounce(searchName, 500);
 
@@ -23,6 +23,10 @@ export default function ProjectsPage() {
     { page: currentPage, limit: itemsPerPage }
   );
 
+  const isFiltersPending = useMemo(() =>
+    searchName !== debouncedSearchName,
+    [searchName, debouncedSearchName]
+  );
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
@@ -87,30 +91,12 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-text-primary"></div>
+      <div className="bg-bg-paper rounded-2xl border border-divider shadow-sm overflow-hidden mb-6">
+        <div className={`overflow-x-auto transition-opacity duration-200 ${isFiltersPending ? 'opacity-50' : 'opacity-100'}`}>
+          <ProjectsTable projects={projects} isLoading={isLoading} />
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-          {projects.map((project) => (
-            <ProjectCard
-              key={project.name}
-              project={project}
-              demandCount={project.demandCount ?? 0}
-            />
-          ))}
-          {projects.length === 0 && (
-            <div className="col-span-full text-center py-10 text-text-secondary">
-              {t('common.noResults', 'No projects found')}
-            </div>
-          )}
-        </div>
-      )}
 
-      {/* Pagination */}
-      {projects.length > 0 && (
-        <div className="flex justify-center">
+        {!isLoading && (
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -118,8 +104,8 @@ export default function ProjectsPage() {
             totalItems={total}
             itemsPerPage={itemsPerPage}
           />
-        </div>
-      )}
+        )}
+      </div>
 
       {isCreateOpen && (
         <CreateProjectModal

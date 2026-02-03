@@ -48,7 +48,11 @@ function mapProject(raw: any): Project {
     relatedTo: raw.relatedTo ?? undefined,
     type: raw.type,
     kind: raw.kindName ?? raw.kind,
-    locationId: raw.locationId,
+    location: {
+      base: raw.location?.baseName ?? '',
+      environment: raw.location?.environmentName ?? '',
+      network: raw.location?.networkName ?? '',
+    },
     year: raw.year ?? undefined,
     median: raw.median ?? undefined,
     createdBy: raw.createdBy ?? '',
