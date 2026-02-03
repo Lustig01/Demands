@@ -64,6 +64,34 @@
     "demandType": {
       "New": "חדש",
       "Extension": "הרחבה"
+    },
+    "newProject": "פרויקט חדש",
+    "export": "ייצוא",
+    "createProject": {
+      "title": "פרויקט חדש",
+      "name": "שם הפרויקט",
+      "trackOrApp": "מסלול / אפליקציה",
+      "center": "מרכז",
+      "branch": "ענף",
+      "requestType": "סוג בקשה",
+      "priority": "עדיפות",
+      "projectType": "סוג פרויקט",
+      "environment": "סביבה",
+      "network": "רשת",
+      "base": "בסיס",
+      "purpose": "ייעוד הפרויקט",
+      "submit": "צור פרויקט",
+      "autoIdentified": "זוהה אוטומטית",
+      "change": "שינוי",
+      "namePlaceholder": "טרת הפרויקט / התפוקה שהפרויקט מביא (לא שם טכני)",
+      "trackOrAppPlaceholder": "לאיזה מסלול/אפליקציה הפרויקט שייך? (אם רלוונטי)",
+      "purposePlaceholder": "פירוט קצר: למה הפרויקט קיים, למי הוא מיועד, ואיזה ערך הוא נותן",
+      "selectOption": "בחר...",
+      "priorityOptions": {
+        "P1": "דחוף - P1",
+        "P2": "רגיל - P2",
+        "P3": "נמוך - P3"
+      }
     }
   },
   "notFound": {
