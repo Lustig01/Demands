@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from 'react-oidc-context';
 import { MdBarChart, MdFolder, MdDescription, MdRemoveRedEye, MdGridOn, MdSettings } from 'react-icons/md';
 import Layout from './components/layout/Layout';
 import DashboardPage from './pages/DashboardPage';
@@ -9,14 +10,9 @@ import ProjectDetailPage from './pages/ProjectDetailPage';
 import NotFoundPage from './pages/NotFoundPage';
 import type { NavSection, UserProfile } from './types/navigation';
 
-// Temporary static user profile
-const userProfile: UserProfile = {
-  name: 'Raphael Lustig',
-  role: 'user',
-};
-
 export default function App() {
   const { t, i18n } = useTranslation();
+  const auth = useAuth();
 
   useEffect(() => {
     const dir = i18n.language === 'he' ? 'rtl' : 'ltr';
@@ -24,6 +20,57 @@ export default function App() {
     document.documentElement.setAttribute('lang', i18n.language);
     document.title = t('app.title');
   }, [i18n.language, t]);
+
+  // Handle authentication
+  useEffect(() => {
+    // If not authenticated and not loading, redirect to login
+    if (!auth.isAuthenticated && !auth.isLoading && !auth.activeNavigator) {
+      auth.signinRedirect();
+    }
+  }, [auth.isAuthenticated, auth.isLoading, auth.activeNavigator, auth.signinRedirect]);
+
+  // Show loading state while checking authentication
+  if (auth.isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">{t('auth.loading', 'Loading...')}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error if authentication failed
+  if (auth.error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center max-w-md p-6">
+          <div className="text-red-600 mb-4">
+            <p className="text-xl font-semibold">{t('auth.error', 'Authentication Error')}</p>
+          </div>
+          <p className="text-gray-600 mb-4">{auth.error.message}</p>
+          <button
+            onClick={() => auth.signinRedirect()}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            {t('auth.retry', 'Try Again')}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // If not authenticated, return null (will redirect)
+  if (!auth.isAuthenticated) {
+    return null;
+  }
+
+  // Extract user profile from token
+  const userProfile: UserProfile = {
+    name: `${auth.user?.profile.given_name || ''} ${auth.user?.profile.family_name || ''}`.trim() || auth.user?.profile.email || 'User',
+    role: (auth.user?.profile.groups as string[])?.[0] || 'user',
+  };
 
   // Temporary static navigation -- will be replaced by role-based logic
   const navSections: NavSection[] = [

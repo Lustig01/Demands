@@ -1,11 +1,15 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { AuthProvider } from 'react-oidc-context';
 import './i18n';
 import App from './App';
 import './index.css';
+import { authConfig } from './auth/authConfig';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <AuthProvider {...authConfig}>
+      <App />
+    </AuthProvider>
   </StrictMode>,
 );
