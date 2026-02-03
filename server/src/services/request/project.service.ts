@@ -13,7 +13,12 @@ export const projectService = {
     const [data, total] = await Promise.all([
       prisma.project.findMany({
         where: createdBy ? { createdBy } : undefined,
-        include: { location: true },
+        include: {
+          location: true,
+          _count: {
+            select: { demands: true },
+          },
+        },
         skip,
         take: limit,
       }),
@@ -51,7 +56,12 @@ export const projectService = {
     const [data, total] = await Promise.all([
       prisma.project.findMany({
         where,
-        include: { location: true },
+        include: {
+          location: true,
+          _count: {
+            select: { demands: true },
+          },
+        },
         skip,
         take: limit,
       }),
@@ -72,7 +82,13 @@ export const projectService = {
   findByName: async (name: string) => {
     return prisma.project.findUnique({
       where: { name },
-      include: { location: true, demands: true },
+      include: {
+        location: true,
+        demands: true,
+        _count: {
+          select: { demands: true },
+        },
+      },
     });
   },
 

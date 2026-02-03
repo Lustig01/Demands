@@ -4,6 +4,7 @@ import StatusBadge from './StatusBadge';
 
 interface DemandsTableProps {
   demands: Demand[];
+  isLoading?: boolean;
 }
 
 function formatDate(dateStr: string | undefined, locale: string): string {
@@ -15,7 +16,7 @@ function formatDate(dateStr: string | undefined, locale: string): string {
   }).format(new Date(dateStr));
 }
 
-export default function DemandsTable({ demands }: DemandsTableProps) {
+export default function DemandsTable({ demands, isLoading }: DemandsTableProps) {
   const { t, i18n } = useTranslation();
 
   const columns = [
@@ -36,6 +37,14 @@ export default function DemandsTable({ demands }: DemandsTableProps) {
     { key: 'createdAt', label: t('projects.columns.createdAt') },
     { key: 'createdBy', label: t('projects.columns.createdBy') },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="p-12 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   if (demands.length === 0) {
     return (

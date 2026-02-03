@@ -6,8 +6,10 @@ import {
   fetchCenters,
   fetchBranches,
   fetchLocations,
+  fetchServices,
+  fetchResources,
 } from '../api/apiService';
-import type { ReferenceItem, BranchItem, LocationItem } from '../api/types';
+import type { ReferenceItem, BranchItem, LocationItem, ResourceItem } from '../api/types';
 
 interface ReferenceData {
   bases: ReferenceItem[];
@@ -16,6 +18,8 @@ interface ReferenceData {
   centers: ReferenceItem[];
   branches: BranchItem[];
   locations: LocationItem[];
+  services: ReferenceItem[];
+  resources: ResourceItem[];
   isLoading: boolean;
   error: string | null;
 }
@@ -27,6 +31,8 @@ export function useReferenceData(): ReferenceData {
   const [centers, setCenters] = useState<ReferenceItem[]>([]);
   const [branches, setBranches] = useState<BranchItem[]>([]);
   const [locations, setLocations] = useState<LocationItem[]>([]);
+  const [services, setServices] = useState<ReferenceItem[]>([]);
+  const [resources, setResources] = useState<ResourceItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,13 +41,15 @@ export function useReferenceData(): ReferenceData {
 
     async function load() {
       try {
-        const [b, e, n, c, br, loc] = await Promise.all([
+        const [b, e, n, c, br, loc, s, r] = await Promise.all([
           fetchBases(),
           fetchEnvironments(),
           fetchNetworks(),
           fetchCenters(),
           fetchBranches(),
           fetchLocations(),
+          fetchServices(),
+          fetchResources(),
         ]);
         if (!cancelled) {
           setBases(b);
@@ -50,6 +58,8 @@ export function useReferenceData(): ReferenceData {
           setCenters(c);
           setBranches(br);
           setLocations(loc);
+          setServices(s);
+          setResources(r);
         }
       } catch (err: any) {
         if (!cancelled) {
@@ -66,5 +76,5 @@ export function useReferenceData(): ReferenceData {
     return () => { cancelled = true; };
   }, []);
 
-  return { bases, environments, networks, centers, branches, locations, isLoading, error };
+  return { bases, environments, networks, centers, branches, locations, services, resources, isLoading, error };
 }

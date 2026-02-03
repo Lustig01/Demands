@@ -1,30 +1,14 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
-import { MdFilterList, MdSearch } from 'react-icons/md';
+import { MdFilterList } from 'react-icons/md';
 import DemandsTable from '../components/projects/DemandsTable';
 import PageHeader from '../components/layout/PageHeader';
 import { useDemands } from '../hooks/useDemands';
-import Select, { type SelectOption } from '../components/common/Select';
+import { useReferenceData } from '../hooks/useReferenceData';
+import Select from '../components/common/Select';
 import SearchableSelect, { type SearchableSelectOption } from '../components/common/SearchableSelect';
 import Pagination from '../components/common/Pagination';
-
-
-// Helper to extract unique options from data
-function getUniqueOptions(data: any[], key: string, labelKey?: string): SelectOption[] {
-    const values = new Set<string>();
-    const options: SelectOption[] = [];
-
-    data.forEach(item => {
-        const value = String(key.includes('.') ? key.split('.').reduce((o, i) => o[i], item) : item[key]);
-        if (!values.has(value)) {
-            values.add(value);
-            options.push({ value, label: labelKey ? item[labelKey] : value });
-        }
-    });
-
-    return options.sort((a, b) => a.label.localeCompare(b.label));
-}
 
 // Helper component for labeled filters
 const FilterField = ({ label, children }: { label: string; children: React.ReactNode }) => (
@@ -37,9 +21,12 @@ const FilterField = ({ label, children }: { label: string; children: React.React
 export default function DemandsPage() {
     const { t } = useTranslation();
     const [searchParams] = useSearchParams();
-    const { demands, isLoading, error } = useDemands();
 
-    // Filter States
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
+
+    // Filter State
     const [filters, setFilters] = useState({
         projectName: searchParams.get('project') || '',
         serviceName: '',
@@ -52,79 +39,66 @@ export default function DemandsPage() {
         status: '',
     });
 
-    const [globalSearch, setGlobalSearch] = useState('');
+    const { demands, total, totalPages, isLoading, error } = useDemands({
+        ...filters,
+        baseName: filters.base,
+        environmentName: filters.environment,
+        networkName: filters.network,
+        type: filters.type as any,
+        status: filters.status as any
+    }, { page: currentPage, limit: itemsPerPage });
+    const { bases, environments, networks, services, resources } = useReferenceData();
+    const [allProjects, setAllProjects] = useState<any[]>([]);
 
-    // Pagination State
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10;
-
-    // Derive Options from Data
-    const projectOptions: SearchableSelectOption[] = useMemo(() => getUniqueOptions(demands, 'projectName'), [demands]);
-    const serviceOptions: SearchableSelectOption[] = useMemo(() => getUniqueOptions(demands, 'serviceName'), [demands]);
-    const resourceOptions = useMemo(() => getUniqueOptions(demands, 'resourceName'), [demands]);
-    const resourceServiceOptions = useMemo(() => getUniqueOptions(demands, 'resourceService'), [demands]);
-    const baseOptions = useMemo(() => getUniqueOptions(demands, 'location.base'), [demands]);
-    const environmentOptions = useMemo(() => getUniqueOptions(demands, 'location.environment'), [demands]);
-    const networkOptions = useMemo(() => getUniqueOptions(demands, 'location.network'), [demands]);
-    const typeOptions = useMemo(() => getUniqueOptions(demands, 'type'), [demands]);
-    const statusOptions = useMemo(() => getUniqueOptions(demands, 'status'), [demands]);
-
-    // Filter Data
-    const filteredDemands = useMemo(() => {
-        return demands.filter((demand) => {
-            // Global Search
-            if (globalSearch) {
-                const searchLower = globalSearch.toLowerCase();
-                const matchesGlobal =
-                    demand.projectName.toLowerCase().includes(searchLower) ||
-                    demand.serviceName.toLowerCase().includes(searchLower) ||
-                    demand.resourceName.toLowerCase().includes(searchLower);
-
-                if (!matchesGlobal) return false;
-            }
-
-            // Specific Filters
-            if (filters.projectName && demand.projectName !== filters.projectName) return false;
-            if (filters.serviceName && demand.serviceName !== filters.serviceName) return false;
-            if (filters.resourceName && demand.resourceName !== filters.resourceName) return false;
-            if (filters.resourceService && demand.resourceService !== filters.resourceService) return false;
-            if (filters.base && demand.location.base !== filters.base) return false;
-            if (filters.environment && demand.location.environment !== filters.environment) return false;
-            if (filters.network && demand.location.network !== filters.network) return false;
-            if (filters.type && demand.type !== filters.type) return false;
-            if (filters.status && demand.status !== filters.status) return false;
-            return true;
+    // Fetch all projects for the filter dropdown
+    useMemo(() => {
+        // Simple fire-and-forget fetch for projects dropdown
+        import('../api/apiService').then(({ fetchProjects }) => {
+            fetchProjects({ limit: 1000 }).then((res) => setAllProjects(res.data));
         });
-    }, [demands, filters, globalSearch]);
+    }, []);
 
-    // Paginate Data
-    const paginatedDemands = useMemo(() => {
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        return filteredDemands.slice(startIndex, startIndex + itemsPerPage);
-    }, [filteredDemands, currentPage]);
+    // Derive Options from Reference Data
+    const projectOptions: SearchableSelectOption[] = useMemo(() =>
+        allProjects.map(p => ({ value: p.name, label: p.name })).sort((a, b) => a.label.localeCompare(b.label))
+        , [allProjects]);
 
-    const totalPages = Math.ceil(filteredDemands.length / itemsPerPage);
+    const serviceOptions: SearchableSelectOption[] = useMemo(() =>
+        services.map(s => ({ value: s.name, label: s.displayName || s.name })).sort((a, b) => a.label.localeCompare(b.label))
+        , [services]);
+
+    const resourceOptions = useMemo(() =>
+        resources.map(r => ({ value: r.name, label: r.name })).filter((v, i, a) => a.findIndex(t => t.value === v.value) === i).sort((a, b) => a.label.localeCompare(b.label))
+        , [resources]);
+
+    const resourceServiceOptions = useMemo(() =>
+        resources.map(r => ({ value: r.serviceName, label: r.serviceName })).filter((v, i, a) => a.findIndex(t => t.value === v.value) === i).sort((a, b) => a.label.localeCompare(b.label))
+        , [resources]);
+
+    const baseOptions = useMemo(() => bases.map(b => ({ value: b.name, label: b.displayName || b.name })), [bases]);
+    const environmentOptions = useMemo(() => environments.map(e => ({ value: e.name, label: e.displayName || e.name })), [environments]);
+    const networkOptions = useMemo(() => networks.map(n => ({ value: n.name, label: n.displayName || n.name })), [networks]);
+
+    // Static options
+    const typeOptions = useMemo(() => [
+        { value: 'New', label: 'New' },
+        { value: 'Extension', label: 'Extension' }
+    ], []);
+
+    const statusOptions = useMemo(() => [
+        { value: 'Pending', label: 'Pending' },
+        { value: 'Approved', label: 'Approved' },
+        { value: 'PartiallyApproved', label: 'Partially Approved' },
+        { value: 'Rejected', label: 'Rejected' }
+    ], []);
+
 
     const handleFilterChange = (key: keyof typeof filters, value: string) => {
         setFilters((prev) => ({ ...prev, [key]: value }));
         setCurrentPage(1); // Reset to first page on filter change
     };
 
-    if (isLoading) {
-        return (
-            <div className="p-6 flex items-center justify-center min-h-[400px]">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-text-primary"></div>
-            </div>
-        );
-    }
 
-    if (error) {
-        return (
-            <div className="p-6">
-                <p className="text-danger text-sm">{error}</p>
-            </div>
-        );
-    }
 
     return (
         <div className="p-6 space-y-6">
@@ -244,36 +218,27 @@ export default function DemandsPage() {
 
             {/* Table Card */}
             <div className="bg-bg-paper rounded-2xl border border-divider shadow-sm overflow-hidden">
-                {/* Toolbar */}
-                <div className="p-4 border-b border-divider flex items-center justify-end">
-                    <div className="relative w-64">
-                        <MdSearch size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
-                        <input
-                            type="text"
-                            value={globalSearch}
-                            onChange={(e) => {
-                                setGlobalSearch(e.target.value);
-                                setCurrentPage(1);
-                            }}
-                            placeholder={t('common.search')}
-                            className="w-full pl-10 pr-4 py-2 text-sm border border-divider rounded-xl focus:outline-none focus:border-primary text-text-primary bg-bg-default"
-                        />
-                    </div>
-                </div>
+                {error ? (
+                    <div className="p-12 text-center text-danger">{error}</div>
+                ) : (
+                    <>
+                        {/* Table */}
+                        <div className="overflow-x-auto">
+                            <DemandsTable demands={demands} isLoading={isLoading} />
+                        </div>
 
-                {/* Table */}
-                <div className="overflow-x-auto">
-                    <DemandsTable demands={paginatedDemands} />
-                </div>
-
-                {/* Pagination */}
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                    totalItems={filteredDemands.length}
-                    itemsPerPage={itemsPerPage}
-                />
+                        {/* Pagination */}
+                        {!isLoading && (
+                            <Pagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onPageChange={setCurrentPage}
+                                totalItems={total}
+                                itemsPerPage={itemsPerPage}
+                            />
+                        )}
+                    </>
+                )}
             </div>
         </div>
     );
