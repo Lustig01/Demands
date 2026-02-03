@@ -46,7 +46,7 @@ function mapProject(raw: any): Project {
     name: raw.name,
     purpose: raw.purpose,
     type: raw.type,
-    kind: raw.kind,
+    kind: raw.kindName ?? raw.kind,
     locationId: raw.locationId,
     year: raw.year ?? undefined,
     median: raw.median ?? undefined,
@@ -167,5 +167,10 @@ export async function fetchServices(): Promise<ReferenceItem[]> {
 
 export async function fetchResources(): Promise<ResourceItem[]> {
   const { data } = await api.get('/resources');
+  return data;
+}
+
+export async function fetchProjectKinds(): Promise<ReferenceItem[]> {
+  const { data } = await api.get('/project-kinds');
   return data;
 }

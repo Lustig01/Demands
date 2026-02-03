@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { projectService } from "../../services/request/project.service";
-import { ProjectType, ProjectKind, Median } from "@prisma/client";
+import { ProjectType, Median } from "@prisma/client";
 import { settings } from "../../lib/settings";
 import { NotFoundError } from "../../lib/errors";
 
@@ -97,7 +97,7 @@ export const projectController = {
         name,
         purpose,
         type,
-        kind,
+        kindName: kind,
         locationId,
         year: type === ProjectType.Semiannual ? year : undefined,
         median: type === ProjectType.Semiannual ? median : undefined,
@@ -134,7 +134,7 @@ export const projectController = {
       const updateData: {
         purpose?: string;
         type?: ProjectType;
-        kind?: ProjectKind;
+        kindName?: string;
         locationId?: number;
         year?: number | null;
         median?: Median | null;
@@ -142,7 +142,7 @@ export const projectController = {
 
       if (purpose !== undefined) updateData.purpose = purpose;
       if (type !== undefined) updateData.type = type;
-      if (kind !== undefined) updateData.kind = kind;
+      if (kind !== undefined) updateData.kindName = kind;
       if (locationId !== undefined) updateData.locationId = locationId;
 
       if (type === ProjectType.Emergency) {

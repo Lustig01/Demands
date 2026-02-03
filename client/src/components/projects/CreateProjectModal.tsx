@@ -4,7 +4,7 @@ import { MdCheck } from 'react-icons/md';
 import Modal from '../common/Modal';
 import Select from '../common/Select';
 import { useReferenceData } from '../../hooks/useReferenceData';
-import type { ProjectType, ProjectKind } from '../../types/domain';
+import type { ProjectType } from '../../types/domain';
 import type { CreateProjectPayload } from '../../api/types';
 
 interface CreateProjectModalProps {
@@ -65,7 +65,7 @@ export default function CreateProjectModal({
       name: form.name.trim(),
       purpose: form.purpose.trim(),
       type: (form.requestType as ProjectType) || 'Semiannual',
-      kind: (form.projectKind as ProjectKind) || 'App',
+      kind: form.projectKind || referenceData.projectKinds[0]?.name || '',
       locationId: location?.id ?? 0,
     };
 
@@ -91,9 +91,9 @@ export default function CreateProjectModal({
     label: t(`projects.createProject.priorityOptions.${p}`),
   }));
 
-  const projectKindOptions = (['App', 'Track'] as ProjectKind[]).map((v) => ({
-    value: v,
-    label: t(`projects.kind.${v}`),
+  const projectKindOptions = referenceData.projectKinds.map((v) => ({
+    value: v.name,
+    label: v.displayName || v.name,
   }));
 
   const environmentOptions = referenceData.environments.map((v) => ({

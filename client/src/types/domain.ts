@@ -1,5 +1,5 @@
 export type ProjectType = 'Semiannual' | 'Emergency';
-export type ProjectKind = 'App' | 'Track';
+export type ProjectKind = string;
 export type Median = 'H1' | 'H2';
 export type DemandType = 'New' | 'Extension';
 export type DemandStatus = 'Pending' | 'Approved' | 'Rejected' | 'PartiallyApproved';

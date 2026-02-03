@@ -6,11 +6,6 @@ export enum ProjectType {
     Semiannual,
 };
 
-export enum ProjectKind {
-    App,
-    Track,
-};
-
 export enum Median {
     H1,
     H2,
@@ -20,7 +15,7 @@ export interface Project {
     name: string;
     purpsoe: string;
     type: ProjectType;
-    kind: ProjectKind;
+    kind: string;
     location: Location;
     year?: number;
     median?: Median;
