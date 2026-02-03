@@ -3,25 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { MdCheck } from 'react-icons/md';
 import Modal from '../common/Modal';
 import Select from '../common/Select';
+import { useReferenceData } from '../../hooks/useReferenceData';
 import type { ProjectType, ProjectKind } from '../../types/domain';
-import type { CreateProjectPayload, ReferenceItem, BranchItem, LocationItem } from '../../api/types';
-
-interface ReferenceData {
-  bases: ReferenceItem[];
-  environments: ReferenceItem[];
-  networks: ReferenceItem[];
-  centers: ReferenceItem[];
-  branches: BranchItem[];
-  locations: LocationItem[];
-  isLoading: boolean;
-  error: string | null;
-}
+import type { CreateProjectPayload } from '../../api/types';
 
 interface CreateProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (payload: CreateProjectPayload) => void;
-  referenceData: ReferenceData;
 }
 
 const initialForm = {
@@ -45,9 +34,9 @@ export default function CreateProjectModal({
   isOpen,
   onClose,
   onSubmit,
-  referenceData,
 }: CreateProjectModalProps) {
   const { t } = useTranslation();
+  const referenceData = useReferenceData();
   const [form, setForm] = useState(initialForm);
   const [centerLocked, setCenterLocked] = useState(true);
   const [branchLocked, setBranchLocked] = useState(true);

@@ -22,31 +22,42 @@ export function useProjects(
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetch = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const params = { ...filters, ...pagination };
-      const { data, meta } = await fetchProjects(params);
-      setProjects(data);
-      setTotal(meta.total);
-      setTotalPages(meta.totalPages);
-    } catch (err: any) {
-      setError(err.message ?? 'Failed to load projects');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [JSON.stringify(filters), pagination?.page, pagination?.limit]);
+  const [reloadTrigger, setReloadTrigger] = useState(0);
 
   useEffect(() => {
-    fetch();
-  }, [fetch]);
+    const controller = new AbortController();
+
+    async function fetchData() {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const params = { ...filters, ...pagination };
+        const { data, meta } = await fetchProjects(params, controller.signal);
+        setProjects(data);
+        setTotal(meta.total);
+        setTotalPages(meta.totalPages);
+      } catch (err: any) {
+        if (err.name !== 'CanceledError' && err.message !== 'canceled') {
+          setError(err.message ?? 'Failed to load projects');
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    fetchData();
+
+    return () => {
+      controller.abort();
+    };
+  }, [JSON.stringify(filters), pagination?.page, pagination?.limit, reloadTrigger]);
 
   const createProject = useCallback(async (payload: CreateProjectPayload) => {
     await apiCreateProject(payload);
-    // Reload projects to reflect changes (or just splice if we implement that, but safer to reload due to sort/pagination)
-    fetch();
-  }, [fetch]);
+    setReloadTrigger(prev => prev + 1);
+  }, []);
 
   return { projects, isLoading, error, total, totalPages, createProject };
 }

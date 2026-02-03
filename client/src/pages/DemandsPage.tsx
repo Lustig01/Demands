@@ -5,10 +5,12 @@ import { MdFilterList } from 'react-icons/md';
 import DemandsTable from '../components/projects/DemandsTable';
 import PageHeader from '../components/layout/PageHeader';
 import { useDemands } from '../hooks/useDemands';
+import { useCachedProjects } from '../hooks/useCachedProjects';
 import { useReferenceData } from '../hooks/useReferenceData';
 import { useDebounce } from '../hooks/useDebounce';
 import Select from '../components/common/Select';
 import SearchableSelect, { type SearchableSelectOption } from '../components/common/SearchableSelect';
+
 import Pagination from '../components/common/Pagination';
 
 // Helper component for labeled filters
@@ -56,15 +58,7 @@ export default function DemandsPage() {
         status: debouncedFilters.status as any
     }, { page: currentPage, limit: itemsPerPage });
     const { bases, environments, networks, services, resources } = useReferenceData();
-    const [allProjects, setAllProjects] = useState<any[]>([]);
-
-    // Fetch all projects for the filter dropdown
-    useMemo(() => {
-        // Simple fire-and-forget fetch for projects dropdown
-        import('../api/apiService').then(({ fetchProjects }) => {
-            fetchProjects({ limit: 1000 }).then((res) => setAllProjects(res.data));
-        });
-    }, []);
+    const { projects: allProjects } = useCachedProjects();
 
     // Derive Options from Reference Data
     const projectOptions: SearchableSelectOption[] = useMemo(() =>

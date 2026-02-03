@@ -11,6 +11,19 @@ import {
 } from '../api/apiService';
 import type { ReferenceItem, BranchItem, LocationItem, ResourceItem } from '../api/types';
 
+let globalFetchPromise: Promise<
+  [
+    ReferenceItem[],
+    ReferenceItem[],
+    ReferenceItem[],
+    ReferenceItem[],
+    BranchItem[],
+    LocationItem[],
+    ReferenceItem[],
+    ResourceItem[]
+  ]
+> | null = null;
+
 interface ReferenceData {
   bases: ReferenceItem[];
   environments: ReferenceItem[];
@@ -40,17 +53,42 @@ export function useReferenceData(): ReferenceData {
     let cancelled = false;
 
     async function load() {
+      if (globalFetchPromise) {
+        try {
+          const [b, e, n, c, br, loc, s, r] = await globalFetchPromise;
+          if (!cancelled) {
+            setBases(b);
+            setEnvironments(e);
+            setNetworks(n);
+            setCenters(c);
+            setBranches(br);
+            setLocations(loc);
+            setServices(s);
+            setResources(r);
+            setIsLoading(false);
+          }
+        } catch (err: any) {
+          if (!cancelled) {
+            setError(err.message ?? 'Failed to load reference data');
+            setIsLoading(false);
+          }
+        }
+        return;
+      }
+
+      globalFetchPromise = Promise.all([
+        fetchBases(),
+        fetchEnvironments(),
+        fetchNetworks(),
+        fetchCenters(),
+        fetchBranches(),
+        fetchLocations(),
+        fetchServices(),
+        fetchResources(),
+      ]);
+
       try {
-        const [b, e, n, c, br, loc, s, r] = await Promise.all([
-          fetchBases(),
-          fetchEnvironments(),
-          fetchNetworks(),
-          fetchCenters(),
-          fetchBranches(),
-          fetchLocations(),
-          fetchServices(),
-          fetchResources(),
-        ]);
+        const [b, e, n, c, br, loc, s, r] = await globalFetchPromise;
         if (!cancelled) {
           setBases(b);
           setEnvironments(e);
@@ -62,6 +100,7 @@ export function useReferenceData(): ReferenceData {
           setResources(r);
         }
       } catch (err: any) {
+        globalFetchPromise = null; // Reset on error so we can retry
         if (!cancelled) {
           setError(err.message ?? 'Failed to load reference data');
         }

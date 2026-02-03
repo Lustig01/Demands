@@ -5,7 +5,6 @@ import PageHeader from '../components/layout/PageHeader';
 import ProjectCard from '../components/projects/ProjectCard';
 import CreateProjectModal from '../components/projects/CreateProjectModal';
 import { useProjects } from '../hooks/useProjects';
-import { useReferenceData } from '../hooks/useReferenceData';
 import { useDebounce } from '../hooks/useDebounce';
 import type { CreateProjectPayload } from '../api/types';
 import Pagination from '../components/common/Pagination';
@@ -24,7 +23,7 @@ export default function ProjectsPage() {
     { page: currentPage, limit: itemsPerPage }
   );
 
-  const referenceData = useReferenceData();
+
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   async function handleCreateProject(payload: CreateProjectPayload) {
@@ -122,12 +121,13 @@ export default function ProjectsPage() {
         </div>
       )}
 
-      <CreateProjectModal
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        onSubmit={handleCreateProject}
-        referenceData={referenceData}
-      />
+      {isCreateOpen && (
+        <CreateProjectModal
+          isOpen={isCreateOpen}
+          onClose={() => setIsCreateOpen(false)}
+          onSubmit={handleCreateProject}
+        />
+      )}
     </div>
   );
 }

@@ -60,7 +60,8 @@ function mapProject(raw: any): Project {
 // --- Projects ---
 
 export async function fetchProjects(
-  params?: PaginationParams & ProjectFilterParams
+  params?: PaginationParams & ProjectFilterParams,
+  signal?: AbortSignal
 ): Promise<PaginatedResponse<Project>> {
   const query = new URLSearchParams();
   if (params?.page) query.append('page', params.page.toString());
@@ -70,7 +71,7 @@ export async function fetchProjects(
   // If filtering by name, use /projects/filter, otherwise /projects
   const endpoint = params?.name ? '/projects/filter' : '/projects';
 
-  const { data } = await api.get(`${endpoint}?${query.toString()}`);
+  const { data } = await api.get(`${endpoint}?${query.toString()}`, { signal });
   return {
     data: data.data.map(mapProject),
     meta: data.meta,
@@ -85,7 +86,8 @@ export async function createProject(payload: CreateProjectPayload): Promise<Proj
 // --- Demands ---
 
 export async function fetchDemands(
-  params?: PaginationParams & DemandFilterParams
+  params?: PaginationParams & DemandFilterParams,
+  signal?: AbortSignal
 ): Promise<PaginatedResponse<Demand>> {
   const query = new URLSearchParams();
   if (params?.page) query.append('page', params.page.toString());
@@ -119,7 +121,7 @@ export async function fetchDemands(
 
   const endpoint = isFiltering ? '/demands/filter' : '/demands';
 
-  const { data } = await api.get(`${endpoint}?${query.toString()}`);
+  const { data } = await api.get(`${endpoint}?${query.toString()}`, { signal });
   return {
     data: data.data.map(mapDemand),
     meta: data.meta,

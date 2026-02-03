@@ -22,34 +22,31 @@ export function useDemands(
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
     async function load() {
       setIsLoading(true);
       setError(null);
       try {
-        // Only fetch if we have valid pagination (default to page 1 limit 10 if not provided, though the caller should provide it)
         const params = { ...filters, ...pagination };
-        const { data, meta } = await fetchDemands(params);
+        const { data, meta } = await fetchDemands(params, controller.signal);
 
-        if (!cancelled) {
-          setDemands(data);
-          setTotal(meta.total);
-          setTotalPages(meta.totalPages);
-        }
+        setDemands(data);
+        setTotal(meta.total);
+        setTotalPages(meta.totalPages);
       } catch (err: any) {
-        if (!cancelled) {
+        if (err.name !== 'CanceledError' && err.message !== 'canceled') {
           setError(err.message ?? 'Failed to load demands');
         }
       } finally {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setIsLoading(false);
         }
       }
     }
 
     load();
-    return () => { cancelled = true; };
+    return () => { controller.abort(); };
   }, [JSON.stringify(filters), pagination.page, pagination.limit]);
 
   return { demands, isLoading, error, total, totalPages };
