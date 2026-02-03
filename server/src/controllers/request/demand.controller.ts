@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { demandService } from "../../services/request/demand.service";
 import { projectService } from "../../services/request/project.service";
-import { DemandType, DemandStatus } from "@prisma/client";
+import { DemandType, DemandStatus, ProjectType, Median } from "@prisma/client";
 import { settings } from "../../lib/settings";
 import { NotFoundError } from "../../lib/errors";
 
@@ -66,6 +66,10 @@ export const demandController = {
         network,
         type,
         status,
+        projectType,
+        median,
+        year,
+        relatedTo,
         page: pageQuery,
         limit: limitQuery,
       } = req.query;
@@ -85,6 +89,10 @@ export const demandController = {
           type: type as DemandType | undefined,
           status: status as DemandStatus | undefined,
           createdBy: isPrivileged ? undefined : username,
+          projectType: projectType as ProjectType | undefined,
+          projectMedian: median as Median | undefined,
+          projectYear: year ? Number(year) : undefined,
+          projectRelatedTo: relatedTo as string | undefined,
         },
         { page, limit }
       );

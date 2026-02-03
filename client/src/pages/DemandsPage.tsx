@@ -40,6 +40,10 @@ export default function DemandsPage() {
         network: '',
         type: '',
         status: '',
+        projectType: '',
+        median: '',
+        year: '',
+        relatedTo: '',
     });
 
     const debouncedFilters = useDebounce(filters, 300);
@@ -55,7 +59,11 @@ export default function DemandsPage() {
         environmentName: debouncedFilters.environment,
         networkName: debouncedFilters.network,
         type: debouncedFilters.type as any,
-        status: debouncedFilters.status as any
+        status: debouncedFilters.status as any,
+        projectType: debouncedFilters.projectType as any || undefined,
+        median: debouncedFilters.median as any || undefined,
+        year: debouncedFilters.year ? Number(debouncedFilters.year) : undefined,
+        relatedTo: debouncedFilters.relatedTo || undefined,
     }, { page: currentPage, limit: itemsPerPage });
     const { bases, environments, networks, services, resources } = useReferenceData();
     const { projects: allProjects } = useCachedProjects();
@@ -110,6 +118,16 @@ export default function DemandsPage() {
         { value: 'Rejected', label: 'Rejected' }
     ], []);
 
+    const projectTypeOptions = useMemo(() => [
+        { value: 'Emergency', label: 'Emergency' },
+        { value: 'Semiannual', label: 'Semiannual' }
+    ], []);
+
+    const medianOptions = useMemo(() => [
+        { value: 'H1', label: 'H1' },
+        { value: 'H2', label: 'H2' }
+    ], []);
+
 
     const handleFilterChange = (key: keyof typeof filters, value: string) => {
         setFilters((prev) => ({ ...prev, [key]: value }));
@@ -140,6 +158,10 @@ export default function DemandsPage() {
                                     network: '',
                                     type: '',
                                     status: '',
+                                    projectType: '',
+                                    median: '',
+                                    year: '',
+                                    relatedTo: '',
                                 });
                                 setCurrentPage(1);
                             }}
@@ -229,6 +251,44 @@ export default function DemandsPage() {
                             value={filters.status}
                             onChange={(val) => handleFilterChange('status', val)}
                             placeholder={t('common.all')}
+                        />
+                    </FilterField>
+
+                    <FilterField label={t('projects.columns.projectType')}>
+                        <Select
+                            options={[{ value: '', label: t('common.all') }, ...projectTypeOptions]}
+                            value={filters.projectType}
+                            onChange={(val) => handleFilterChange('projectType', val)}
+                            placeholder={t('common.all')}
+                        />
+                    </FilterField>
+
+                    <FilterField label={t('projects.columns.median')}>
+                        <Select
+                            options={[{ value: '', label: t('common.all') }, ...medianOptions]}
+                            value={filters.median}
+                            onChange={(val) => handleFilterChange('median', val)}
+                            placeholder={t('common.all')}
+                        />
+                    </FilterField>
+
+                    <FilterField label={t('projects.columns.year')}>
+                        <input
+                            type="number"
+                            value={filters.year}
+                            onChange={(e) => handleFilterChange('year', e.target.value)}
+                            placeholder={new Date().getFullYear().toString()}
+                            className="w-full px-3 py-1.5 text-sm border border-divider rounded-lg bg-bg-paper text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-primary"
+                        />
+                    </FilterField>
+
+                    <FilterField label={t('projects.columns.relatedTo')}>
+                        <input
+                            type="text"
+                            value={filters.relatedTo}
+                            onChange={(e) => handleFilterChange('relatedTo', e.target.value)}
+                            placeholder={t('common.search', 'Search...')}
+                            className="w-full px-3 py-1.5 text-sm border border-divider rounded-lg bg-bg-paper text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-primary"
                         />
                     </FilterField>
                 </div>

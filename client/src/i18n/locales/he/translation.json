@@ -59,7 +59,11 @@
       "decisionReason": "סיבת החלטה",
       "createdAt": "תאריך יצירה",
       "createdBy": "נוצר ע\"י",
-      "resourceService": "שירות משאב"
+      "resourceService": "שירות משאב",
+      "year": "שנה",
+      "relatedTo": "קשור ל",
+      "median": "מחצית",
+      "projectType": "סוג פרויקט"
     },
     "status": {
       "Pending": "ממתין",
@@ -110,10 +114,10 @@
   },
   "projectsTable": {
     "columns": {
-      "name": "שם פרוייקט",
+      "name": "שם פרויקט",
       "purpose": "ייעוד",
       "demandCount": "דרישות",
-      "kind": "סוג פרוייקט",
+      "kind": "סוג פרויקט",
       "relatedTo": "קשור ל",
       "year": "שנה",
       "median": "מחצית"
