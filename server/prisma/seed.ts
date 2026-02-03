@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, ProjectType, ProjectKind, Median, DemandType, DemandStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -235,127 +235,117 @@ async function main() {
   const USERS = {
     admin1: { username: 'admin1', name: 'Admin One' },
     admin2: { username: 'admin2', name: 'Admin Two' },
-    mod1:   { username: 'mod1',   name: 'Moderator One' },
-    mod2:   { username: 'mod2',   name: 'Moderator Two' },
-    user1:  { username: 'user1',  name: 'User One' },
-    user2:  { username: 'user2',  name: 'User Two' },
-    user3:  { username: 'user3',  name: 'User Three' },
+    mod1: { username: 'mod1', name: 'Moderator One' },
+    mod2: { username: 'mod2', name: 'Moderator Two' },
+    user1: { username: 'user1', name: 'User One' },
+    user2: { username: 'user2', name: 'User Two' },
+    user3: { username: 'user3', name: 'User Three' },
   };
 
-  const projects = await Promise.all([
-    prisma.project.upsert({
-      where: { name: 'Cloud Migration' },
-      update: {},
-      create: { name: 'Cloud Migration', purpose: 'Migrate legacy apps to cloud', type: 'Semiannual', kind: 'App', locationId: locations[2].id, year: 2026, median: 'H1', createdBy: USERS.user1.username, createdByName: USERS.user1.name },
-    }),
-    prisma.project.upsert({
-      where: { name: 'Database Upgrade' },
-      update: {},
-      create: { name: 'Database Upgrade', purpose: 'Upgrade PostgreSQL clusters', type: 'Emergency', kind: 'Track', locationId: locations[0].id, createdBy: USERS.user2.username, createdByName: USERS.user2.name },
-    }),
-    prisma.project.upsert({
-      where: { name: 'New API Platform' },
-      update: {},
-      create: { name: 'New API Platform', purpose: 'Build new API gateway', type: 'Semiannual', kind: 'App', locationId: locations[0].id, year: 2026, median: 'H2', createdBy: USERS.user3.username, createdByName: USERS.user3.name },
-    }),
-    prisma.project.upsert({
-      where: { name: 'DR Setup' },
-      update: {},
-      create: { name: 'DR Setup', purpose: 'Setup disaster recovery site', type: 'Semiannual', kind: 'Track', locationId: locations[4].id, year: 2026, median: 'H1', createdBy: USERS.mod1.username, createdByName: USERS.mod1.name },
-    }),
-    prisma.project.upsert({
-      where: { name: 'Dev Environment' },
-      update: {},
-      create: { name: 'Dev Environment', purpose: 'New development environment', type: 'Emergency', kind: 'App', locationId: locations[3].id, createdBy: USERS.user1.username, createdByName: USERS.user1.name },
-    }),
-  ]);
+  const creators = [USERS.user1, USERS.user2, USERS.user3];
+
+  const projectList = [
+    { name: 'Cloud Migration', purpose: 'Migrate legacy apps to cloud', type: ProjectType.Semiannual, kind: ProjectKind.App, year: 2026, median: Median.H1 },
+    { name: 'Database Upgrade', purpose: 'Upgrade PostgreSQL clusters', type: ProjectType.Emergency, kind: ProjectKind.Track, year: undefined, median: undefined },
+    { name: 'New API Platform', purpose: 'Build new API gateway', type: ProjectType.Semiannual, kind: ProjectKind.App, year: 2026, median: Median.H2 },
+    { name: 'DR Setup', purpose: 'Setup disaster recovery site', type: ProjectType.Semiannual, kind: ProjectKind.Track, year: 2026, median: Median.H1 },
+    { name: 'Dev Environment', purpose: 'New development environment', type: ProjectType.Emergency, kind: ProjectKind.App, year: undefined, median: undefined },
+    { name: 'Legacy Decom', purpose: 'Decommission old servers', type: ProjectType.Semiannual, kind: ProjectKind.Track, year: 2026, median: Median.H1 },
+    { name: 'AI Research', purpose: 'AI model training infrastructure', type: ProjectType.Semiannual, kind: ProjectKind.App, year: 2026, median: Median.H2 },
+    { name: 'Network Refresh', purpose: 'Upgrade core switches', type: ProjectType.Emergency, kind: ProjectKind.Track, year: 2026, median: Median.H1 },
+    { name: 'Storage Expansion', purpose: 'Add more storage capacity', type: ProjectType.Semiannual, kind: ProjectKind.Track, year: 2026, median: Median.H2 },
+    { name: 'Kubernetes Upgrade', purpose: 'Upgrade K8s clusters', type: ProjectType.Emergency, kind: ProjectKind.Track, year: 2026, median: Median.H1 },
+    { name: 'Security Audit', purpose: 'Infrastructure for security audit', type: ProjectType.Semiannual, kind: ProjectKind.App, year: 2026, median: Median.H2 },
+    { name: 'Big Data Platform', purpose: 'Hadoop cluster setup', type: ProjectType.Semiannual, kind: ProjectKind.App, year: 2026, median: Median.H1 },
+    { name: 'CRM Integration', purpose: 'Integrate new CRM system', type: ProjectType.Emergency, kind: ProjectKind.App, year: 2026, median: Median.H2 },
+    { name: 'ERP Migration', purpose: 'Migrate ERP to cloud', type: ProjectType.Semiannual, kind: ProjectKind.Track, year: 2026, median: Median.H1 },
+    { name: 'Mobile App Backend', purpose: 'Backend for new mobile app', type: ProjectType.Semiannual, kind: ProjectKind.App, year: 2026, median: Median.H2 },
+  ];
+
+  const projects = await Promise.all(
+    projectList.map((p, index) => {
+      const creator = creators[index % creators.length];
+      const location = locations[index % locations.length];
+      return prisma.project.upsert({
+        where: { name: p.name },
+        update: {},
+        create: {
+          name: p.name,
+          purpose: p.purpose,
+          type: p.type,
+          kind: p.kind,
+          locationId: location.id,
+          year: p.year,
+          median: p.median,
+          createdBy: creator.username,
+          createdByName: creator.name,
+        },
+      });
+    })
+  );
   console.log(`Created ${projects.length} projects`);
 
   // Clear existing demands to avoid duplicates
   await prisma.demand.deleteMany({
     where: {
-      projectName: { in: projects.map(p => p.name) }
-    }
+      projectName: { in: projects.map((p) => p.name) },
+    },
   });
 
-  const demands = await Promise.all([
-    prisma.demand.create({
-      data: {
-        projectName: 'Cloud Migration',
-        serviceName: 'Compute',
-        resourceName: 'CPU',
-        resourceService: 'Compute',
-        value: 200,
-        locationId: locations[2].id,
-        type: 'New',
-        status: 'Pending',
-        createdBy: USERS.user1.username,
-        createdByName: USERS.user1.name,
-      },
-    }),
-    prisma.demand.create({
-      data: {
-        projectName: 'Cloud Migration',
-        serviceName: 'Compute',
-        resourceName: 'RAM',
-        resourceService: 'Compute',
-        value: 512,
-        locationId: locations[2].id,
-        type: 'New',
-        status: 'Approved',
-        approvedValue: 512,
-        approvedDate: new Date(),
-        createdBy: USERS.user1.username,
-        createdByName: USERS.user1.name,
-      },
-    }),
-    prisma.demand.create({
-      data: {
-        projectName: 'Database Upgrade',
-        serviceName: 'Storage',
-        resourceName: 'SSD',
-        resourceService: 'Storage',
-        value: 50,
-        locationId: locations[0].id,
-        type: 'Extension',
-        status: 'Approved',
-        approvedValue: 50,
-        approvedDate: new Date(),
-        createdBy: USERS.user2.username,
-        createdByName: USERS.user2.name,
-      },
-    }),
-    prisma.demand.create({
-      data: {
-        projectName: 'New API Platform',
-        serviceName: 'Compute',
-        resourceName: 'CPU',
-        resourceService: 'Compute',
-        value: 100,
-        locationId: locations[0].id,
-        type: 'New',
-        status: 'PartiallyApproved',
-        approvedValue: 80,
-        approvedDate: new Date(),
-        createdBy: USERS.user3.username,
-        createdByName: USERS.user3.name,
-      },
-    }),
-    prisma.demand.create({
-      data: {
-        projectName: 'DR Setup',
-        serviceName: 'Compute',
-        resourceName: 'CPU',
-        resourceService: 'Compute',
-        value: 150,
-        locationId: locations[4].id,
-        type: 'New',
-        status: 'Rejected',
-        createdBy: USERS.mod1.username,
-        createdByName: USERS.mod1.name,
-      },
-    }),
-  ]);
+  const resourceOptions = [
+    { serviceName: 'Compute', resourceName: 'CPU', resourceService: 'Compute', unit: 'vCPU', maxVal: 500 },
+    { serviceName: 'Compute', resourceName: 'RAM', resourceService: 'Compute', unit: 'GB', maxVal: 1024 },
+    { serviceName: 'Storage', resourceName: 'SSD', resourceService: 'Storage', unit: 'TB', maxVal: 100 },
+    { serviceName: 'Network', resourceName: 'Bandwidth', resourceService: 'Network', unit: 'Gbps', maxVal: 10 },
+    { serviceName: 'Container', resourceName: 'Pods', resourceService: 'Container', unit: 'units', maxVal: 50 },
+  ];
+
+  // Need at least 50 demands
+  const demandPromises = [];
+  const statuses = [DemandStatus.Pending, DemandStatus.Approved, DemandStatus.Rejected, DemandStatus.PartiallyApproved];
+  const types = [DemandType.New, DemandType.Extension];
+
+  for (let i = 0; i < 50; i++) {
+    const project = projects[i % projects.length];
+    const resource = resourceOptions[i % resourceOptions.length];
+    const creator = creators[i % creators.length];
+    const status = statuses[i % statuses.length];
+    const type = types[i % types.length];
+
+    const val = Math.floor(Math.random() * resource.maxVal) + 1;
+
+    let approvedValue = undefined;
+    let approvedDate = undefined;
+
+    if (status === DemandStatus.Approved) {
+      approvedValue = val;
+      approvedDate = new Date();
+    } else if (status === DemandStatus.PartiallyApproved) {
+      approvedValue = Math.floor(val * 0.8);
+      approvedDate = new Date();
+    }
+
+    demandPromises.push(
+      prisma.demand.create({
+        data: {
+          projectName: project.name,
+          serviceName: resource.serviceName,
+          resourceName: resource.resourceName,
+          resourceService: resource.resourceService,
+          value: val,
+          locationId: project.locationId,
+          type: type,
+          status: status,
+          approvedValue,
+          approvedDate,
+          createdBy: creator.username,
+          createdByName: creator.name,
+        },
+      })
+    );
+  }
+
+  const demands = await Promise.all(demandPromises);
   console.log(`Created ${demands.length} demands`);
 
   // Update allocated and available using PostgreSQL functions
@@ -394,7 +384,7 @@ async function main() {
   // Link a demand to a decision reason
   const demandToUpdate = await prisma.demand.findFirst({
     where: {
-      status: 'Rejected'
+      status: DemandStatus.Rejected
     }
   });
 
