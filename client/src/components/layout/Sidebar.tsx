@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from 'react-oidc-context';
 import { MdStorage, MdPersonOutline, MdLogout, MdExpandMore } from 'react-icons/md';
-import LanguageSwitcher from '../LanguageSwitcher';
 import type { NavSection, UserProfile } from '../../types/navigation';
 
 export const SIDEBAR_WIDTH = 280;
