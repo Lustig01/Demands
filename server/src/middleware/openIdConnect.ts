@@ -83,7 +83,8 @@ export async function authenticate(
 
     // Get signing key and verify
     const signingKey = await getSigningKey(decoded.header);
-    const issuer = await oidcDiscoveryService.getIssuer();
+    const discoveredIssuer = await oidcDiscoveryService.getIssuer();
+    const issuer = settings.authIssuer || discoveredIssuer;
     const algorithms = await oidcDiscoveryService.getSupportedAlgorithms();
 
     const verified = jwt.verify(token, signingKey, {

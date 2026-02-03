@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from 'react-oidc-context';
 import { MdBarChart, MdFolder, MdDescription, MdRemoveRedEye, MdGridOn, MdSettings } from 'react-icons/md';
+import { useAuthToken } from './hooks/useAuthToken';
 import Layout from './components/layout/Layout';
 import DashboardPage from './pages/DashboardPage';
 import ProjectsPage from './pages/ProjectsPage';
@@ -13,6 +14,7 @@ import type { NavSection, UserProfile } from './types/navigation';
 export default function App() {
   const { t, i18n } = useTranslation();
   const auth = useAuth();
+  useAuthToken();
 
   useEffect(() => {
     const dir = i18n.language === 'he' ? 'rtl' : 'ltr';

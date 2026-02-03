@@ -33,7 +33,9 @@
           "temporary": false
         }
       ],
-      "groups": ["admin"]
+      "groups": [
+        "admin"
+      ]
     },
     {
       "username": "admin2",
@@ -48,7 +50,9 @@
           "temporary": false
         }
       ],
-      "groups": ["admin"]
+      "groups": [
+        "admin"
+      ]
     },
     {
       "username": "mod1",
@@ -63,7 +67,9 @@
           "temporary": false
         }
       ],
-      "groups": ["moderator"]
+      "groups": [
+        "moderator"
+      ]
     },
     {
       "username": "mod2",
@@ -78,7 +84,9 @@
           "temporary": false
         }
       ],
-      "groups": ["moderator"]
+      "groups": [
+        "moderator"
+      ]
     },
     {
       "username": "user1",
@@ -93,7 +101,9 @@
           "temporary": false
         }
       ],
-      "groups": ["user"]
+      "groups": [
+        "user"
+      ]
     },
     {
       "username": "user2",
@@ -108,7 +118,9 @@
           "temporary": false
         }
       ],
-      "groups": ["user"]
+      "groups": [
+        "user"
+      ]
     },
     {
       "username": "user3",
@@ -123,7 +135,9 @@
           "temporary": false
         }
       ],
-      "groups": ["user"]
+      "groups": [
+        "user"
+      ]
     },
     {
       "username": "service-account-demands-api",
@@ -149,8 +163,14 @@
       "authorizationServicesEnabled": false,
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
-      "redirectUris": ["http://localhost:3000/*", "http://localhost:5173/*"],
-      "webOrigins": ["http://localhost:3000", "http://localhost:5173"],
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000",
+        "http://localhost:5173"
+      ],
       "protocolMappers": [
         {
           "name": "groups",
@@ -175,8 +195,12 @@
       "directAccessGrantsEnabled": true,
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
-      "redirectUris": ["http://localhost:5173/*"],
-      "webOrigins": ["http://localhost:5173"],
+      "redirectUris": [
+        "http://localhost:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173"
+      ],
       "protocolMappers": [
         {
           "name": "groups",

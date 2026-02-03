@@ -9,6 +9,7 @@ export const settings = {
   // OIDC
   oidcDiscoveryUrl: process.env.OIDC_DISCOVERY_URL || '',
   authAudience: process.env.AUTH_AUDIENCE || 'demands-api',
+  authIssuer: process.env.AUTH_ISSUER || '',
   authGroupClaimPath: process.env.AUTH_GROUP_CLAIM_PATH || 'groups',
   authAdminGroup: process.env.AUTH_ADMIN_GROUP || 'admin',
   authModeratorGroup: process.env.AUTH_MODERATOR_GROUP || 'moderator',

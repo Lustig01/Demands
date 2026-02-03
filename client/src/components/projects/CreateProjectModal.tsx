@@ -3,23 +3,32 @@ import { useTranslation } from 'react-i18next';
 import { MdCheck } from 'react-icons/md';
 import Modal from '../common/Modal';
 import Select from '../common/Select';
-import type { Project, ProjectType, ProjectKind } from '../../types/domain';
+import type { ProjectType, ProjectKind } from '../../types/domain';
+import type { CreateProjectPayload, ReferenceItem, BranchItem, LocationItem } from '../../api/types';
+
+interface ReferenceData {
+  bases: ReferenceItem[];
+  environments: ReferenceItem[];
+  networks: ReferenceItem[];
+  centers: ReferenceItem[];
+  branches: BranchItem[];
+  locations: LocationItem[];
+  isLoading: boolean;
+  error: string | null;
+}
 
 interface CreateProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (project: Project) => void;
+  onSubmit: (payload: CreateProjectPayload) => void;
+  referenceData: ReferenceData;
 }
-
-const BASES = ['Datacenter A', 'Datacenter B', 'Cloud AWS', 'Cloud Azure'];
-const CENTERS = ['Center A', 'Center B', 'Center C'];
-const BRANCHES = ['Branch 1', 'Branch 2', 'Branch 3'];
 
 const initialForm = {
   name: '',
   trackOrApp: '',
-  center: 'Center A',
-  branch: 'Branch 1',
+  center: '',
+  branch: '',
   requestType: '',
   priority: 'P2',
   projectKind: '',
@@ -36,6 +45,7 @@ export default function CreateProjectModal({
   isOpen,
   onClose,
   onSubmit,
+  referenceData,
 }: CreateProjectModalProps) {
   const { t } = useTranslation();
   const [form, setForm] = useState(initialForm);
@@ -55,18 +65,22 @@ export default function CreateProjectModal({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    const project: Project = {
+    const location = referenceData.locations.find(
+      (l) =>
+        l.baseName === form.base &&
+        l.environmentName === form.environment &&
+        l.networkName === form.network
+    );
+
+    const payload: CreateProjectPayload = {
       name: form.name.trim(),
       purpose: form.purpose.trim(),
       type: (form.requestType as ProjectType) || 'Semiannual',
       kind: (form.projectKind as ProjectKind) || 'App',
-      locationId: 1,
-      createdBy: 'user1',
-      createdByName: 'Raphael Lustig',
-      createdAt: new Date().toISOString(),
+      locationId: location?.id ?? 0,
     };
 
-    onSubmit(project);
+    onSubmit(payload);
     setForm(initialForm);
     setCenterLocked(true);
     setBranchLocked(true);
@@ -93,24 +107,30 @@ export default function CreateProjectModal({
     label: t(`projects.kind.${v}`),
   }));
 
-  const environmentOptions = [
-    'Production',
-    'Development',
-    'DR',
-    'Staging',
-  ].map((v) => ({ value: v, label: v }));
+  const environmentOptions = referenceData.environments.map((v) => ({
+    value: v.name,
+    label: v.displayName || v.name,
+  }));
 
-  const networkOptions = [
-    'Internal',
-    'Private VPC',
-    'Isolated',
-    'Public',
-  ].map((v) => ({ value: v, label: v }));
+  const networkOptions = referenceData.networks.map((v) => ({
+    value: v.name,
+    label: v.displayName || v.name,
+  }));
 
-  const baseOptions = BASES.map((v) => ({ value: v, label: v }));
+  const baseOptions = referenceData.bases.map((v) => ({
+    value: v.name,
+    label: v.displayName || v.name,
+  }));
 
-  const centerOptions = CENTERS.map((v) => ({ value: v, label: v }));
-  const branchOptions = BRANCHES.map((v) => ({ value: v, label: v }));
+  const centerOptions = referenceData.centers.map((v) => ({
+    value: v.name,
+    label: v.displayName || v.name,
+  }));
+
+  const branchOptions = referenceData.branches.map((v) => ({
+    value: v.name,
+    label: v.displayName || v.name,
+  }));
 
   const placeholder = t('projects.createProject.selectOption');
 

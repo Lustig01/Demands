@@ -10,6 +10,7 @@ services:
       - DATABASE_URL=${DATABASE_URL:-postgresql://user:password@postgres:5432/demands}
       # OIDC / Auth
       - OIDC_DISCOVERY_URL=http://keycloak:8080/realms/demands/.well-known/openid-configuration
+      - AUTH_ISSUER=http://localhost:8080/realms/demands
       - AUTH_AUDIENCE=${AUTH_AUDIENCE:-demands-api}
       - AUTH_GROUP_CLAIM_PATH=${AUTH_GROUP_CLAIM_PATH:-groups}
       - AUTH_ADMIN_GROUP=${AUTH_ADMIN_GROUP:-admin}

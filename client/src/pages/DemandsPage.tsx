@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { MdFilterList, MdSearch } from 'react-icons/md';
 import DemandsTable from '../components/projects/DemandsTable';
 import PageHeader from '../components/layout/PageHeader';
-import { mockDemands } from '../data/mockDemands';
+import { useDemands } from '../hooks/useDemands';
 import Select, { type SelectOption } from '../components/common/Select';
 import SearchableSelect, { type SearchableSelectOption } from '../components/common/SearchableSelect';
 import Pagination from '../components/common/Pagination';
@@ -37,6 +37,7 @@ const FilterField = ({ label, children }: { label: string; children: React.React
 export default function DemandsPage() {
     const { t } = useTranslation();
     const [searchParams] = useSearchParams();
+    const { demands, isLoading, error } = useDemands();
 
     // Filter States
     const [filters, setFilters] = useState({
@@ -58,19 +59,19 @@ export default function DemandsPage() {
     const itemsPerPage = 10;
 
     // Derive Options from Data
-    const projectOptions: SearchableSelectOption[] = useMemo(() => getUniqueOptions(mockDemands, 'projectName'), []);
-    const serviceOptions: SearchableSelectOption[] = useMemo(() => getUniqueOptions(mockDemands, 'serviceName'), []);
-    const resourceOptions = useMemo(() => getUniqueOptions(mockDemands, 'resourceName'), []);
-    const resourceServiceOptions = useMemo(() => getUniqueOptions(mockDemands, 'resourceService'), []);
-    const baseOptions = useMemo(() => getUniqueOptions(mockDemands, 'location.base'), []);
-    const environmentOptions = useMemo(() => getUniqueOptions(mockDemands, 'location.environment'), []);
-    const networkOptions = useMemo(() => getUniqueOptions(mockDemands, 'location.network'), []);
-    const typeOptions = useMemo(() => getUniqueOptions(mockDemands, 'type'), []);
-    const statusOptions = useMemo(() => getUniqueOptions(mockDemands, 'status'), []);
+    const projectOptions: SearchableSelectOption[] = useMemo(() => getUniqueOptions(demands, 'projectName'), [demands]);
+    const serviceOptions: SearchableSelectOption[] = useMemo(() => getUniqueOptions(demands, 'serviceName'), [demands]);
+    const resourceOptions = useMemo(() => getUniqueOptions(demands, 'resourceName'), [demands]);
+    const resourceServiceOptions = useMemo(() => getUniqueOptions(demands, 'resourceService'), [demands]);
+    const baseOptions = useMemo(() => getUniqueOptions(demands, 'location.base'), [demands]);
+    const environmentOptions = useMemo(() => getUniqueOptions(demands, 'location.environment'), [demands]);
+    const networkOptions = useMemo(() => getUniqueOptions(demands, 'location.network'), [demands]);
+    const typeOptions = useMemo(() => getUniqueOptions(demands, 'type'), [demands]);
+    const statusOptions = useMemo(() => getUniqueOptions(demands, 'status'), [demands]);
 
     // Filter Data
     const filteredDemands = useMemo(() => {
-        return mockDemands.filter((demand) => {
+        return demands.filter((demand) => {
             // Global Search
             if (globalSearch) {
                 const searchLower = globalSearch.toLowerCase();
@@ -94,7 +95,7 @@ export default function DemandsPage() {
             if (filters.status && demand.status !== filters.status) return false;
             return true;
         });
-    }, [filters, globalSearch]);
+    }, [demands, filters, globalSearch]);
 
     // Paginate Data
     const paginatedDemands = useMemo(() => {
@@ -108,6 +109,22 @@ export default function DemandsPage() {
         setFilters((prev) => ({ ...prev, [key]: value }));
         setCurrentPage(1); // Reset to first page on filter change
     };
+
+    if (isLoading) {
+        return (
+            <div className="p-6 flex items-center justify-center min-h-[400px]">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-text-primary"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="p-6">
+                <p className="text-danger text-sm">{error}</p>
+            </div>
+        );
+    }
 
     return (
         <div className="p-6 space-y-6">

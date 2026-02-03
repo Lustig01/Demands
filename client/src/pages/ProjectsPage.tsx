@@ -4,17 +4,35 @@ import { MdAdd, MdFileDownload } from 'react-icons/md';
 import PageHeader from '../components/layout/PageHeader';
 import ProjectCard from '../components/projects/ProjectCard';
 import CreateProjectModal from '../components/projects/CreateProjectModal';
-import { mockProjects, mockDemands } from '../data/mockProjects';
-import type { Project } from '../types/domain';
+import { useProjects } from '../hooks/useProjects';
+import { useReferenceData } from '../hooks/useReferenceData';
+import type { CreateProjectPayload } from '../api/types';
 
 export default function ProjectsPage() {
   const { t } = useTranslation();
-  const [projects, setProjects] = useState<Project[]>(mockProjects);
+  const { projects, demandCounts, isLoading, error, createProject } = useProjects();
+  const referenceData = useReferenceData();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  function handleCreateProject(project: Project) {
-    setProjects((prev) => [project, ...prev]);
+  async function handleCreateProject(payload: CreateProjectPayload) {
+    await createProject(payload);
     setIsCreateOpen(false);
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-text-primary"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <p className="text-danger text-sm">{error}</p>
+      </div>
+    );
   }
 
   return (
@@ -48,9 +66,7 @@ export default function ProjectsPage() {
           <ProjectCard
             key={project.name}
             project={project}
-            demandCount={
-              mockDemands.filter((d) => d.projectName === project.name).length
-            }
+            demandCount={demandCounts[project.name] ?? 0}
           />
         ))}
       </div>
@@ -59,6 +75,7 @@ export default function ProjectsPage() {
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
         onSubmit={handleCreateProject}
+        referenceData={referenceData}
       />
     </div>
   );
