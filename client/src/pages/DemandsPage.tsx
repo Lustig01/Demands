@@ -6,6 +6,7 @@ import DemandsTable from '../components/projects/DemandsTable';
 import PageHeader from '../components/layout/PageHeader';
 import { useDemands } from '../hooks/useDemands';
 import { useReferenceData } from '../hooks/useReferenceData';
+import { useDebounce } from '../hooks/useDebounce';
 import Select from '../components/common/Select';
 import SearchableSelect, { type SearchableSelectOption } from '../components/common/SearchableSelect';
 import Pagination from '../components/common/Pagination';
@@ -39,13 +40,20 @@ export default function DemandsPage() {
         status: '',
     });
 
+    const debouncedFilters = useDebounce(filters, 300);
+
+    const isFiltersPending = useMemo(() =>
+        JSON.stringify(filters) !== JSON.stringify(debouncedFilters),
+        [filters, debouncedFilters]
+    );
+
     const { demands, total, totalPages, isLoading, error } = useDemands({
-        ...filters,
-        baseName: filters.base,
-        environmentName: filters.environment,
-        networkName: filters.network,
-        type: filters.type as any,
-        status: filters.status as any
+        ...debouncedFilters,
+        baseName: debouncedFilters.base,
+        environmentName: debouncedFilters.environment,
+        networkName: debouncedFilters.network,
+        type: debouncedFilters.type as any,
+        status: debouncedFilters.status as any
     }, { page: currentPage, limit: itemsPerPage });
     const { bases, environments, networks, services, resources } = useReferenceData();
     const [allProjects, setAllProjects] = useState<any[]>([]);
@@ -67,13 +75,29 @@ export default function DemandsPage() {
         services.map(s => ({ value: s.name, label: s.displayName || s.name })).sort((a, b) => a.label.localeCompare(b.label))
         , [services]);
 
-    const resourceOptions = useMemo(() =>
-        resources.map(r => ({ value: r.name, label: r.name })).filter((v, i, a) => a.findIndex(t => t.value === v.value) === i).sort((a, b) => a.label.localeCompare(b.label))
-        , [resources]);
+    const resourceOptions = useMemo(() => {
+        const unique = new Set();
+        const options: SearchableSelectOption[] = [];
+        for (const r of resources) {
+            if (!unique.has(r.name)) {
+                unique.add(r.name);
+                options.push({ value: r.name, label: r.name });
+            }
+        }
+        return options.sort((a, b) => a.label.localeCompare(b.label));
+    }, [resources]);
 
-    const resourceServiceOptions = useMemo(() =>
-        resources.map(r => ({ value: r.serviceName, label: r.serviceName })).filter((v, i, a) => a.findIndex(t => t.value === v.value) === i).sort((a, b) => a.label.localeCompare(b.label))
-        , [resources]);
+    const resourceServiceOptions = useMemo(() => {
+        const unique = new Set();
+        const options: SearchableSelectOption[] = [];
+        for (const r of resources) {
+            if (!unique.has(r.serviceName)) {
+                unique.add(r.serviceName);
+                options.push({ value: r.serviceName, label: r.serviceName });
+            }
+        }
+        return options.sort((a, b) => a.label.localeCompare(b.label));
+    }, [resources]);
 
     const baseOptions = useMemo(() => bases.map(b => ({ value: b.name, label: b.displayName || b.name })), [bases]);
     const environmentOptions = useMemo(() => environments.map(e => ({ value: e.name, label: e.displayName || e.name })), [environments]);
@@ -223,7 +247,7 @@ export default function DemandsPage() {
                 ) : (
                     <>
                         {/* Table */}
-                        <div className="overflow-x-auto">
+                        <div className={`overflow-x-auto transition-opacity duration-200 ${isFiltersPending ? 'opacity-50' : 'opacity-100'}`}>
                             <DemandsTable demands={demands} isLoading={isLoading} />
                         </div>
 
