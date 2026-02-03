@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { MdFilterList, MdSearch } from 'react-icons/md';
 import DemandsTable from '../components/projects/DemandsTable';
 import PageHeader from '../components/layout/PageHeader';
@@ -35,10 +36,11 @@ const FilterField = ({ label, children }: { label: string; children: React.React
 
 export default function DemandsPage() {
     const { t } = useTranslation();
+    const [searchParams] = useSearchParams();
 
     // Filter States
     const [filters, setFilters] = useState({
-        projectName: '',
+        projectName: searchParams.get('project') || '',
         serviceName: '',
         resourceName: '',
         resourceService: '',

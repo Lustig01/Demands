@@ -2,7 +2,7 @@ import type { Project, Demand } from '../types/domain';
 
 export const mockProjects: Project[] = [
   {
-    name: 'Cloud Migration',
+    name: 'Beta Migration',
     purpose: 'Migrate legacy apps to cloud',
     type: 'Semiannual',
     kind: 'App',
@@ -282,11 +282,3 @@ export const mockDemands: Demand[] = [
     createdAt: '2026-01-02T11:10:00Z',
   },
 ];
-
-export function getProjectByName(name: string): Project | undefined {
-  return mockProjects.find((p) => p.name === name);
-}
-
-export function getDemandsByProject(projectName: string): Demand[] {
-  return mockDemands.filter((d) => d.projectName === projectName);
-}

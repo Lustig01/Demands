@@ -13,7 +13,7 @@ export default function ProjectCard({ project, demandCount }: ProjectCardProps) 
 
   return (
     <Link
-      to={`/projects/${encodeURIComponent(project.name)}`}
+      to={`/demands?project=${encodeURIComponent(project.name)}`}
       className="no-underline text-inherit"
     >
       <div className="bg-bg-paper rounded-2xl border border-divider p-5 hover:shadow-md transition-shadow cursor-pointer h-full flex flex-col">
