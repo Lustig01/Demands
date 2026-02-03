@@ -57,10 +57,9 @@ export default function Sidebar({ sections, userProfile }: SidebarProps) {
                   <NavLink
                     to={item.path}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 px-4 py-3 rounded-2xl text-[0.95rem] transition-colors no-underline ${
-                        isActive
-                          ? 'bg-primary-light text-primary font-semibold'
-                          : 'text-text-secondary hover:bg-gray-50 hover:text-text-primary'
+                      `flex items-center gap-3 px-4 py-3 rounded-2xl text-[0.95rem] transition-colors no-underline ${isActive
+                        ? 'bg-primary-light text-primary font-semibold'
+                        : 'text-text-secondary hover:bg-gray-50 hover:text-text-primary'
                       }`
                     }
                   >
@@ -73,11 +72,6 @@ export default function Sidebar({ sections, userProfile }: SidebarProps) {
           </div>
         ))}
       </nav>
-
-      {/* Language switcher */}
-      <div className="flex justify-center py-2">
-        <LanguageSwitcher />
-      </div>
 
       {/* User profile */}
       <div className="relative px-3 pb-3" ref={menuRef}>
