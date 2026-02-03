@@ -3,16 +3,39 @@ import { DemandType, DemandStatus } from "@prisma/client";
 import { NotFoundError } from "../../lib/errors";
 
 export const demandService = {
-  findAll: async (createdBy?: string) => {
-    return prisma.demand.findMany({
-      where: createdBy ? { createdBy } : undefined,
-      include: {
-        project: true,
-        service: true,
-        resource: true,
-        location: true,
+  findAll: async (
+    createdBy?: string,
+    pagination?: { page: number; limit: number }
+  ) => {
+    const { page = 1, limit = 10 } = pagination || {};
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.demand.findMany({
+        where: createdBy ? { createdBy } : undefined,
+        include: {
+          project: true,
+          service: true,
+          resource: true,
+          location: true,
+        },
+        skip,
+        take: limit,
+      }),
+      prisma.demand.count({
+        where: createdBy ? { createdBy } : undefined,
+      }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
       },
-    });
+    };
   },
 
   findById: async (id: number) => {
@@ -27,18 +50,24 @@ export const demandService = {
     });
   },
 
-  findByFilters: async (filters: {
-    projectName?: string;
-    resourceName?: string;
-    resourceService?: string;
-    locationId?: number;
-    baseName?: string;
-    environmentName?: string;
-    networkName?: string;
-    type?: DemandType;
-    status?: DemandStatus;
-    createdBy?: string;
-  }) => {
+  findByFilters: async (
+    filters: {
+      projectName?: string;
+      resourceName?: string;
+      resourceService?: string;
+      locationId?: number;
+      baseName?: string;
+      environmentName?: string;
+      networkName?: string;
+      type?: DemandType;
+      status?: DemandStatus;
+      createdBy?: string;
+    },
+    pagination?: { page: number; limit: number }
+  ) => {
+    const { page = 1, limit = 10 } = pagination || {};
+    const skip = (page - 1) * limit;
+
     const where: {
       projectName?: string;
       resourceName?: string;
@@ -69,15 +98,30 @@ export const demandService = {
       if (filters.networkName) where.location.networkName = filters.networkName;
     }
 
-    return prisma.demand.findMany({
-      where,
-      include: {
-        project: true,
-        service: true,
-        resource: true,
-        location: true,
+    const [data, total] = await Promise.all([
+      prisma.demand.findMany({
+        where,
+        include: {
+          project: true,
+          service: true,
+          resource: true,
+          location: true,
+        },
+        skip,
+        take: limit,
+      }),
+      prisma.demand.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
       },
-    });
+    };
   },
 
   create: async (data: {
