@@ -3,8 +3,7 @@
     "dashboard": "Dashboard",
     "projects": "Projects",
     "demands": "Manage Demands",
-    "moderator": "Moderator View",
-    "import": "Import Excel",
+    "moderator": "Moderator Management",
     "settings": "Settings"
   },
   "common": {

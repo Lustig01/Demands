@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from 'react-oidc-context';
-import { MdBarChart, MdFolder, MdDescription, MdRemoveRedEye, MdGridOn, MdSettings } from 'react-icons/md';
+import { MdFolder, MdDescription, MdRemoveRedEye, MdSettings } from 'react-icons/md';
 import { useAuthToken } from './hooks/useAuthToken';
 import Layout from './components/layout/Layout';
 import DashboardPage from './pages/DashboardPage';
@@ -74,17 +74,37 @@ export default function App() {
     role: (auth.user?.profile.groups as string[])?.[0] || 'user',
   };
 
-  // Temporary static navigation -- will be replaced by role-based logic
+  // Role-based navigation
+  const getNavItems = (role: string) => {
+    const commonItems = [
+      { label: t('nav.projects'), path: '/projects', icon: MdFolder },
+      { label: t('nav.demands'), path: '/demands', icon: MdDescription },
+    ];
+
+    const moderatorItems = [
+      ...commonItems,
+      { label: t('nav.moderator'), path: '/moderator', icon: MdRemoveRedEye },
+    ];
+
+    const adminItems = [
+      ...moderatorItems,
+      { label: t('nav.settings'), path: '/settings', icon: MdSettings },
+    ];
+
+    switch (role.toLowerCase()) {
+      case 'admin':
+        return adminItems;
+      case 'moderator':
+        return moderatorItems;
+      case 'user':
+      default:
+        return commonItems;
+    }
+  };
+
   const navSections: NavSection[] = [
     {
-      items: [
-        { label: t('nav.dashboard'), path: '/dashboard', icon: MdBarChart },
-        { label: t('nav.projects'), path: '/projects', icon: MdFolder },
-        { label: t('nav.demands'), path: '/demands', icon: MdDescription },
-        { label: t('nav.moderator'), path: '/moderator', icon: MdRemoveRedEye },
-        { label: t('nav.import'), path: '/import', icon: MdGridOn },
-        { label: t('nav.settings'), path: '/settings', icon: MdSettings },
-      ],
+      items: getNavItems(userProfile.role),
     },
   ];
 
@@ -96,7 +116,7 @@ export default function App() {
             <Layout navSections={navSections} userProfile={userProfile} />
           }
         >
-          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route index element={<Navigate to="/projects" replace />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/demands" element={<DemandsPage />} />
