@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from 'react-oidc-context';
 import { MdStorage, MdPersonOutline, MdLogout, MdExpandMore } from 'react-icons/md';
 import LanguageSwitcher from '../LanguageSwitcher';
 import type { NavSection, UserProfile } from '../../types/navigation';
@@ -14,6 +15,7 @@ interface SidebarProps {
 
 export default function Sidebar({ sections, userProfile }: SidebarProps) {
   const { t } = useTranslation();
+  const auth = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -90,7 +92,10 @@ export default function Sidebar({ sections, userProfile }: SidebarProps) {
               {t('user.profile')}
             </button>
             <button
-              onClick={() => setMenuOpen(false)}
+              onClick={() => {
+                setMenuOpen(false);
+                auth.signoutRedirect();
+              }}
               className="flex items-center gap-3 w-full px-4 py-3 text-sm text-danger hover:bg-gray-50 transition-colors bg-transparent border-none cursor-pointer text-start"
             >
               <MdLogout size={20} />
