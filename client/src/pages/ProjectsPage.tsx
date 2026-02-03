@@ -19,27 +19,28 @@ export default function ProjectsPage() {
 
   return (
     <div>
-      <PageHeader
-        title={t('projects.title')}
-        subtitle={t('projects.subtitle')}
-      />
-
-      <div className="flex items-center gap-3 mb-6">
-        <button
-          type="button"
-          onClick={() => setIsCreateOpen(true)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none"
-        >
-          <MdAdd size={18} />
-          {t('projects.newProject')}
-        </button>
-        <button
-          type="button"
-          className="flex items-center gap-2 px-4 py-2.5 bg-bg-paper border border-divider text-text-primary rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors cursor-pointer"
-        >
-          <MdFileDownload size={18} />
-          {t('projects.export')}
-        </button>
+      <div className="flex items-start justify-between gap-4 mb-6">
+        <PageHeader
+          title={t('projects.title')}
+          subtitle={t('projects.subtitle')}
+        />
+        <div className="flex items-center gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsCreateOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none"
+          >
+            <MdAdd size={18} />
+            {t('projects.newProject')}
+          </button>
+          <button
+            type="button"
+            className="flex items-center gap-2 px-4 py-2.5 bg-bg-paper border border-divider text-text-primary rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors cursor-pointer"
+          >
+            <MdFileDownload size={18} />
+            {t('projects.export')}
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
