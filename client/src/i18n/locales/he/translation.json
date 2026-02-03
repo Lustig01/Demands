@@ -2,9 +2,8 @@
   "nav": {
     "dashboard": "דשבורד",
     "projects": "פרוייקטים",
-    "demands": "ניהול דרישות",
-    "moderator": "תצוגת מודריטור",
-    "import": "ייבוא אקסל",
+    "demands": "דרישות",
+    "moderator": "ניהול מדורייטור",
     "settings": "הגדרות"
   },
   "common": {
