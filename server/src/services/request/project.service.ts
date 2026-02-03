@@ -1,5 +1,5 @@
 import prisma from "../../lib/prisma";
-import { ProjectType, ProjectKind, Median } from "@prisma/client";
+import { ProjectType, Median } from "@prisma/client";
 import { NotFoundError } from "../../lib/errors";
 
 export const projectService = {
@@ -15,6 +15,7 @@ export const projectService = {
         where: createdBy ? { createdBy } : undefined,
         include: {
           location: true,
+          kind: true,
           _count: {
             select: { demands: true },
           },
@@ -58,6 +59,7 @@ export const projectService = {
         where,
         include: {
           location: true,
+          kind: true,
           _count: {
             select: { demands: true },
           },
@@ -84,6 +86,7 @@ export const projectService = {
       where: { name },
       include: {
         location: true,
+        kind: true,
         demands: true,
         _count: {
           select: { demands: true },
@@ -95,8 +98,9 @@ export const projectService = {
   create: async (data: {
     name: string;
     purpose: string;
+    relatedTo?: string;
     type: ProjectType;
-    kind: ProjectKind;
+    kindName: string;
     locationId: number;
     year?: number;
     median?: Median;
@@ -105,7 +109,7 @@ export const projectService = {
   }) => {
     return prisma.project.create({
       data,
-      include: { location: true },
+      include: { location: true, kind: true },
     });
   },
 
@@ -113,8 +117,9 @@ export const projectService = {
     name: string,
     data: {
       purpose?: string;
+      relatedTo?: string | null;
       type?: ProjectType;
-      kind?: ProjectKind;
+      kindName?: string;
       locationId?: number;
       year?: number | null;
       median?: Median | null;
@@ -132,7 +137,7 @@ export const projectService = {
     return prisma.project.update({
       where: { name },
       data,
-      include: { location: true },
+      include: { location: true, kind: true },
     });
   },
 

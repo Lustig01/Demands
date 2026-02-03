@@ -27,6 +27,7 @@ export interface ResourceItem {
 export interface CreateProjectPayload {
   name: string;
   purpose: string;
+  relatedTo?: string;
   type: ProjectType;
   kind: ProjectKind;
   locationId: number;

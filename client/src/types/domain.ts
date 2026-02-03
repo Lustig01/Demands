@@ -1,5 +1,5 @@
 export type ProjectType = 'Semiannual' | 'Emergency';
-export type ProjectKind = 'App' | 'Track';
+export type ProjectKind = string;
 export type Median = 'H1' | 'H2';
 export type DemandType = 'New' | 'Extension';
 export type DemandStatus = 'Pending' | 'Approved' | 'Rejected' | 'PartiallyApproved';
@@ -7,9 +7,10 @@ export type DemandStatus = 'Pending' | 'Approved' | 'Rejected' | 'PartiallyAppro
 export interface Project {
   name: string;
   purpose: string;
+  relatedTo?: string;
   type: ProjectType;
   kind: ProjectKind;
-  locationId: number;
+  location: DemandLocation;
   year?: number;
   median?: Median;
   createdBy: string;

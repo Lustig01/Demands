@@ -108,6 +108,18 @@
       }
     }
   },
+  "projectsTable": {
+    "columns": {
+      "name": "Project Name",
+      "purpose": "Purpose",
+      "demandCount": "Demands",
+      "kind": "Kind",
+      "relatedTo": "Related To",
+      "year": "Year",
+      "median": "Median"
+    },
+    "noProjects": "No projects to display"
+  },
   "notFound": {
     "message": "The requested page was not found"
   }

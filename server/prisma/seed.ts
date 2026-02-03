@@ -1,4 +1,4 @@
-import { PrismaClient, ProjectType, ProjectKind, Median, DemandType, DemandStatus } from '@prisma/client';
+import { PrismaClient, ProjectType, Median, DemandType, DemandStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -244,22 +244,40 @@ async function main() {
 
   const creators = [USERS.user1, USERS.user2, USERS.user3];
 
+  // ============================================
+  // Project Kind Models
+  // ============================================
+
+  const projectKinds = await Promise.all([
+    prisma.projectKind.upsert({
+      where: { name: 'App' },
+      update: {},
+      create: { name: 'App' },
+    }),
+    prisma.projectKind.upsert({
+      where: { name: 'Track' },
+      update: {},
+      create: { name: 'Track' },
+    }),
+  ]);
+  console.log(`Created ${projectKinds.length} project kinds`);
+
   const projectList = [
-    { name: 'Cloud Migration', purpose: 'Migrate legacy apps to cloud', type: ProjectType.Semiannual, kind: ProjectKind.App, year: 2026, median: Median.H1 },
-    { name: 'Database Upgrade', purpose: 'Upgrade PostgreSQL clusters', type: ProjectType.Emergency, kind: ProjectKind.Track, year: undefined, median: undefined },
-    { name: 'New API Platform', purpose: 'Build new API gateway', type: ProjectType.Semiannual, kind: ProjectKind.App, year: 2026, median: Median.H2 },
-    { name: 'DR Setup', purpose: 'Setup disaster recovery site', type: ProjectType.Semiannual, kind: ProjectKind.Track, year: 2026, median: Median.H1 },
-    { name: 'Dev Environment', purpose: 'New development environment', type: ProjectType.Emergency, kind: ProjectKind.App, year: undefined, median: undefined },
-    { name: 'Legacy Decom', purpose: 'Decommission old servers', type: ProjectType.Semiannual, kind: ProjectKind.Track, year: 2026, median: Median.H1 },
-    { name: 'AI Research', purpose: 'AI model training infrastructure', type: ProjectType.Semiannual, kind: ProjectKind.App, year: 2026, median: Median.H2 },
-    { name: 'Network Refresh', purpose: 'Upgrade core switches', type: ProjectType.Emergency, kind: ProjectKind.Track, year: 2026, median: Median.H1 },
-    { name: 'Storage Expansion', purpose: 'Add more storage capacity', type: ProjectType.Semiannual, kind: ProjectKind.Track, year: 2026, median: Median.H2 },
-    { name: 'Kubernetes Upgrade', purpose: 'Upgrade K8s clusters', type: ProjectType.Emergency, kind: ProjectKind.Track, year: 2026, median: Median.H1 },
-    { name: 'Security Audit', purpose: 'Infrastructure for security audit', type: ProjectType.Semiannual, kind: ProjectKind.App, year: 2026, median: Median.H2 },
-    { name: 'Big Data Platform', purpose: 'Hadoop cluster setup', type: ProjectType.Semiannual, kind: ProjectKind.App, year: 2026, median: Median.H1 },
-    { name: 'CRM Integration', purpose: 'Integrate new CRM system', type: ProjectType.Emergency, kind: ProjectKind.App, year: 2026, median: Median.H2 },
-    { name: 'ERP Migration', purpose: 'Migrate ERP to cloud', type: ProjectType.Semiannual, kind: ProjectKind.Track, year: 2026, median: Median.H1 },
-    { name: 'Mobile App Backend', purpose: 'Backend for new mobile app', type: ProjectType.Semiannual, kind: ProjectKind.App, year: 2026, median: Median.H2 },
+    { name: 'Cloud Migration', purpose: 'Migrate legacy apps to cloud', relatedTo: 'Cloud Platform', type: ProjectType.Semiannual, kind: 'App', year: 2026, median: Median.H1 },
+    { name: 'Database Upgrade', purpose: 'Upgrade PostgreSQL clusters', relatedTo: 'DB Management', type: ProjectType.Emergency, kind: 'Track', year: undefined, median: undefined },
+    { name: 'New API Platform', purpose: 'Build new API gateway', relatedTo: 'API Gateway', type: ProjectType.Semiannual, kind: 'App', year: 2026, median: Median.H2 },
+    { name: 'DR Setup', purpose: 'Setup disaster recovery site', relatedTo: undefined, type: ProjectType.Semiannual, kind: 'Track', year: 2026, median: Median.H1 },
+    { name: 'Dev Environment', purpose: 'New development environment', relatedTo: 'DevOps', type: ProjectType.Emergency, kind: 'App', year: undefined, median: undefined },
+    { name: 'Legacy Decom', purpose: 'Decommission old servers', relatedTo: undefined, type: ProjectType.Semiannual, kind: 'Track', year: 2026, median: Median.H1 },
+    { name: 'AI Research', purpose: 'AI model training infrastructure', relatedTo: 'ML Pipeline', type: ProjectType.Semiannual, kind: 'App', year: 2026, median: Median.H2 },
+    { name: 'Network Refresh', purpose: 'Upgrade core switches', relatedTo: 'Network Infra', type: ProjectType.Emergency, kind: 'Track', year: 2026, median: Median.H1 },
+    { name: 'Storage Expansion', purpose: 'Add more storage capacity', relatedTo: undefined, type: ProjectType.Semiannual, kind: 'Track', year: 2026, median: Median.H2 },
+    { name: 'Kubernetes Upgrade', purpose: 'Upgrade K8s clusters', relatedTo: 'K8s Platform', type: ProjectType.Emergency, kind: 'Track', year: 2026, median: Median.H1 },
+    { name: 'Security Audit', purpose: 'Infrastructure for security audit', relatedTo: 'Security Suite', type: ProjectType.Semiannual, kind: 'App', year: 2026, median: Median.H2 },
+    { name: 'Big Data Platform', purpose: 'Hadoop cluster setup', relatedTo: 'Big Data', type: ProjectType.Semiannual, kind: 'App', year: 2026, median: Median.H1 },
+    { name: 'CRM Integration', purpose: 'Integrate new CRM system', relatedTo: 'CRM System', type: ProjectType.Emergency, kind: 'App', year: 2026, median: Median.H2 },
+    { name: 'ERP Migration', purpose: 'Migrate ERP to cloud', relatedTo: undefined, type: ProjectType.Semiannual, kind: 'Track', year: 2026, median: Median.H1 },
+    { name: 'Mobile App Backend', purpose: 'Backend for new mobile app', relatedTo: 'Mobile App', type: ProjectType.Semiannual, kind: 'App', year: 2026, median: Median.H2 },
   ];
 
   const projects = await Promise.all(
@@ -272,8 +290,9 @@ async function main() {
         create: {
           name: p.name,
           purpose: p.purpose,
+          relatedTo: p.relatedTo,
           type: p.type,
-          kind: p.kind,
+          kindName: p.kind,
           locationId: location.id,
           year: p.year,
           median: p.median,

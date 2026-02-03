@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { projectService } from "../../services/request/project.service";
-import { ProjectType, ProjectKind, Median } from "@prisma/client";
+import { ProjectType, Median } from "@prisma/client";
 import { settings } from "../../lib/settings";
 import { NotFoundError } from "../../lib/errors";
 
@@ -77,7 +77,7 @@ export const projectController = {
   create: async (req: Request, res: Response) => {
     try {
       const { username, fullName } = getUserContext(req);
-      const { name, purpose, type, kind, locationId, year, median } = req.body;
+      const { name, purpose, relatedTo, type, kind, locationId, year, median } = req.body;
 
       // Validate: year and median are required if type is Semiannual
       if (type === ProjectType.Semiannual) {
@@ -96,8 +96,9 @@ export const projectController = {
       const project = await projectService.create({
         name,
         purpose,
+        relatedTo: relatedTo || undefined,
         type,
-        kind,
+        kindName: kind,
         locationId,
         year: type === ProjectType.Semiannual ? year : undefined,
         median: type === ProjectType.Semiannual ? median : undefined,
@@ -114,7 +115,7 @@ export const projectController = {
   update: async (req: Request, res: Response) => {
     try {
       const { username, isPrivileged } = getUserContext(req);
-      const { purpose, type, kind, locationId, year, median } = req.body;
+      const { purpose, relatedTo, type, kind, locationId, year, median } = req.body;
 
       // If type is being updated to Semiannual, validate year and median
       if (type === ProjectType.Semiannual) {
@@ -133,16 +134,18 @@ export const projectController = {
       // If type is Emergency, clear year and median
       const updateData: {
         purpose?: string;
+        relatedTo?: string | null;
         type?: ProjectType;
-        kind?: ProjectKind;
+        kindName?: string;
         locationId?: number;
         year?: number | null;
         median?: Median | null;
       } = {};
 
       if (purpose !== undefined) updateData.purpose = purpose;
+      if (relatedTo !== undefined) updateData.relatedTo = relatedTo || null;
       if (type !== undefined) updateData.type = type;
-      if (kind !== undefined) updateData.kind = kind;
+      if (kind !== undefined) updateData.kindName = kind;
       if (locationId !== undefined) updateData.locationId = locationId;
 
       if (type === ProjectType.Emergency) {

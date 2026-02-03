@@ -24,6 +24,7 @@ import capacityRoutes from "./service/capacity.routes";
 import projectRoutes from "./request/project.routes";
 import demandRoutes from "./request/demand.routes";
 import decisionReasonRoutes from "./request/decisionReason.routes";
+import projectKindRoutes from "./request/projectKind.routes";
 
 const router = Router();
 
@@ -51,5 +52,6 @@ router.use("/capacities", capacityRoutes);
 router.use("/projects", projectRoutes);
 router.use("/demands", demandRoutes);
 router.use("/decision-reasons", decisionReasonRoutes);
+router.use("/project-kinds", projectKindRoutes);
 
 export default router;

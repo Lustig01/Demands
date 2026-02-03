@@ -108,6 +108,18 @@
       }
     }
   },
+  "projectsTable": {
+    "columns": {
+      "name": "שם פרוייקט",
+      "purpose": "ייעוד",
+      "demandCount": "דרישות",
+      "kind": "סוג פרוייקט",
+      "relatedTo": "קשור ל",
+      "year": "שנה",
+      "median": "מחצית"
+    },
+    "noProjects": "אין פרוייקטים להצגה"
+  },
   "notFound": {
     "message": "העמוד המבוקש לא נמצא"
   }

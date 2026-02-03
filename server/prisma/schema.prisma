@@ -138,9 +138,12 @@ enum ProjectType {
   Semiannual
 }
 
-enum ProjectKind {
-  App
-  Track
+model ProjectKind {
+  name        String    @id
+  displayName String?
+  projects    Project[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 enum Median {
@@ -163,8 +166,10 @@ enum DemandStatus {
 model Project {
   name          String      @id
   purpose       String
+  relatedTo     String?
   type          ProjectType
-  kind          ProjectKind
+  kindName      String
+  kind          ProjectKind  @relation(fields: [kindName], references: [name], onDelete: Restrict)
   locationId    Int
   location      Location    @relation(fields: [locationId], references: [id], onDelete: Cascade)
   year          Int?

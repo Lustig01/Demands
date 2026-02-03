@@ -45,9 +45,14 @@ function mapProject(raw: any): Project {
   return {
     name: raw.name,
     purpose: raw.purpose,
+    relatedTo: raw.relatedTo ?? undefined,
     type: raw.type,
-    kind: raw.kind,
-    locationId: raw.locationId,
+    kind: raw.kindName ?? raw.kind,
+    location: {
+      base: raw.location?.baseName ?? '',
+      environment: raw.location?.environmentName ?? '',
+      network: raw.location?.networkName ?? '',
+    },
     year: raw.year ?? undefined,
     median: raw.median ?? undefined,
     createdBy: raw.createdBy ?? '',
@@ -167,5 +172,10 @@ export async function fetchServices(): Promise<ReferenceItem[]> {
 
 export async function fetchResources(): Promise<ResourceItem[]> {
   const { data } = await api.get('/resources');
+  return data;
+}
+
+export async function fetchProjectKinds(): Promise<ReferenceItem[]> {
+  const { data } = await api.get('/project-kinds');
   return data;
 }
