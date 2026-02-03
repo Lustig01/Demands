@@ -22,10 +22,14 @@ export const demandController = {
   getAll: async (req: Request, res: Response) => {
     try {
       const { username, isPrivileged } = getUserContext(req);
-      const demands = await demandService.findAll(
-        isPrivileged ? undefined : username
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+
+      const result = await demandService.findAll(
+        isPrivileged ? undefined : username,
+        { page, limit }
       );
-      res.json(demands);
+      res.json(result);
     } catch (error) {
       console.error("demandController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch demands" });
@@ -62,21 +66,29 @@ export const demandController = {
         network,
         type,
         status,
+        page: pageQuery,
+        limit: limitQuery,
       } = req.query;
 
-      const demands = await demandService.findByFilters({
-        projectName: project as string | undefined,
-        resourceName: resource as string | undefined,
-        resourceService: resourceService as string | undefined,
-        locationId: location ? Number(location) : undefined,
-        baseName: base as string | undefined,
-        environmentName: environment as string | undefined,
-        networkName: network as string | undefined,
-        type: type as DemandType | undefined,
-        status: status as DemandStatus | undefined,
-        createdBy: isPrivileged ? undefined : username,
-      });
-      res.json(demands);
+      const page = Number(pageQuery) || 1;
+      const limit = Number(limitQuery) || 10;
+
+      const result = await demandService.findByFilters(
+        {
+          projectName: project as string | undefined,
+          resourceName: resource as string | undefined,
+          resourceService: resourceService as string | undefined,
+          locationId: location ? Number(location) : undefined,
+          baseName: base as string | undefined,
+          environmentName: environment as string | undefined,
+          networkName: network as string | undefined,
+          type: type as DemandType | undefined,
+          status: status as DemandStatus | undefined,
+          createdBy: isPrivileged ? undefined : username,
+        },
+        { page, limit }
+      );
+      res.json(result);
     } catch (error) {
       console.error("demandController.getByFilters error:", error);
       res.status(500).json({ error: "Failed to fetch demands" });

@@ -21,13 +21,39 @@ export const projectController = {
   getAll: async (req: Request, res: Response) => {
     try {
       const { username, isPrivileged } = getUserContext(req);
-      const projects = await projectService.findAll(
-        isPrivileged ? undefined : username
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+
+      const result = await projectService.findAll(
+        isPrivileged ? undefined : username,
+        { page, limit }
       );
-      res.json(projects);
+      res.json(result);
     } catch (error) {
       console.error("projectController.getAll error:", error);
       res.status(500).json({ error: "Failed to fetch projects" });
+    }
+  },
+
+  getByFilters: async (req: Request, res: Response) => {
+    try {
+      const { username, isPrivileged } = getUserContext(req);
+      const { name, page: pageQuery, limit: limitQuery } = req.query;
+
+      const page = Number(pageQuery) || 1;
+      const limit = Number(limitQuery) || 10;
+
+      const result = await projectService.findByFilters(
+        {
+          name: name as string | undefined,
+          createdBy: isPrivileged ? undefined : username,
+        },
+        { page, limit }
+      );
+      res.json(result);
+    } catch (error) {
+      console.error("projectController.getByFilters error:", error);
+      res.status(500).json({ error: "Failed to fetch projects by filters" });
     }
   },
 

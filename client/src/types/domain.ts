@@ -15,6 +15,7 @@ export interface Project {
   createdBy: string;
   createdByName: string;
   createdAt: string;
+  demandCount?: number;
 }
 
 export interface DemandLocation {

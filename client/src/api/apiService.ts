@@ -1,11 +1,16 @@
 import api from './axiosInstance';
 import type { Demand, Project } from '../types/domain';
+
 import type {
   ReferenceItem,
   BranchItem,
   LocationItem,
   ResourceItem,
   CreateProjectPayload,
+  PaginationParams,
+  PaginatedResponse,
+  ProjectFilterParams,
+  DemandFilterParams,
 } from './types';
 
 // --- Response mappers ---
@@ -48,14 +53,29 @@ function mapProject(raw: any): Project {
     createdBy: raw.createdBy ?? '',
     createdByName: raw.createdByName ?? '',
     createdAt: raw.createdAt,
+    demandCount: raw._count?.demands ?? 0,
   };
 }
 
 // --- Projects ---
 
-export async function fetchProjects(): Promise<Project[]> {
-  const { data } = await api.get('/projects');
-  return data.map(mapProject);
+export async function fetchProjects(
+  params?: PaginationParams & ProjectFilterParams,
+  signal?: AbortSignal
+): Promise<PaginatedResponse<Project>> {
+  const query = new URLSearchParams();
+  if (params?.page) query.append('page', params.page.toString());
+  if (params?.limit) query.append('limit', params.limit.toString());
+  if (params?.name) query.append('name', params.name);
+
+  // If filtering by name, use /projects/filter, otherwise /projects
+  const endpoint = params?.name ? '/projects/filter' : '/projects';
+
+  const { data } = await api.get(`${endpoint}?${query.toString()}`, { signal });
+  return {
+    data: data.data.map(mapProject),
+    meta: data.meta,
+  };
 }
 
 export async function createProject(payload: CreateProjectPayload): Promise<Project> {
@@ -65,9 +85,47 @@ export async function createProject(payload: CreateProjectPayload): Promise<Proj
 
 // --- Demands ---
 
-export async function fetchDemands(): Promise<Demand[]> {
-  const { data } = await api.get('/demands');
-  return data.map(mapDemand);
+export async function fetchDemands(
+  params?: PaginationParams & DemandFilterParams,
+  signal?: AbortSignal
+): Promise<PaginatedResponse<Demand>> {
+  const query = new URLSearchParams();
+  if (params?.page) query.append('page', params.page.toString());
+  if (params?.limit) query.append('limit', params.limit.toString());
+
+  if (params) {
+    if (params.projectName) query.append('project', params.projectName);
+
+    // Map serviceName to resourceService, taking precedence over explicit resourceService filter
+    if (params.serviceName) {
+      query.append('resourceService', params.serviceName);
+    } else if (params.resourceService) {
+      query.append('resourceService', params.resourceService);
+    }
+
+    if (params.resourceName) query.append('resource', params.resourceName);
+    if (params.locationId) query.append('location', params.locationId.toString());
+    if (params.baseName) query.append('base', params.baseName);
+    if (params.environmentName) query.append('environment', params.environmentName);
+    if (params.networkName) query.append('network', params.networkName);
+    if (params.type) query.append('type', params.type);
+    if (params.status) query.append('status', params.status);
+  }
+
+  // If any filter is present (besides pagination), use /demands/filter, otherwise /demands
+  const isFiltering = params && (
+    params.projectName || params.serviceName || params.resourceName || params.resourceService ||
+    params.locationId || params.baseName || params.environmentName ||
+    params.networkName || params.type || params.status
+  );
+
+  const endpoint = isFiltering ? '/demands/filter' : '/demands';
+
+  const { data } = await api.get(`${endpoint}?${query.toString()}`, { signal });
+  return {
+    data: data.data.map(mapDemand),
+    meta: data.meta,
+  };
 }
 
 // --- Reference data ---

@@ -1,4 +1,4 @@
-import type { AuthProviderProps } from 'oidc-client-ts';
+import type { AuthProviderProps } from 'react-oidc-context';
 
 export const authConfig: AuthProviderProps = {
   authority: import.meta.env.VITE_OIDC_AUTHORITY,

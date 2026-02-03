@@ -6,6 +6,7 @@ import { requireAuth } from "../../middleware/authorization";
 const router = Router();
 
 router.get("/", authenticate, requireAuth, projectController.getAll);
+router.get("/filter", authenticate, requireAuth, projectController.getByFilters);
 router.get("/:name", authenticate, requireAuth, projectController.getByName);
 router.post("/", authenticate, requireAuth, projectController.create);
 router.put("/:name", authenticate, requireAuth, projectController.update);

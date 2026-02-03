@@ -1,17 +1,29 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MdAdd, MdFileDownload } from 'react-icons/md';
+import { MdAdd, MdFileDownload, MdSearch } from 'react-icons/md';
 import PageHeader from '../components/layout/PageHeader';
 import ProjectCard from '../components/projects/ProjectCard';
 import CreateProjectModal from '../components/projects/CreateProjectModal';
 import { useProjects } from '../hooks/useProjects';
-import { useReferenceData } from '../hooks/useReferenceData';
+import { useDebounce } from '../hooks/useDebounce';
 import type { CreateProjectPayload } from '../api/types';
+import Pagination from '../components/common/Pagination';
 
 export default function ProjectsPage() {
   const { t } = useTranslation();
-  const { projects, demandCounts, isLoading, error, createProject } = useProjects();
-  const referenceData = useReferenceData();
+
+  // Pagination & Filter State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9; // Grid layout usually nice with 9 or 12
+  const [searchName, setSearchName] = useState('');
+  const debouncedSearchName = useDebounce(searchName, 500);
+
+  const { projects, total, totalPages, isLoading, error, createProject } = useProjects(
+    { name: debouncedSearchName },
+    { page: currentPage, limit: itemsPerPage }
+  );
+
+
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   async function handleCreateProject(payload: CreateProjectPayload) {
@@ -19,13 +31,10 @@ export default function ProjectsPage() {
     setIsCreateOpen(false);
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-text-primary"></div>
-      </div>
-    );
-  }
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchName(e.target.value);
+    setCurrentPage(1);
+  };
 
   if (error) {
     return (
@@ -37,46 +46,88 @@ export default function ProjectsPage() {
 
   return (
     <div>
-      <div className="flex items-start justify-between gap-4 mb-6">
-        <PageHeader
-          title={t('projects.title')}
-          subtitle={t('projects.subtitle')}
-        />
-        <div className="flex items-center gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={() => setIsCreateOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none"
-          >
-            <MdAdd size={18} />
-            {t('projects.newProject')}
-          </button>
-          <button
-            type="button"
-            className="flex items-center gap-2 px-4 py-2.5 bg-bg-paper border border-divider text-text-primary rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors cursor-pointer"
-          >
-            <MdFileDownload size={18} />
-            {t('projects.export')}
-          </button>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        <div className="flex items-center justify-between w-full md:w-auto">
+          <PageHeader
+            title={t('projects.title')}
+            subtitle={t('projects.subtitle')}
+          />
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+          {/* Search Bar */}
+          <div className="relative w-full md:w-64">
+            <MdSearch size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" />
+            <input
+              type="text"
+              value={searchName}
+              onChange={handleSearchChange}
+              placeholder={t('projects.searchPlaceholder', 'Search projects...')}
+              className="w-full pl-10 pr-4 py-2.5 text-sm border border-divider rounded-xl focus:outline-none focus:border-primary text-text-primary bg-bg-default"
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => setIsCreateOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none whitespace-nowrap"
+            >
+              <MdAdd size={18} />
+              {t('projects.newProject')}
+            </button>
+            <button
+              type="button"
+              className="flex items-center gap-2 px-4 py-2.5 bg-bg-paper border border-divider text-text-primary rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors cursor-pointer whitespace-nowrap"
+            >
+              <MdFileDownload size={18} />
+              {t('projects.export')}
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {projects.map((project) => (
-          <ProjectCard
-            key={project.name}
-            project={project}
-            demandCount={demandCounts[project.name] ?? 0}
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-text-primary"></div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+          {projects.map((project) => (
+            <ProjectCard
+              key={project.name}
+              project={project}
+              demandCount={project.demandCount ?? 0}
+            />
+          ))}
+          {projects.length === 0 && (
+            <div className="col-span-full text-center py-10 text-text-secondary">
+              {t('common.noResults', 'No projects found')}
+            </div>
+          )}
+        </div>
+      )}
 
-      <CreateProjectModal
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        onSubmit={handleCreateProject}
-        referenceData={referenceData}
-      />
+      {/* Pagination */}
+      {projects.length > 0 && (
+        <div className="flex justify-center">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            totalItems={total}
+            itemsPerPage={itemsPerPage}
+          />
+        </div>
+      )}
+
+      {isCreateOpen && (
+        <CreateProjectModal
+          isOpen={isCreateOpen}
+          onClose={() => setIsCreateOpen(false)}
+          onSubmit={handleCreateProject}
+        />
+      )}
     </div>
   );
 }

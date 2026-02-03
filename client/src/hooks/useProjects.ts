@@ -1,61 +1,63 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { fetchProjects, fetchDemands, createProject as apiCreateProject } from '../api/apiService';
+import { useState, useEffect, useCallback } from 'react';
+import { fetchProjects, createProject as apiCreateProject } from '../api/apiService';
 import type { Project } from '../types/domain';
-import type { CreateProjectPayload } from '../api/types';
+import type { CreateProjectPayload, PaginationParams, ProjectFilterParams } from '../api/types';
 
 interface UseProjectsResult {
   projects: Project[];
-  demandCounts: Record<string, number>;
   isLoading: boolean;
   error: string | null;
+  total: number;
+  totalPages: number;
   createProject: (payload: CreateProjectPayload) => Promise<void>;
 }
 
-export function useProjects(): UseProjectsResult {
+export function useProjects(
+  filters?: ProjectFilterParams,
+  pagination?: PaginationParams
+): UseProjectsResult {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [demandCountsRaw, setDemandCountsRaw] = useState<Record<string, number>>({});
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [reloadTrigger, setReloadTrigger] = useState(0);
+
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
-    async function load() {
+    async function fetchData() {
+      setIsLoading(true);
+      setError(null);
       try {
-        const [projectsData, demandsData] = await Promise.all([
-          fetchProjects(),
-          fetchDemands(),
-        ]);
-        if (!cancelled) {
-          setProjects(projectsData);
-
-          const counts: Record<string, number> = {};
-          for (const d of demandsData) {
-            counts[d.projectName] = (counts[d.projectName] ?? 0) + 1;
-          }
-          setDemandCountsRaw(counts);
-        }
+        const params = { ...filters, ...pagination };
+        const { data, meta } = await fetchProjects(params, controller.signal);
+        setProjects(data);
+        setTotal(meta.total);
+        setTotalPages(meta.totalPages);
       } catch (err: any) {
-        if (!cancelled) {
+        if (err.name !== 'CanceledError' && err.message !== 'canceled') {
           setError(err.message ?? 'Failed to load projects');
         }
       } finally {
-        if (!cancelled) {
+        if (!controller.signal.aborted) {
           setIsLoading(false);
         }
       }
     }
 
-    load();
-    return () => { cancelled = true; };
-  }, []);
+    fetchData();
 
-  const demandCounts = useMemo(() => demandCountsRaw, [demandCountsRaw]);
+    return () => {
+      controller.abort();
+    };
+  }, [JSON.stringify(filters), pagination?.page, pagination?.limit, reloadTrigger]);
 
   const createProject = useCallback(async (payload: CreateProjectPayload) => {
-    const created = await apiCreateProject(payload);
-    setProjects((prev) => [created, ...prev]);
+    await apiCreateProject(payload);
+    setReloadTrigger(prev => prev + 1);
   }, []);
 
-  return { projects, demandCounts, isLoading, error, createProject };
+  return { projects, isLoading, error, total, totalPages, createProject };
 }
