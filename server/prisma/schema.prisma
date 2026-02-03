@@ -166,6 +166,7 @@ enum DemandStatus {
 model Project {
   name          String      @id
   purpose       String
+  relatedTo     String?
   type          ProjectType
   kindName      String
   kind          ProjectKind  @relation(fields: [kindName], references: [name], onDelete: Restrict)

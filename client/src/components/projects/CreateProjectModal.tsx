@@ -64,6 +64,7 @@ export default function CreateProjectModal({
     const payload: CreateProjectPayload = {
       name: form.name.trim(),
       purpose: form.purpose.trim(),
+      relatedTo: form.trackOrApp.trim() || undefined,
       type: (form.requestType as ProjectType) || 'Semiannual',
       kind: form.projectKind || referenceData.projectKinds[0]?.name || '',
       locationId: location?.id ?? 0,

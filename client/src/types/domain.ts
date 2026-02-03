@@ -7,6 +7,7 @@ export type DemandStatus = 'Pending' | 'Approved' | 'Rejected' | 'PartiallyAppro
 export interface Project {
   name: string;
   purpose: string;
+  relatedTo?: string;
   type: ProjectType;
   kind: ProjectKind;
   locationId: number;

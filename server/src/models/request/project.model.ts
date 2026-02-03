@@ -14,6 +14,7 @@ export enum Median {
 export interface Project {
     name: string;
     purpsoe: string;
+    relatedTo?: string;
     type: ProjectType;
     kind: string;
     location: Location;

@@ -98,6 +98,7 @@ export const projectService = {
   create: async (data: {
     name: string;
     purpose: string;
+    relatedTo?: string;
     type: ProjectType;
     kindName: string;
     locationId: number;
@@ -116,6 +117,7 @@ export const projectService = {
     name: string,
     data: {
       purpose?: string;
+      relatedTo?: string | null;
       type?: ProjectType;
       kindName?: string;
       locationId?: number;

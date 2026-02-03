@@ -45,6 +45,7 @@ function mapProject(raw: any): Project {
   return {
     name: raw.name,
     purpose: raw.purpose,
+    relatedTo: raw.relatedTo ?? undefined,
     type: raw.type,
     kind: raw.kindName ?? raw.kind,
     locationId: raw.locationId,

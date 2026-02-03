@@ -77,7 +77,7 @@ export const projectController = {
   create: async (req: Request, res: Response) => {
     try {
       const { username, fullName } = getUserContext(req);
-      const { name, purpose, type, kind, locationId, year, median } = req.body;
+      const { name, purpose, relatedTo, type, kind, locationId, year, median } = req.body;
 
       // Validate: year and median are required if type is Semiannual
       if (type === ProjectType.Semiannual) {
@@ -96,6 +96,7 @@ export const projectController = {
       const project = await projectService.create({
         name,
         purpose,
+        relatedTo: relatedTo || undefined,
         type,
         kindName: kind,
         locationId,
@@ -114,7 +115,7 @@ export const projectController = {
   update: async (req: Request, res: Response) => {
     try {
       const { username, isPrivileged } = getUserContext(req);
-      const { purpose, type, kind, locationId, year, median } = req.body;
+      const { purpose, relatedTo, type, kind, locationId, year, median } = req.body;
 
       // If type is being updated to Semiannual, validate year and median
       if (type === ProjectType.Semiannual) {
@@ -133,6 +134,7 @@ export const projectController = {
       // If type is Emergency, clear year and median
       const updateData: {
         purpose?: string;
+        relatedTo?: string | null;
         type?: ProjectType;
         kindName?: string;
         locationId?: number;
@@ -141,6 +143,7 @@ export const projectController = {
       } = {};
 
       if (purpose !== undefined) updateData.purpose = purpose;
+      if (relatedTo !== undefined) updateData.relatedTo = relatedTo || null;
       if (type !== undefined) updateData.type = type;
       if (kind !== undefined) updateData.kindName = kind;
       if (locationId !== undefined) updateData.locationId = locationId;
