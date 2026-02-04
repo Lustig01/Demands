@@ -15,6 +15,7 @@ model Center {
   name      String   @id
   displayName String?
   branches  Branch[]
+  wallets   Wallet[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -124,10 +125,28 @@ model Capacity {
   available       Float    @default(0)
   location        Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
   resource        Resource @relation(fields: [resourceName, resourceService], references: [name, serviceName], onDelete: Cascade)
+  wallets         Wallet[]
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   @@unique([locationId, resourceName, resourceService])
+}
+
+// ============================================
+// Wallet Model
+// ============================================
+
+model Wallet {
+  id         Int      @id @default(autoincrement())
+  centerName String
+  center     Center   @relation(fields: [centerName], references: [name], onDelete: Cascade)
+  capacityId Int
+  capacity   Capacity @relation(fields: [capacityId], references: [id], onDelete: Cascade)
+  value      Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([centerName, capacityId])
 }
 
 // ============================================

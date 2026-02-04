@@ -20,6 +20,9 @@ import serviceRoutes from "./service/service.routes";
 import resourceRoutes from "./service/resource.routes";
 import capacityRoutes from "./service/capacity.routes";
 
+// Wallet routes
+import walletRoutes from "./wallet/wallet.routes";
+
 // Request routes
 import projectRoutes from "./request/project.routes";
 import demandRoutes from "./request/demand.routes";
@@ -47,6 +50,9 @@ router.use("/locations", locationRoutes);
 router.use("/services", serviceRoutes);
 router.use("/resources", resourceRoutes);
 router.use("/capacities", capacityRoutes);
+
+// Wallet endpoints
+router.use("/wallets", walletRoutes);
 
 // Request endpoints
 router.use("/projects", projectRoutes);

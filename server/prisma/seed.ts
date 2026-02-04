@@ -228,6 +228,39 @@ async function main() {
   console.log(`Created ${capacities.length} capacities`);
 
   // ============================================
+  // Wallet Models
+  // ============================================
+
+  const wallets = await Promise.all([
+    prisma.wallet.upsert({
+      where: { centerName_capacityId: { centerName: 'IT Center', capacityId: capacities[0].id } },
+      update: {},
+      create: { centerName: 'IT Center', capacityId: capacities[0].id, value: 500 },
+    }),
+    prisma.wallet.upsert({
+      where: { centerName_capacityId: { centerName: 'IT Center', capacityId: capacities[1].id } },
+      update: {},
+      create: { centerName: 'IT Center', capacityId: capacities[1].id, value: 2048 },
+    }),
+    prisma.wallet.upsert({
+      where: { centerName_capacityId: { centerName: 'Operations Center', capacityId: capacities[2].id } },
+      update: {},
+      create: { centerName: 'Operations Center', capacityId: capacities[2].id, value: 50 },
+    }),
+    prisma.wallet.upsert({
+      where: { centerName_capacityId: { centerName: 'Finance Center', capacityId: capacities[3].id } },
+      update: {},
+      create: { centerName: 'Finance Center', capacityId: capacities[3].id, value: 800 },
+    }),
+    prisma.wallet.upsert({
+      where: { centerName_capacityId: { centerName: 'Research Center', capacityId: capacities[4].id } },
+      update: {},
+      create: { centerName: 'Research Center', capacityId: capacities[4].id, value: 4096 },
+    }),
+  ]);
+  console.log(`Created ${wallets.length} wallets`);
+
+  // ============================================
   // Request Models
   // ============================================
 
