@@ -73,7 +73,7 @@
       "createdBy": "נוצר ע\"י",
       "resourceService": "שירות משאב",
       "year": "שנה",
-      "relatedTo": "קשור ל",
+      "relatedTo": "מסלול / אפליקציה",
       "median": "חציון",
       "projectType": "סוג פרויקט"
     },
@@ -149,7 +149,7 @@
       "purpose": "ייעוד",
       "demandCount": "דרישות",
       "kind": "סוג פרויקט",
-      "relatedTo": "קשור ל",
+      "relatedTo": "מסלול / אפליקציה",
       "year": "שנה",
       "median": "מחצית"
     },
