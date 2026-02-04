@@ -4,7 +4,10 @@
     "projects": "Projects",
     "demands": "Manage Demands",
     "moderator": "Moderator Management",
-    "settings": "Settings"
+    "settings": "Settings",
+    "create": "Create New",
+    "project": "Project",
+    "demand": "Demand"
   },
   "common": {
     "search": "Search...",

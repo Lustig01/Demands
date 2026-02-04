@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from 'react-oidc-context';
 import { MdStorage, MdPersonOutline, MdLogout, MdExpandMore } from 'react-icons/md';
 import type { NavSection, UserProfile, NavItem } from '../../types/navigation';
+import LanguageSwitcher from '../LanguageSwitcher';
 
 export const SIDEBAR_WIDTH = 280;
 
@@ -144,6 +145,11 @@ export default function Sidebar({ sections, userProfile }: SidebarProps) {
           </div>
         ))}
       </nav>
+
+      {/* Language switcher */}
+      <div className="flex justify-center py-2">
+        <LanguageSwitcher />
+      </div>
 
       {/* User profile */}
       <div className="relative px-3 pb-3" ref={menuRef}>
