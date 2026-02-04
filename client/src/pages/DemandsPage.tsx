@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
-import { MdFilterList } from 'react-icons/md';
+import { MdFilterList, MdAdd } from 'react-icons/md';
 import DemandsTable from '../components/projects/DemandsTable';
+import CreateDemandModal from '../components/projects/CreateDemandModal';
 import PageHeader from '../components/layout/PageHeader';
 import { useDemands } from '../hooks/useDemands';
 import { useCachedProjects } from '../hooks/useCachedProjects';
@@ -10,6 +11,7 @@ import { useReferenceData } from '../hooks/useReferenceData';
 import { useDebounce } from '../hooks/useDebounce';
 import Select from '../components/common/Select';
 import SearchableSelect, { type SearchableSelectOption } from '../components/common/SearchableSelect';
+import type { CreateDemandPayload } from '../api/types';
 
 import Pagination from '../components/common/Pagination';
 
@@ -53,7 +55,10 @@ export default function DemandsPage() {
         [filters, debouncedFilters]
     );
 
-    const { demands, total, totalPages, isLoading, error } = useDemands({
+    // Create Modal State
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+    const { demands, total, totalPages, isLoading, error, createDemand } = useDemands({
         ...debouncedFilters,
         baseName: debouncedFilters.base,
         environmentName: debouncedFilters.environment,
@@ -129,6 +134,11 @@ export default function DemandsPage() {
     ], []);
 
 
+    async function handleCreateDemand(payload: CreateDemandPayload) {
+        await createDemand(payload);
+        setIsCreateOpen(false);
+    }
+
     const handleFilterChange = (key: keyof typeof filters, value: string) => {
         setFilters((prev) => ({ ...prev, [key]: value }));
         setCurrentPage(1); // Reset to first page on filter change
@@ -138,7 +148,17 @@ export default function DemandsPage() {
 
     return (
         <div className="p-6 space-y-6">
-            <PageHeader title={t('nav.demands')} />
+            <div className="flex items-center justify-between">
+                <PageHeader title={t('nav.demands')} />
+                <button
+                    type="button"
+                    onClick={() => setIsCreateOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none whitespace-nowrap"
+                >
+                    <MdAdd size={18} />
+                    {t('projects.createDemand.newDemand')}
+                </button>
+            </div>
 
             {/* Filters Card */}
             <div className="bg-bg-paper rounded-2xl border border-divider shadow-sm p-5">
@@ -318,6 +338,14 @@ export default function DemandsPage() {
                     </>
                 )}
             </div>
+
+            {isCreateOpen && (
+                <CreateDemandModal
+                    isOpen={isCreateOpen}
+                    onClose={() => setIsCreateOpen(false)}
+                    onSubmit={handleCreateDemand}
+                />
+            )}
         </div>
     );
 }

@@ -84,6 +84,22 @@
     },
     "newProject": "New Project",
     "export": "Export",
+    "createDemand": {
+      "title": "New Demand",
+      "newDemand": "New Demand",
+      "project": "Project",
+      "service": "Service",
+      "resource": "Resource",
+      "unit": "Unit",
+      "value": "Value",
+      "type": "Type",
+      "clusterName": "Cluster Name",
+      "clusterNamePlaceholder": "Enter cluster name",
+      "overrideLocation": "Override Location",
+      "submit": "Create Demand",
+      "selectOption": "Select...",
+      "valuePlaceholder": "Enter value"
+    },
     "createProject": {
       "title": "New Project",
       "name": "Project Name",

@@ -84,6 +84,22 @@
     },
     "newProject": "פרויקט חדש",
     "export": "ייצוא",
+    "createDemand": {
+      "title": "דרישה חדשה",
+      "newDemand": "דרישה חדשה",
+      "project": "פרויקט",
+      "service": "שירות",
+      "resource": "משאב",
+      "unit": "יחידה",
+      "value": "כמות",
+      "type": "סוג",
+      "clusterName": "שם אשכול",
+      "clusterNamePlaceholder": "הזן שם אשכול",
+      "overrideLocation": "דריסת מיקום",
+      "submit": "צור דרישה",
+      "selectOption": "בחר...",
+      "valuePlaceholder": "הזן כמות"
+    },
     "createProject": {
       "title": "פרויקט חדש",
       "name": "שם הפרויקט",

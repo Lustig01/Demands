@@ -68,6 +68,17 @@ export interface ProjectFilterParams {
   name?: string;
 }
 
+export interface CreateDemandPayload {
+  projectName: string;
+  serviceName: string;
+  resourceName: string;
+  resourceService: string;
+  value: number;
+  locationId?: number;
+  type: DemandType;
+  clusterName?: string;
+}
+
 export interface DemandFilterParams {
   projectName?: string;
   serviceName?: string;

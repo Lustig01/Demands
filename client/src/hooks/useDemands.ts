@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { fetchDemands } from '../api/apiService';
+import { useState, useEffect, useCallback } from 'react';
+import { fetchDemands, createDemand as apiCreateDemand } from '../api/apiService';
 import type { Demand } from '../types/domain';
-import type { PaginationParams, DemandFilterParams } from '../api/types';
+import type { PaginationParams, DemandFilterParams, CreateDemandPayload } from '../api/types';
 
 interface UseDemandsResult {
   demands: Demand[];
@@ -9,6 +9,7 @@ interface UseDemandsResult {
   error: string | null;
   total: number;
   totalPages: number;
+  createDemand: (payload: CreateDemandPayload) => Promise<void>;
 }
 
 export function useDemands(
@@ -20,6 +21,7 @@ export function useDemands(
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reloadTrigger, setReloadTrigger] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -47,7 +49,12 @@ export function useDemands(
 
     load();
     return () => { controller.abort(); };
-  }, [JSON.stringify(filters), pagination.page, pagination.limit]);
+  }, [JSON.stringify(filters), pagination.page, pagination.limit, reloadTrigger]);
 
-  return { demands, isLoading, error, total, totalPages };
+  const createDemand = useCallback(async (payload: CreateDemandPayload) => {
+    await apiCreateDemand(payload);
+    setReloadTrigger((prev) => prev + 1);
+  }, []);
+
+  return { demands, isLoading, error, total, totalPages, createDemand };
 }

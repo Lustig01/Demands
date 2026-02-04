@@ -4,9 +4,11 @@ import type { Demand, Project } from '../types/domain';
 import type {
   ReferenceItem,
   BranchItem,
+  SectionItem,
   LocationItem,
   ResourceItem,
   CreateProjectPayload,
+  CreateDemandPayload,
   PaginationParams,
   PaginatedResponse,
   ProjectFilterParams,
@@ -136,6 +138,11 @@ export async function fetchDemands(
     data: data.data.map(mapDemand),
     meta: data.meta,
   };
+}
+
+export async function createDemand(payload: CreateDemandPayload): Promise<Demand> {
+  const { data } = await api.post('/demands', payload);
+  return mapDemand(data);
 }
 
 // --- Reference data ---
