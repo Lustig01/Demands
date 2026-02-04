@@ -165,6 +165,11 @@ export async function fetchBranches(): Promise<BranchItem[]> {
   return data;
 }
 
+export async function fetchSections(): Promise<SectionItem[]> {
+  const { data } = await api.get('/sections');
+  return data;
+}
+
 export async function fetchLocations(): Promise<LocationItem[]> {
   const { data } = await api.get('/locations');
   return data;

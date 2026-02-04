@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MdAdd, MdFileDownload, MdSearch } from 'react-icons/md';
+import { MdAdd, MdSearch } from 'react-icons/md';
 import PageHeader from '../components/layout/PageHeader';
 import ProjectsTable from '../components/projects/ProjectsTable';
 import CreateProjectModal from '../components/projects/CreateProjectModal';
@@ -79,13 +79,6 @@ export default function ProjectsPage() {
             >
               <MdAdd size={18} />
               {t('projects.newProject')}
-            </button>
-            <button
-              type="button"
-              className="flex items-center gap-2 px-4 py-2.5 bg-bg-paper border border-divider text-text-primary rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors cursor-pointer whitespace-nowrap"
-            >
-              <MdFileDownload size={18} />
-              {t('projects.export')}
             </button>
           </div>
         </div>

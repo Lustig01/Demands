@@ -37,6 +37,7 @@ model Section {
   branchName     String
   branchCenter   String
   branch         Branch   @relation(fields: [branchName, branchCenter], references: [name, centerName], onDelete: Cascade)
+  projects       Project[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -163,6 +164,12 @@ enum DemandStatus {
   PartiallyApproved
 }
 
+enum Priority {
+  P1
+  P2
+  P3
+}
+
 model Project {
   name          String      @id
   purpose       String
@@ -174,6 +181,11 @@ model Project {
   location      Location    @relation(fields: [locationId], references: [id], onDelete: Cascade)
   year          Int?
   median        Median?
+  priority      Priority?
+  centerName    String?
+  branchName    String?
+  sectionName   String?
+  section       Section?    @relation(fields: [sectionName, branchName, centerName], references: [name, branchName, branchCenter])
   demands       Demand[]
   createdBy     String?
   createdByName String?

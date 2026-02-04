@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MdCheck } from 'react-icons/md';
 import Modal from '../common/Modal';
 import Select from '../common/Select';
 import { useReferenceData } from '../../hooks/useReferenceData';
 import type { ProjectType } from '../../types/domain';
-import type { CreateProjectPayload } from '../../api/types';
+import type { CreateProjectPayload, Priority } from '../../api/types';
+import type { Median } from '../../types/domain';
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -18,13 +18,16 @@ const initialForm = {
   trackOrApp: '',
   center: '',
   branch: '',
+  section: '',
   requestType: '',
-  priority: 'P2',
+  priority: '',
   projectKind: '',
   environment: '',
   network: '',
   base: '',
   purpose: '',
+  median: '',
+  year: '' as unknown as number,
 };
 
 const inputClass =
@@ -38,17 +41,123 @@ export default function CreateProjectModal({
   const { t } = useTranslation();
   const referenceData = useReferenceData();
   const [form, setForm] = useState(initialForm);
-  const [centerLocked, setCenterLocked] = useState(true);
-  const [branchLocked, setBranchLocked] = useState(true);
 
-  function setField(name: string, value: string) {
-    setForm((prev) => ({ ...prev, [name]: value }));
+  // --- Derived State for Hierarchies ---
+
+  // Organization Hierarchy: Center -> Branch -> Section
+  const centerOptions = referenceData.centers.map((v) => ({
+    value: v.name,
+    label: v.displayName || v.name,
+  }));
+
+  const branchOptions = useMemo(() => {
+    if (!form.center) return [];
+    return referenceData.branches
+      .filter((b) => b.centerName === form.center)
+      .map((v) => ({
+        value: v.name,
+        label: v.displayName || v.name,
+      }));
+  }, [referenceData.branches, form.center]);
+
+  const sectionOptions = useMemo(() => {
+    if (!form.branch) return [];
+    // Note: Section also depends on branchCenter, but practically branch names are unique or scoped.
+    // Ideally we check both branchName and branchCenter.
+    return referenceData.sections
+      .filter((s) => s.branchName === form.branch && s.branchCenter === form.center)
+      .map((v) => ({
+        value: v.name,
+        label: v.displayName || v.name,
+      }));
+  }, [referenceData.sections, form.branch, form.center]);
+
+
+  // Location Hierarchy: Network -> Base -> Environment
+  const networkOptions = referenceData.networks.map((v) => ({
+    value: v.name,
+    label: v.displayName || v.name,
+  }));
+
+  const baseOptions = useMemo(() => {
+    if (!form.network) return [];
+    // Filter available locations by network, then extract unique bases
+    const relevantLocations = referenceData.locations.filter(l => l.networkName === form.network);
+    const relevantBaseNames = new Set(relevantLocations.map(l => l.baseName));
+
+    return referenceData.bases
+      .filter(b => relevantBaseNames.has(b.name))
+      .map((v) => ({
+        value: v.name,
+        label: v.displayName || v.name,
+      }));
+  }, [referenceData.locations, referenceData.bases, form.network]);
+
+  const environmentOptions = useMemo(() => {
+    if (!form.network || !form.base) return [];
+    // Filter available locations by network and base, then extract unique environments
+    const relevantLocations = referenceData.locations.filter(
+      l => l.networkName === form.network && l.baseName === form.base
+    );
+    const relevantEnvNames = new Set(relevantLocations.map(l => l.environmentName));
+
+    return referenceData.environments
+      .filter(e => relevantEnvNames.has(e.name))
+      .map((v) => ({
+        value: v.name,
+        label: v.displayName || v.name,
+      }));
+  }, [referenceData.locations, referenceData.environments, form.network, form.base]);
+
+
+  // --- Other Options ---
+
+  const requestTypeOptions = (['Semiannual', 'Emergency'] as ProjectType[]).map(
+    (v) => ({ value: v, label: t(`projects.type.${v}`) })
+  );
+
+  const priorityOptions = (['P1', 'P2', 'P3'] as Priority[]).map((p) => ({
+    value: p,
+    label: t(`projects.createProject.priorityOptions.${p}`),
+  }));
+
+  const projectKindOptions = referenceData.projectKinds.map((v) => ({
+    value: v.name,
+    label: v.displayName || v.name,
+  }));
+
+  const medianOptions = (['H1', 'H2'] as Median[]).map((m) => ({
+    value: m,
+    label: m,
+  }));
+
+  // --- Handlers ---
+
+  function setField(name: keyof typeof initialForm, value: any) {
+    setForm((prev) => {
+      const updates: any = { [name]: value };
+
+      // Reset downstream selections when upstream changes
+      if (name === 'center') {
+        updates.branch = '';
+        updates.section = '';
+      } else if (name === 'branch') {
+        updates.section = '';
+      } else if (name === 'network') {
+        updates.base = '';
+        updates.environment = '';
+      } else if (name === 'base') {
+        updates.environment = '';
+      }
+
+      return { ...prev, ...updates };
+    });
   }
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
-    setField(e.target.name, e.target.value);
+    setField(e.target.name as keyof typeof initialForm, e.target.value);
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -61,68 +170,40 @@ export default function CreateProjectModal({
         l.networkName === form.network
     );
 
+    if (!location) {
+      // Should not happen if UI is correct
+      return;
+    }
+
     const payload: CreateProjectPayload = {
       name: form.name.trim(),
       purpose: form.purpose.trim(),
       relatedTo: form.trackOrApp.trim() || undefined,
       type: (form.requestType as ProjectType) || 'Semiannual',
       kind: form.projectKind || referenceData.projectKinds[0]?.name || '',
-      locationId: location?.id ?? 0,
+      locationId: location.id,
+      centerName: form.center,
+      branchName: form.branch,
+      sectionName: form.section,
+      priority: form.priority as Priority,
     };
 
+    if (form.requestType === 'Semiannual') {
+      if (form.year) payload.year = Number(form.year);
+      if (form.median) payload.median = form.median as Median;
+    }
+
     onSubmit(payload);
-    setForm(initialForm);
-    setCenterLocked(true);
-    setBranchLocked(true);
+    handleClose();
   }
 
   function handleClose() {
     onClose();
     setForm(initialForm);
-    setCenterLocked(true);
-    setBranchLocked(true);
   }
 
-  const requestTypeOptions = (['Semiannual', 'Emergency'] as ProjectType[]).map(
-    (v) => ({ value: v, label: t(`projects.type.${v}`) })
-  );
-
-  const priorityOptions = (['P1', 'P2', 'P3'] as const).map((p) => ({
-    value: p,
-    label: t(`projects.createProject.priorityOptions.${p}`),
-  }));
-
-  const projectKindOptions = referenceData.projectKinds.map((v) => ({
-    value: v.name,
-    label: v.displayName || v.name,
-  }));
-
-  const environmentOptions = referenceData.environments.map((v) => ({
-    value: v.name,
-    label: v.displayName || v.name,
-  }));
-
-  const networkOptions = referenceData.networks.map((v) => ({
-    value: v.name,
-    label: v.displayName || v.name,
-  }));
-
-  const baseOptions = referenceData.bases.map((v) => ({
-    value: v.name,
-    label: v.displayName || v.name,
-  }));
-
-  const centerOptions = referenceData.centers.map((v) => ({
-    value: v.name,
-    label: v.displayName || v.name,
-  }));
-
-  const branchOptions = referenceData.branches.map((v) => ({
-    value: v.name,
-    label: v.displayName || v.name,
-  }));
-
   const placeholder = t('projects.createProject.selectOption');
+  const isSemiannual = form.requestType === 'Semiannual';
 
   return (
     <Modal
@@ -164,65 +245,49 @@ export default function CreateProjectModal({
             />
           </div>
 
-          {/* Center (auto-identified) */}
+          {/* Center */}
           <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-sm font-medium text-text-primary">
-                {t('projects.createProject.center')}
-              </label>
-              <div className="flex items-center gap-2">
-                {centerLocked && (
-                  <span className="flex items-center gap-1 text-xs text-green-600">
-                    <MdCheck size={14} />
-                    {t('projects.createProject.autoIdentified')}
-                  </span>
-                )}
-                <button
-                  type="button"
-                  onClick={() => setCenterLocked((v) => !v)}
-                  className="text-xs text-text-secondary border border-divider rounded-lg px-2.5 py-1 bg-bg-paper hover:bg-gray-50 transition-colors cursor-pointer"
-                >
-                  {t('projects.createProject.change')}
-                </button>
-              </div>
-            </div>
+            <label className="block text-sm font-medium text-text-primary mb-1.5">
+              {t('projects.createProject.center')} <span className="text-danger">*</span>
+            </label>
             <Select
               options={centerOptions}
               value={form.center}
               onChange={(v) => setField('center', v)}
-              disabled={centerLocked}
+              placeholder={placeholder}
             />
           </div>
 
-          {/* Branch (auto-identified) */}
+          {/* Branch */}
           <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-sm font-medium text-text-primary">
-                {t('projects.createProject.branch')}
-              </label>
-              <div className="flex items-center gap-2">
-                {branchLocked && (
-                  <span className="flex items-center gap-1 text-xs text-green-600">
-                    <MdCheck size={14} />
-                    {t('projects.createProject.autoIdentified')}
-                  </span>
-                )}
-                <button
-                  type="button"
-                  onClick={() => setBranchLocked((v) => !v)}
-                  className="text-xs text-text-secondary border border-divider rounded-lg px-2.5 py-1 bg-bg-paper hover:bg-gray-50 transition-colors cursor-pointer"
-                >
-                  {t('projects.createProject.change')}
-                </button>
-              </div>
-            </div>
+            <label className="block text-sm font-medium text-text-primary mb-1.5">
+              {t('projects.createProject.branch')} <span className="text-danger">*</span>
+            </label>
             <Select
               options={branchOptions}
               value={form.branch}
               onChange={(v) => setField('branch', v)}
-              disabled={branchLocked}
+              placeholder={placeholder}
+              disabled={!form.center}
             />
           </div>
+
+          {/* Section */}
+          <div>
+            <label className="block text-sm font-medium text-text-primary mb-1.5">
+              {t('projects.createProject.section')} <span className="text-danger">*</span>
+            </label>
+            <Select
+              options={sectionOptions}
+              value={form.section}
+              onChange={(v) => setField('section', v)}
+              placeholder={placeholder}
+              disabled={!form.branch}
+            />
+          </div>
+
+
+          {/* Project Type & Kind Row Breakdown */}
 
           {/* Request Type */}
           <div>
@@ -241,16 +306,17 @@ export default function CreateProjectModal({
           {/* Priority */}
           <div>
             <label className="block text-sm font-medium text-text-primary mb-1.5">
-              {t('projects.createProject.priority')}
+              {t('projects.createProject.priority')} <span className="text-danger">*</span>
             </label>
             <Select
               options={priorityOptions}
               value={form.priority}
               onChange={(v) => setField('priority', v)}
+              placeholder={placeholder}
             />
           </div>
 
-          {/* Project Type */}
+          {/* Kind */}
           <div>
             <label className="block text-sm font-medium text-text-primary mb-1.5">
               {t('projects.createProject.projectType')}
@@ -263,23 +329,42 @@ export default function CreateProjectModal({
             />
           </div>
 
-          {/* Environment */}
-          <div>
-            <label className="block text-sm font-medium text-text-primary mb-1.5">
-              {t('projects.createProject.environment')}
-            </label>
-            <Select
-              options={environmentOptions}
-              value={form.environment}
-              onChange={(v) => setField('environment', v)}
-              placeholder={placeholder}
-            />
-          </div>
+          {/* Semiannual Fields */}
+          {isSemiannual && (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-1.5">
+                  {t('projects.createProject.year')} <span className="text-danger">*</span>
+                </label>
+                <input
+                  type="number"
+                  name="year"
+                  value={form.year}
+                  onChange={handleChange}
+                  placeholder="202X"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-1.5">
+                  {t('projects.createProject.median')} <span className="text-danger">*</span>
+                </label>
+                <Select
+                  options={medianOptions}
+                  value={form.median}
+                  onChange={(v) => setField('median', v)}
+                  placeholder={placeholder}
+                />
+              </div>
+            </>
+          )}
+
+          {/* Location Hierarchy */}
 
           {/* Network */}
           <div>
             <label className="block text-sm font-medium text-text-primary mb-1.5">
-              {t('projects.createProject.network')}
+              {t('projects.createProject.network')} <span className="text-danger">*</span>
             </label>
             <Select
               options={networkOptions}
@@ -292,17 +377,32 @@ export default function CreateProjectModal({
           {/* Base */}
           <div>
             <label className="block text-sm font-medium text-text-primary mb-1.5">
-              {t('projects.createProject.base')}
+              {t('projects.createProject.base')} <span className="text-danger">*</span>
             </label>
             <Select
               options={baseOptions}
               value={form.base}
               onChange={(v) => setField('base', v)}
               placeholder={placeholder}
+              disabled={!form.network}
             />
           </div>
 
-          {/* Purpose (full width) */}
+          {/* Environment */}
+          <div>
+            <label className="block text-sm font-medium text-text-primary mb-1.5">
+              {t('projects.createProject.environment')} <span className="text-danger">*</span>
+            </label>
+            <Select
+              options={environmentOptions}
+              value={form.environment}
+              onChange={(v) => setField('environment', v)}
+              placeholder={placeholder}
+              disabled={!form.base}
+            />
+          </div>
+
+          {/* Purpose */}
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-text-primary mb-1.5">
               {t('projects.createProject.purpose')}
