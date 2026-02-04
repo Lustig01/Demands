@@ -6,8 +6,39 @@
     "create": "צור חדש",
     "project": "פרויקט",
     "demand": "דרישה",
-    "moderator": "ניהול מדורייטור",
+    "moderator": "ניהול",
     "settings": "הגדרות"
+  },
+  "management": {
+    "tabs": {
+      "capacity": "ניהול קיבולת משאבים"
+    },
+    "capacity": {
+      "add": "הוסף קיבולת",
+      "columns": {
+        "service": "שירות",
+        "resource": "סוג משאב",
+        "unit": "יחידה",
+        "base": "בסיס",
+        "network": "רשת",
+        "environment": "סביבה",
+        "total": "קיבולת כוללת",
+        "allocated": "מוקצה",
+        "available": "זמין",
+        "utilization": "ניצול %",
+        "actions": "פעולות"
+      },
+      "modal": {
+        "createTitle": "הוסף קיבולת חדשה",
+        "editTitle": "ערוך קיבולת",
+        "location": "מיקום",
+        "serviceResource": "שירות ומשאב",
+        "value": "קיבולת כוללת",
+        "cancel": "ביטול",
+        "save": "שמור",
+        "create": "צור"
+      }
+    }
   },
   "common": {
     "search": "חיפוש...",

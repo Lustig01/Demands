@@ -13,6 +13,9 @@ import type {
   PaginatedResponse,
   ProjectFilterParams,
   DemandFilterParams,
+  Capacity,
+  CreateCapacityPayload,
+  UpdateCapacityPayload,
 } from './types';
 
 // --- Response mappers ---
@@ -195,4 +198,25 @@ export async function fetchResources(): Promise<ResourceItem[]> {
 export async function fetchProjectKinds(): Promise<ReferenceItem[]> {
   const { data } = await api.get('/project-kinds');
   return data;
+}
+
+// --- Capacities ---
+
+export async function fetchCapacities(): Promise<Capacity[]> {
+  const { data } = await api.get('/capacities');
+  return data;
+}
+
+export async function createCapacity(payload: CreateCapacityPayload): Promise<Capacity> {
+  const { data } = await api.post('/capacities', payload);
+  return data;
+}
+
+export async function updateCapacity(id: number, payload: UpdateCapacityPayload): Promise<Capacity> {
+  const { data } = await api.put(`/capacities/${id}`, payload);
+  return data;
+}
+
+export async function deleteCapacity(id: number): Promise<void> {
+  await api.delete(`/capacities/${id}`);
 }

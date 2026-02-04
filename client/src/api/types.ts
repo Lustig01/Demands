@@ -95,3 +95,26 @@ export interface DemandFilterParams {
   year?: number;
   relatedTo?: string;
 }
+
+export interface Capacity {
+  id: number;
+  locationId: number;
+  resourceName: string;
+  resourceService: string;
+  value: number;
+  allocated: number;
+  available: number;
+  location: LocationItem;
+  resource: ResourceItem;
+}
+
+export interface CreateCapacityPayload {
+  locationId: number;
+  resourceName: string;
+  resourceService: string;
+  value: number;
+}
+
+export interface UpdateCapacityPayload {
+  value: number;
+}

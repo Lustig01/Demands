@@ -3,11 +3,42 @@
     "dashboard": "Dashboard",
     "projects": "Projects",
     "demands": "Manage Demands",
-    "moderator": "Moderator Management",
+    "moderator": "Management",
     "settings": "Settings",
     "create": "Create New",
     "project": "Project",
     "demand": "Demand"
+  },
+  "management": {
+    "tabs": {
+      "capacity": "Capacity Management"
+    },
+    "capacity": {
+      "add": "Add Capacity",
+      "columns": {
+        "service": "Service",
+        "resource": "Resource Type",
+        "unit": "Unit",
+        "base": "Base",
+        "network": "Network",
+        "environment": "Environment",
+        "total": "Total Capacity",
+        "allocated": "Allocated",
+        "available": "Available",
+        "utilization": "Utilization %",
+        "actions": "Actions"
+      },
+      "modal": {
+        "createTitle": "Add New Capacity",
+        "editTitle": "Edit Capacity",
+        "location": "Location",
+        "serviceResource": "Service & Resource",
+        "value": "Total Capacity",
+        "cancel": "Cancel",
+        "save": "Save",
+        "create": "Create"
+      }
+    }
   },
   "common": {
     "search": "Search...",
