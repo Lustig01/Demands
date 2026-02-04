@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { fetchProjects, createProject as apiCreateProject } from '../api/apiService';
+import { useRefresh } from '../contexts/RefreshContext';
 import type { Project } from '../types/domain';
 import type { CreateProjectPayload, PaginationParams, ProjectFilterParams } from '../api/types';
 
@@ -16,13 +17,12 @@ export function useProjects(
   filters?: ProjectFilterParams,
   pagination?: PaginationParams
 ): UseProjectsResult {
+  const { projectsRefreshTrigger, triggerRefreshProjects } = useRefresh();
   const [projects, setProjects] = useState<Project[]>([]);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const [reloadTrigger, setReloadTrigger] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -52,12 +52,12 @@ export function useProjects(
     return () => {
       controller.abort();
     };
-  }, [JSON.stringify(filters), pagination?.page, pagination?.limit, reloadTrigger]);
+  }, [JSON.stringify(filters), pagination?.page, pagination?.limit, projectsRefreshTrigger]);
 
   const createProject = useCallback(async (payload: CreateProjectPayload) => {
     await apiCreateProject(payload);
-    setReloadTrigger(prev => prev + 1);
-  }, []);
+    triggerRefreshProjects();
+  }, [triggerRefreshProjects]);
 
   return { projects, isLoading, error, total, totalPages, createProject };
 }
