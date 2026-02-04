@@ -2,18 +2,23 @@ import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from 'react-oidc-context';
-import { MdFolder, MdDescription, MdRemoveRedEye, MdSettings } from 'react-icons/md';
+import { MdFolder, MdDescription, MdRemoveRedEye, MdSettings, MdAddCircleOutline } from 'react-icons/md';
 import { useAuthToken } from './hooks/useAuthToken';
+import { ToastProvider } from './components/common/Toast';
 import Layout from './components/layout/Layout';
 import DashboardPage from './pages/DashboardPage';
 import ProjectsPage from './pages/ProjectsPage';
 import DemandsPage from './pages/DemandsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import GlobalModals from './components/layout/GlobalModals';
+import { RefreshProvider } from './contexts/RefreshContext';
+import { ModalProvider, useModal } from './contexts/ModalContext';
 import type { NavSection, UserProfile } from './types/navigation';
 
-export default function App() {
+function AppContent() {
   const { t, i18n } = useTranslation();
   const auth = useAuth();
+  const { openModal } = useModal();
   useAuthToken();
 
   useEffect(() => {
@@ -76,7 +81,26 @@ export default function App() {
 
   // Role-based navigation
   const getNavItems = (role: string) => {
+    // Add Create Tab
+    const createItem = {
+      label: t('nav.create', 'Create'), // Use fallback key if missing
+      icon: MdAddCircleOutline,
+      children: [
+        {
+          label: t('nav.project', 'Project'),
+          icon: MdFolder,
+          onClick: () => openModal('project'),
+        },
+        {
+          label: t('nav.demand', 'Demand'),
+          icon: MdDescription,
+          onClick: () => openModal('demand'),
+        },
+      ],
+    };
+
     const commonItems = [
+      createItem,
       { label: t('nav.projects'), path: '/projects', icon: MdFolder },
       { label: t('nav.demands'), path: '/demands', icon: MdDescription },
     ];
@@ -110,6 +134,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <GlobalModals />
       <Routes>
         <Route
           element={
@@ -127,3 +152,14 @@ export default function App() {
   );
 }
 
+export default function App() {
+  return (
+    <ToastProvider>
+      <RefreshProvider>
+        <ModalProvider>
+          <AppContent />
+        </ModalProvider>
+      </RefreshProvider>
+    </ToastProvider>
+  );
+}

@@ -5,10 +5,18 @@ export interface ReferenceItem {
   displayName?: string;
 }
 
+
 export interface BranchItem {
   name: string;
   centerName: string;
   displayName?: string;
+}
+
+export interface SectionItem {
+  name: string;
+  displayName?: string;
+  branchName: string;
+  branchCenter: string;
 }
 
 export interface LocationItem {
@@ -24,6 +32,8 @@ export interface ResourceItem {
   serviceName: string;
 }
 
+export type Priority = 'P1' | 'P2' | 'P3';
+
 export interface CreateProjectPayload {
   name: string;
   purpose: string;
@@ -33,6 +43,10 @@ export interface CreateProjectPayload {
   locationId: number;
   year?: number;
   median?: Median;
+  priority?: Priority;
+  centerName?: string;
+  branchName?: string;
+  sectionName?: string;
 }
 
 export interface PaginationParams {
@@ -52,6 +66,17 @@ export interface PaginatedResponse<T> {
 
 export interface ProjectFilterParams {
   name?: string;
+}
+
+export interface CreateDemandPayload {
+  projectName: string;
+  serviceName: string;
+  resourceName: string;
+  resourceService: string;
+  value: number;
+  locationId?: number;
+  type: DemandType;
+  clusterName?: string;
 }
 
 export interface DemandFilterParams {

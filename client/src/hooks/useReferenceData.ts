@@ -5,12 +5,13 @@ import {
   fetchNetworks,
   fetchCenters,
   fetchBranches,
+  fetchSections,
   fetchLocations,
   fetchServices,
   fetchResources,
   fetchProjectKinds,
 } from '../api/apiService';
-import type { ReferenceItem, BranchItem, LocationItem, ResourceItem } from '../api/types';
+import type { ReferenceItem, BranchItem, SectionItem, LocationItem, ResourceItem } from '../api/types';
 
 let globalFetchPromise: Promise<
   [
@@ -19,6 +20,7 @@ let globalFetchPromise: Promise<
     ReferenceItem[],
     ReferenceItem[],
     BranchItem[],
+    SectionItem[],
     LocationItem[],
     ReferenceItem[],
     ResourceItem[],
@@ -32,6 +34,7 @@ interface ReferenceData {
   networks: ReferenceItem[];
   centers: ReferenceItem[];
   branches: BranchItem[];
+  sections: SectionItem[];
   locations: LocationItem[];
   services: ReferenceItem[];
   resources: ResourceItem[];
@@ -46,6 +49,7 @@ export function useReferenceData(): ReferenceData {
   const [networks, setNetworks] = useState<ReferenceItem[]>([]);
   const [centers, setCenters] = useState<ReferenceItem[]>([]);
   const [branches, setBranches] = useState<BranchItem[]>([]);
+  const [sections, setSections] = useState<SectionItem[]>([]);
   const [locations, setLocations] = useState<LocationItem[]>([]);
   const [services, setServices] = useState<ReferenceItem[]>([]);
   const [resources, setResources] = useState<ResourceItem[]>([]);
@@ -59,13 +63,14 @@ export function useReferenceData(): ReferenceData {
     async function load() {
       if (globalFetchPromise) {
         try {
-          const [b, e, n, c, br, loc, s, r, pk] = await globalFetchPromise;
+          const [b, e, n, c, br, sec, loc, s, r, pk] = await globalFetchPromise;
           if (!cancelled) {
             setBases(b);
             setEnvironments(e);
             setNetworks(n);
             setCenters(c);
             setBranches(br);
+            setSections(sec);
             setLocations(loc);
             setServices(s);
             setResources(r);
@@ -87,6 +92,7 @@ export function useReferenceData(): ReferenceData {
         fetchNetworks(),
         fetchCenters(),
         fetchBranches(),
+        fetchSections(),
         fetchLocations(),
         fetchServices(),
         fetchResources(),
@@ -94,13 +100,14 @@ export function useReferenceData(): ReferenceData {
       ]);
 
       try {
-        const [b, e, n, c, br, loc, s, r, pk] = await globalFetchPromise;
+        const [b, e, n, c, br, sec, loc, s, r, pk] = await globalFetchPromise;
         if (!cancelled) {
           setBases(b);
           setEnvironments(e);
           setNetworks(n);
           setCenters(c);
           setBranches(br);
+          setSections(sec);
           setLocations(loc);
           setServices(s);
           setResources(r);
@@ -122,5 +129,5 @@ export function useReferenceData(): ReferenceData {
     return () => { cancelled = true; };
   }, []);
 
-  return { bases, environments, networks, centers, branches, locations, services, resources, projectKinds, isLoading, error };
+  return { bases, environments, networks, centers, branches, sections, locations, services, resources, projectKinds, isLoading, error };
 }

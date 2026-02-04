@@ -11,13 +11,24 @@ export enum Median {
     H2,
 };
 
+
+export enum Priority {
+    P1 = 'P1',
+    P2 = 'P2',
+    P3 = 'P3',
+}
+
 export interface Project {
     name: string;
-    purpsoe: string;
+    purpose: string;
     relatedTo?: string;
     type: ProjectType;
     kind: string;
     location: Location;
     year?: number;
     median?: Median;
+    priority?: Priority;
+    centerName?: string;
+    branchName?: string;
+    sectionName?: string;
 }

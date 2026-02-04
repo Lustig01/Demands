@@ -3,6 +3,9 @@
     "dashboard": "דשבורד",
     "projects": "פרוייקטים",
     "demands": "דרישות",
+    "create": "צור חדש",
+    "project": "פרויקט",
+    "demand": "דרישה",
     "moderator": "ניהול מדורייטור",
     "settings": "הגדרות"
   },
@@ -17,7 +20,17 @@
     "next": "הבא",
     "all": "הכל",
     "clearFilters": "נקה סינונים",
-    "filters": "סינון"
+    "filters": "סינון",
+    "submitting": "שולח...",
+    "errors": {
+      "unknown": "אירעה שגיאה בלתי צפויה. נסה שוב."
+    },
+    "toast": {
+      "projectCreated": "הפרויקט נוצר בהצלחה",
+      "projectCreateFailed": "יצירת הפרויקט נכשלה",
+      "demandCreated": "הדרישה נוצרה בהצלחה",
+      "demandCreateFailed": "יצירת הדרישה נכשלה"
+    }
   },
   "app": {
     "title": "מערכת דרישות"
@@ -60,8 +73,8 @@
       "createdBy": "נוצר ע\"י",
       "resourceService": "שירות משאב",
       "year": "שנה",
-      "relatedTo": "קשור ל",
-      "median": "מחצית",
+      "relatedTo": "מסלול / אפליקציה",
+      "median": "חציון",
       "projectType": "סוג פרויקט"
     },
     "status": {
@@ -84,14 +97,33 @@
     },
     "newProject": "פרויקט חדש",
     "export": "ייצוא",
+    "createDemand": {
+      "title": "דרישה חדשה",
+      "newDemand": "דרישה חדשה",
+      "project": "פרויקט",
+      "service": "שירות",
+      "resource": "משאב",
+      "unit": "יחידה",
+      "value": "כמות",
+      "type": "סוג",
+      "clusterName": "שם אשכול",
+      "clusterNamePlaceholder": "הזן שם אשכול",
+      "overrideLocation": "דריסת מיקום",
+      "submit": "צור דרישה",
+      "selectOption": "בחר...",
+      "valuePlaceholder": "הזן כמות"
+    },
     "createProject": {
       "title": "פרויקט חדש",
       "name": "שם הפרויקט",
       "trackOrApp": "מסלול / אפליקציה",
+      "year": "שנה",
+      "median": "חציון",
+      "section": "מדור",
       "center": "מרכז",
       "branch": "ענף",
       "requestType": "סוג בקשה",
-      "priority": "עדיפות",
+      "priority": "תעדוף",
       "projectType": "סוג פרויקט",
       "environment": "סביבה",
       "network": "רשת",
@@ -117,7 +149,7 @@
       "purpose": "ייעוד",
       "demandCount": "דרישות",
       "kind": "סוג פרויקט",
-      "relatedTo": "קשור ל",
+      "relatedTo": "מסלול / אפליקציה",
       "year": "שנה",
       "median": "מחצית"
     },

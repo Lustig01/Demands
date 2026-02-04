@@ -4,7 +4,10 @@
     "projects": "Projects",
     "demands": "Manage Demands",
     "moderator": "Moderator Management",
-    "settings": "Settings"
+    "settings": "Settings",
+    "create": "Create New",
+    "project": "Project",
+    "demand": "Demand"
   },
   "common": {
     "search": "Search...",
@@ -17,7 +20,17 @@
     "next": "Next",
     "all": "All",
     "clearFilters": "Clear all filters",
-    "filters": "Filters"
+    "filters": "Filters",
+    "submitting": "Submitting...",
+    "errors": {
+      "unknown": "An unexpected error occurred. Please try again."
+    },
+    "toast": {
+      "projectCreated": "Project created successfully",
+      "projectCreateFailed": "Failed to create project",
+      "demandCreated": "Demand created successfully",
+      "demandCreateFailed": "Failed to create demand"
+    }
   },
   "app": {
     "title": "Resource Demand System"
@@ -84,6 +97,22 @@
     },
     "newProject": "New Project",
     "export": "Export",
+    "createDemand": {
+      "title": "New Demand",
+      "newDemand": "New Demand",
+      "project": "Project",
+      "service": "Service",
+      "resource": "Resource",
+      "unit": "Unit",
+      "value": "Value",
+      "type": "Type",
+      "clusterName": "Cluster Name",
+      "clusterNamePlaceholder": "Enter cluster name",
+      "overrideLocation": "Override Location",
+      "submit": "Create Demand",
+      "selectOption": "Select...",
+      "valuePlaceholder": "Enter value"
+    },
     "createProject": {
       "title": "New Project",
       "name": "Project Name",

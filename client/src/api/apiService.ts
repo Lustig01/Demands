@@ -4,9 +4,11 @@ import type { Demand, Project } from '../types/domain';
 import type {
   ReferenceItem,
   BranchItem,
+  SectionItem,
   LocationItem,
   ResourceItem,
   CreateProjectPayload,
+  CreateDemandPayload,
   PaginationParams,
   PaginatedResponse,
   ProjectFilterParams,
@@ -138,6 +140,11 @@ export async function fetchDemands(
   };
 }
 
+export async function createDemand(payload: CreateDemandPayload): Promise<Demand> {
+  const { data } = await api.post('/demands', payload);
+  return mapDemand(data);
+}
+
 // --- Reference data ---
 
 export async function fetchBases(): Promise<ReferenceItem[]> {
@@ -162,6 +169,11 @@ export async function fetchCenters(): Promise<ReferenceItem[]> {
 
 export async function fetchBranches(): Promise<BranchItem[]> {
   const { data } = await api.get('/branches');
+  return data;
+}
+
+export async function fetchSections(): Promise<SectionItem[]> {
+  const { data } = await api.get('/sections');
   return data;
 }
 
