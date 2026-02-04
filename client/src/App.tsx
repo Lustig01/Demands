@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from 'react-oidc-context';
 import { MdFolder, MdDescription, MdRemoveRedEye, MdSettings } from 'react-icons/md';
 import { useAuthToken } from './hooks/useAuthToken';
+import { ToastProvider } from './components/common/Toast';
 import Layout from './components/layout/Layout';
 import DashboardPage from './pages/DashboardPage';
 import ProjectsPage from './pages/ProjectsPage';
@@ -109,21 +110,23 @@ export default function App() {
   ];
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          element={
-            <Layout navSections={navSections} userProfile={userProfile} />
-          }
-        >
-          <Route index element={<Navigate to="/projects" replace />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/demands" element={<DemandsPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <ToastProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            element={
+              <Layout navSections={navSections} userProfile={userProfile} />
+            }
+          >
+            <Route index element={<Navigate to="/projects" replace />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/demands" element={<DemandsPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ToastProvider>
   );
 }
 

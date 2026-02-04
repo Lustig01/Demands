@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Modal from '../common/Modal';
 import Select from '../common/Select';
 import SearchableSelect from '../common/SearchableSelect';
+import { useToast } from '../common/Toast';
 import { useReferenceData } from '../../hooks/useReferenceData';
 import { useCachedProjects } from '../../hooks/useCachedProjects';
 import type { CreateDemandPayload } from '../../api/types';
@@ -11,7 +12,7 @@ import type { DemandType } from '../../types/domain';
 interface CreateDemandModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (payload: CreateDemandPayload) => void;
+  onSubmit: (payload: CreateDemandPayload) => Promise<void>;
 }
 
 const initialForm = {
@@ -37,9 +38,12 @@ export default function CreateDemandModal({
   onSubmit,
 }: CreateDemandModalProps) {
   const { t } = useTranslation();
+  const { showToast } = useToast();
   const referenceData = useReferenceData();
   const { projects: allProjects } = useCachedProjects();
   const [form, setForm] = useState(initialForm);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // --- Derived: selected project for location display ---
   const selectedProject = useMemo(
@@ -149,7 +153,7 @@ export default function CreateDemandModal({
     });
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     const payload: CreateDemandPayload = {
@@ -177,13 +181,29 @@ export default function CreateDemandModal({
       }
     }
 
-    onSubmit(payload);
-    handleClose();
+    setError(null);
+    setIsSubmitting(true);
+    try {
+      await onSubmit(payload);
+      showToast(t('common.toast.demandCreated'), 'success');
+      handleClose();
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.error ||
+        err?.message ||
+        t('common.errors.unknown');
+      setError(message);
+      showToast(t('common.toast.demandCreateFailed'), 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function handleClose() {
+    if (isSubmitting) return;
     onClose();
     setForm(initialForm);
+    setError(null);
   }
 
   const placeholder = t('projects.createDemand.selectOption');
@@ -397,12 +417,19 @@ export default function CreateDemandModal({
           </div>
         </div>
 
+        {error && (
+          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-danger">
+            {error}
+          </div>
+        )}
+
         <div className="flex justify-end mt-6">
           <button
             type="submit"
-            className="px-6 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none"
+            disabled={isSubmitting}
+            className="px-6 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {t('projects.createDemand.submit')}
+            {isSubmitting ? t('common.submitting') : t('projects.createDemand.submit')}
           </button>
         </div>
       </form>

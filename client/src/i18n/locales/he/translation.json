@@ -17,7 +17,17 @@
     "next": "הבא",
     "all": "הכל",
     "clearFilters": "נקה סינונים",
-    "filters": "סינון"
+    "filters": "סינון",
+    "submitting": "שולח...",
+    "errors": {
+      "unknown": "אירעה שגיאה בלתי צפויה. נסה שוב."
+    },
+    "toast": {
+      "projectCreated": "הפרויקט נוצר בהצלחה",
+      "projectCreateFailed": "יצירת הפרויקט נכשלה",
+      "demandCreated": "הדרישה נוצרה בהצלחה",
+      "demandCreateFailed": "יצירת הדרישה נכשלה"
+    }
   },
   "app": {
     "title": "מערכת דרישות"

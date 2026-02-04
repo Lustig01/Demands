@@ -32,7 +32,8 @@ export default function ProjectsPage() {
 
   async function handleCreateProject(payload: CreateProjectPayload) {
     await createProject(payload);
-    setIsCreateOpen(false);
+    setSearchName(payload.name);
+    setCurrentPage(1);
   }
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {

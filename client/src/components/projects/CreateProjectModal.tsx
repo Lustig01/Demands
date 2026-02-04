@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Modal from '../common/Modal';
 import Select from '../common/Select';
+import { useToast } from '../common/Toast';
 import { useReferenceData } from '../../hooks/useReferenceData';
 import type { ProjectType } from '../../types/domain';
 import type { CreateProjectPayload, Priority } from '../../api/types';
@@ -10,7 +11,7 @@ import type { Median } from '../../types/domain';
 interface CreateProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (payload: CreateProjectPayload) => void;
+  onSubmit: (payload: CreateProjectPayload) => Promise<void>;
 }
 
 const initialForm = {
@@ -39,8 +40,11 @@ export default function CreateProjectModal({
   onSubmit,
 }: CreateProjectModalProps) {
   const { t } = useTranslation();
+  const { showToast } = useToast();
   const referenceData = useReferenceData();
   const [form, setForm] = useState(initialForm);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // --- Derived State for Hierarchies ---
 
@@ -160,7 +164,7 @@ export default function CreateProjectModal({
     setField(e.target.name as keyof typeof initialForm, e.target.value);
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     const location = referenceData.locations.find(
@@ -170,10 +174,7 @@ export default function CreateProjectModal({
         l.networkName === form.network
     );
 
-    if (!location) {
-      // Should not happen if UI is correct
-      return;
-    }
+    if (!location) return;
 
     const payload: CreateProjectPayload = {
       name: form.name.trim(),
@@ -193,13 +194,29 @@ export default function CreateProjectModal({
       if (form.median) payload.median = form.median as Median;
     }
 
-    onSubmit(payload);
-    handleClose();
+    setError(null);
+    setIsSubmitting(true);
+    try {
+      await onSubmit(payload);
+      showToast(t('common.toast.projectCreated'), 'success');
+      handleClose();
+    } catch (err: any) {
+      const message =
+        err?.response?.data?.error ||
+        err?.message ||
+        t('common.errors.unknown');
+      setError(message);
+      showToast(t('common.toast.projectCreateFailed'), 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   function handleClose() {
+    if (isSubmitting) return;
     onClose();
     setForm(initialForm);
+    setError(null);
   }
 
   const placeholder = t('projects.createProject.selectOption');
@@ -418,12 +435,19 @@ export default function CreateProjectModal({
           </div>
         </div>
 
+        {error && (
+          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-danger">
+            {error}
+          </div>
+        )}
+
         <div className="flex justify-end mt-6">
           <button
             type="submit"
-            className="px-6 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none"
+            disabled={isSubmitting}
+            className="px-6 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {t('projects.createProject.submit')}
+            {isSubmitting ? t('common.submitting') : t('projects.createProject.submit')}
           </button>
         </div>
       </form>

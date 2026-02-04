@@ -136,7 +136,8 @@ export default function DemandsPage() {
 
     async function handleCreateDemand(payload: CreateDemandPayload) {
         await createDemand(payload);
-        setIsCreateOpen(false);
+        setFilters(prev => ({ ...prev, projectName: payload.projectName }));
+        setCurrentPage(1);
     }
 
     const handleFilterChange = (key: keyof typeof filters, value: string) => {

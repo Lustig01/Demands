@@ -17,7 +17,17 @@
     "next": "Next",
     "all": "All",
     "clearFilters": "Clear all filters",
-    "filters": "Filters"
+    "filters": "Filters",
+    "submitting": "Submitting...",
+    "errors": {
+      "unknown": "An unexpected error occurred. Please try again."
+    },
+    "toast": {
+      "projectCreated": "Project created successfully",
+      "projectCreateFailed": "Failed to create project",
+      "demandCreated": "Demand created successfully",
+      "demandCreateFailed": "Failed to create demand"
+    }
   },
   "app": {
     "title": "Resource Demand System"
