@@ -70,6 +70,7 @@ export const demandController = {
         median,
         year,
         relatedTo,
+        emergencyOption,
         page: pageQuery,
         limit: limitQuery,
       } = req.query;
@@ -93,6 +94,7 @@ export const demandController = {
           projectMedian: median as Median | undefined,
           projectYear: year ? Number(year) : undefined,
           projectRelatedTo: relatedTo as string | undefined,
+          projectEmergencyOption: emergencyOption as string | undefined,
         },
         { page, limit }
       );

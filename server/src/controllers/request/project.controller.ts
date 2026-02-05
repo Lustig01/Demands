@@ -77,7 +77,7 @@ export const projectController = {
   create: async (req: Request, res: Response) => {
     try {
       const { username, fullName } = getUserContext(req);
-      const { name, purpose, relatedTo, type, kind, locationId, year, median } = req.body;
+      const { name, purpose, relatedTo, type, kind, locationId, year, median, emergencyOption } = req.body;
 
       // Validate: year and median are required if type is Semiannual
       if (type === ProjectType.Semiannual) {
@@ -93,6 +93,13 @@ export const projectController = {
         }
       }
 
+      // Validate: emergencyOption is required if type is Emergency
+      if (type === ProjectType.Emergency && !emergencyOption) {
+        return res
+          .status(400)
+          .json({ error: "emergencyOption is required for Emergency projects" });
+      }
+
       const project = await projectService.create({
         name,
         purpose,
@@ -102,6 +109,7 @@ export const projectController = {
         locationId,
         year: type === ProjectType.Semiannual ? year : undefined,
         median: type === ProjectType.Semiannual ? median : undefined,
+        emergencyOptionName: type === ProjectType.Emergency ? emergencyOption : undefined,
         createdBy: username,
         createdByName: fullName,
       });
@@ -115,7 +123,7 @@ export const projectController = {
   update: async (req: Request, res: Response) => {
     try {
       const { username, isPrivileged } = getUserContext(req);
-      const { purpose, relatedTo, type, kind, locationId, year, median } = req.body;
+      const { purpose, relatedTo, type, kind, locationId, year, median, emergencyOption } = req.body;
 
       // If type is being updated to Semiannual, validate year and median
       if (type === ProjectType.Semiannual) {
@@ -131,6 +139,13 @@ export const projectController = {
         }
       }
 
+      // If type is being updated to Emergency, validate emergencyOption
+      if (type === ProjectType.Emergency && !emergencyOption) {
+        return res
+          .status(400)
+          .json({ error: "emergencyOption is required for Emergency projects" });
+      }
+
       // If type is Emergency, clear year and median
       const updateData: {
         purpose?: string;
@@ -140,6 +155,7 @@ export const projectController = {
         locationId?: number;
         year?: number | null;
         median?: Median | null;
+        emergencyOptionName?: string | null;
       } = {};
 
       if (purpose !== undefined) updateData.purpose = purpose;
@@ -151,14 +167,19 @@ export const projectController = {
       if (type === ProjectType.Emergency) {
         updateData.year = null;
         updateData.median = null;
+        updateData.emergencyOptionName = emergencyOption;
       } else if (type === ProjectType.Semiannual) {
         updateData.year = year;
         updateData.median = median;
+        updateData.emergencyOptionName = null;
       } else if (year !== undefined) {
         updateData.year = year;
       }
       if (median !== undefined && type !== ProjectType.Emergency) {
         updateData.median = median;
+      }
+      if (emergencyOption !== undefined && type !== ProjectType.Semiannual) {
+        updateData.emergencyOptionName = emergencyOption || null;
       }
 
       const project = await projectService.update(

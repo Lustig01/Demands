@@ -205,11 +205,13 @@ model Project {
   branchName    String?
   sectionName   String?
   section       Section?    @relation(fields: [sectionName, branchName, centerName], references: [name, branchName, branchCenter])
-  demands       Demand[]
-  createdBy     String?
-  createdByName String?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  demands             Demand[]
+  emergencyOptionName String?
+  emergencyOption     EmergencyOption? @relation(fields: [emergencyOptionName], references: [name])
+  createdBy           String?
+  createdByName       String?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
 
   @@index([createdBy])
 }
@@ -247,4 +249,11 @@ model DecisionReason {
   demands     Demand[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model EmergencyOption {
+  name      String    @id
+  projects  Project[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }

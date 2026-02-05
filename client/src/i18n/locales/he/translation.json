@@ -106,7 +106,8 @@
       "year": "שנה",
       "relatedTo": "מסלול / אפליקציה",
       "median": "חציון",
-      "projectType": "סוג פרויקט"
+      "projectType": "סוג פרויקט",
+      "emergencyOption": "אפשרות חירום"
     },
     "status": {
       "Pending": "ממתין",
@@ -171,7 +172,8 @@
         "P1": "דחוף - P1",
         "P2": "רגיל - P2",
         "P3": "נמוך - P3"
-      }
+      },
+      "emergencyOption": "אפשרות חירום"
     }
   },
   "projectsTable": {
@@ -182,7 +184,8 @@
       "kind": "סוג פרויקט",
       "relatedTo": "מסלול / אפליקציה",
       "year": "שנה",
-      "median": "מחצית"
+      "median": "מחצית",
+      "emergencyOption": "אפשרות חירום"
     },
     "noProjects": "אין פרוייקטים להצגה"
   },

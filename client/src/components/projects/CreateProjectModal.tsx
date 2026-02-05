@@ -29,6 +29,7 @@ const initialForm = {
   purpose: '',
   median: '',
   year: '' as unknown as number,
+  emergencyOption: '',
 };
 
 const inputClass =
@@ -135,6 +136,11 @@ export default function CreateProjectModal({
     label: m,
   }));
 
+  const emergencyOptionOptions = referenceData.emergencyOptions.map((v) => ({
+    value: v.name,
+    label: v.name,
+  }));
+
   // --- Handlers ---
 
   function setField(name: keyof typeof initialForm, value: any) {
@@ -194,6 +200,10 @@ export default function CreateProjectModal({
       if (form.median) payload.median = form.median as Median;
     }
 
+    if (form.requestType === 'Emergency' && form.emergencyOption) {
+      payload.emergencyOption = form.emergencyOption;
+    }
+
     setError(null);
     setIsSubmitting(true);
     try {
@@ -221,6 +231,7 @@ export default function CreateProjectModal({
 
   const placeholder = t('projects.createProject.selectOption');
   const isSemiannual = form.requestType === 'Semiannual';
+  const isEmergency = form.requestType === 'Emergency';
 
   return (
     <Modal
@@ -374,6 +385,21 @@ export default function CreateProjectModal({
                 />
               </div>
             </>
+          )}
+
+          {/* Emergency Fields */}
+          {isEmergency && (
+            <div>
+              <label className="block text-sm font-medium text-text-primary mb-1.5">
+                {t('projects.createProject.emergencyOption')} <span className="text-danger">*</span>
+              </label>
+              <Select
+                options={emergencyOptionOptions}
+                value={form.emergencyOption}
+                onChange={(v) => setField('emergencyOption', v)}
+                placeholder={placeholder}
+              />
+            </div>
           )}
 
           {/* Location Hierarchy */}

@@ -46,6 +46,7 @@ export default function DemandsPage() {
         median: '',
         year: '',
         relatedTo: '',
+        emergencyOption: '',
     });
 
     const debouncedFilters = useDebounce(filters, 300);
@@ -69,8 +70,9 @@ export default function DemandsPage() {
         median: debouncedFilters.median as any || undefined,
         year: debouncedFilters.year ? Number(debouncedFilters.year) : undefined,
         relatedTo: debouncedFilters.relatedTo || undefined,
+        emergencyOption: debouncedFilters.emergencyOption || undefined,
     }, { page: currentPage, limit: itemsPerPage });
-    const { bases, environments, networks, services, resources } = useReferenceData();
+    const { bases, environments, networks, services, resources, emergencyOptions } = useReferenceData();
     const { projects: allProjects } = useCachedProjects();
 
     // Derive Options from Reference Data
@@ -133,6 +135,10 @@ export default function DemandsPage() {
         { value: 'H2', label: 'H2' }
     ], []);
 
+    const emergencyOptionOptions = useMemo(() =>
+        emergencyOptions.map(eo => ({ value: eo.name, label: eo.name }))
+    , [emergencyOptions]);
+
 
     async function handleCreateDemand(payload: CreateDemandPayload) {
         await createDemand(payload);
@@ -183,6 +189,7 @@ export default function DemandsPage() {
                                     median: '',
                                     year: '',
                                     relatedTo: '',
+                                    emergencyOption: '',
                                 });
                                 setCurrentPage(1);
                             }}
@@ -310,6 +317,15 @@ export default function DemandsPage() {
                             onChange={(e) => handleFilterChange('relatedTo', e.target.value)}
                             placeholder={t('common.search', 'Search...')}
                             className="w-full px-3 py-1.5 text-sm border border-divider rounded-lg bg-bg-paper text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-primary"
+                        />
+                    </FilterField>
+
+                    <FilterField label={t('projects.columns.emergencyOption')}>
+                        <Select
+                            options={[{ value: '', label: t('common.all') }, ...emergencyOptionOptions]}
+                            value={filters.emergencyOption}
+                            onChange={(val) => handleFilterChange('emergencyOption', val)}
+                            placeholder={t('common.all')}
                         />
                     </FilterField>
                 </div>

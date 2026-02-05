@@ -11,7 +11,6 @@ export enum Median {
     H2,
 };
 
-
 export enum Priority {
     P1 = 'P1',
     P2 = 'P2',
@@ -31,4 +30,5 @@ export interface Project {
     centerName?: string;
     branchName?: string;
     sectionName?: string;
+    emergencyOptionName?: string;
 }

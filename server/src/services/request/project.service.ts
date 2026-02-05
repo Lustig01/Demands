@@ -16,6 +16,7 @@ export const projectService = {
         include: {
           location: true,
           kind: true,
+          emergencyOption: true,
           _count: {
             select: { demands: true },
           },
@@ -60,6 +61,7 @@ export const projectService = {
         include: {
           location: true,
           kind: true,
+          emergencyOption: true,
           _count: {
             select: { demands: true },
           },
@@ -87,6 +89,7 @@ export const projectService = {
       include: {
         location: true,
         kind: true,
+        emergencyOption: true,
         demands: true,
         _count: {
           select: { demands: true },
@@ -104,12 +107,13 @@ export const projectService = {
     locationId: number;
     year?: number;
     median?: Median;
+    emergencyOptionName?: string;
     createdBy?: string;
     createdByName?: string;
   }) => {
     return prisma.project.create({
       data,
-      include: { location: true, kind: true },
+      include: { location: true, kind: true, emergencyOption: true },
     });
   },
 
@@ -123,6 +127,7 @@ export const projectService = {
       locationId?: number;
       year?: number | null;
       median?: Median | null;
+      emergencyOptionName?: string | null;
     },
     createdBy?: string
   ) => {
@@ -137,7 +142,7 @@ export const projectService = {
     return prisma.project.update({
       where: { name },
       data,
-      include: { location: true, kind: true },
+      include: { location: true, kind: true, emergencyOption: true },
     });
   },
 

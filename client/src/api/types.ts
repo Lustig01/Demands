@@ -43,6 +43,7 @@ export interface CreateProjectPayload {
   locationId: number;
   year?: number;
   median?: Median;
+  emergencyOption?: string;
   priority?: Priority;
   centerName?: string;
   branchName?: string;
@@ -94,6 +95,7 @@ export interface DemandFilterParams {
   median?: Median;
   year?: number;
   relatedTo?: string;
+  emergencyOption?: string;
 }
 
 export interface Capacity {

@@ -106,7 +106,8 @@
       "year": "Year",
       "relatedTo": "Related To",
       "median": "Median",
-      "projectType": "Project Type"
+      "projectType": "Project Type",
+      "emergencyOption": "Emergency Option"
     },
     "status": {
       "Pending": "Pending",
@@ -168,7 +169,11 @@
         "P1": "Urgent - P1",
         "P2": "Normal - P2",
         "P3": "Low - P3"
-      }
+      },
+      "emergencyOption": "Emergency Option",
+      "year": "Year",
+      "median": "Median",
+      "section": "Section"
     }
   },
   "projectsTable": {
@@ -179,7 +184,8 @@
       "kind": "Kind",
       "relatedTo": "Related To",
       "year": "Year",
-      "median": "Median"
+      "median": "Median",
+      "emergencyOption": "Emergency Option"
     },
     "noProjects": "No projects to display"
   },

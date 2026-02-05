@@ -295,6 +295,34 @@ async function main() {
   ]);
   console.log(`Created ${projectKinds.length} project kinds`);
 
+  // ============================================
+  // Emergency Option Models
+  // ============================================
+
+  const emergencyOptions = await Promise.all([
+    prisma.emergencyOption.upsert({
+      where: { name: 'Security Breach' },
+      update: {},
+      create: { name: 'Security Breach' },
+    }),
+    prisma.emergencyOption.upsert({
+      where: { name: 'System Failure' },
+      update: {},
+      create: { name: 'System Failure' },
+    }),
+    prisma.emergencyOption.upsert({
+      where: { name: 'Data Loss' },
+      update: {},
+      create: { name: 'Data Loss' },
+    }),
+    prisma.emergencyOption.upsert({
+      where: { name: 'Compliance Requirement' },
+      update: {},
+      create: { name: 'Compliance Requirement' },
+    }),
+  ]);
+  console.log(`Created ${emergencyOptions.length} emergency options`);
+
   // Define Sections map for easier assignment
   const SECTIONS = [
     { name: 'Backend Team', branchName: 'Development', centerName: 'IT Center' },
@@ -306,18 +334,18 @@ async function main() {
 
   const projectList = [
     { name: 'Cloud Migration', purpose: 'Migrate legacy apps to cloud', relatedTo: 'Cloud Platform', type: ProjectType.Semiannual, kind: 'App', year: 2026, median: Median.H1, priority: Priority.P1, sectionId: 2 }, // Cloud Team
-    { name: 'Database Upgrade', purpose: 'Upgrade PostgreSQL clusters', relatedTo: 'DB Management', type: ProjectType.Emergency, kind: 'Track', year: undefined, median: undefined, priority: Priority.P1, sectionId: 0 }, // Backend Team
+    { name: 'Database Upgrade', purpose: 'Upgrade PostgreSQL clusters', relatedTo: 'DB Management', type: ProjectType.Emergency, kind: 'Track', year: undefined, median: undefined, priority: Priority.P1, sectionId: 0, emergencyOption: 'System Failure' }, // Backend Team
     { name: 'New API Platform', purpose: 'Build new API gateway', relatedTo: 'API Gateway', type: ProjectType.Semiannual, kind: 'App', year: 2026, median: Median.H2, priority: Priority.P2, sectionId: 0 }, // Backend Team
     { name: 'DR Setup', purpose: 'Setup disaster recovery site', relatedTo: undefined, type: ProjectType.Semiannual, kind: 'Track', year: 2026, median: Median.H1, priority: Priority.P1, sectionId: 2 }, // Cloud Team
-    { name: 'Dev Environment', purpose: 'New development environment', relatedTo: 'DevOps', type: ProjectType.Emergency, kind: 'App', year: undefined, median: undefined, priority: Priority.P1, sectionId: 2 }, // Cloud Team
+    { name: 'Dev Environment', purpose: 'New development environment', relatedTo: 'DevOps', type: ProjectType.Emergency, kind: 'App', year: undefined, median: undefined, priority: Priority.P1, sectionId: 2, emergencyOption: 'System Failure' }, // Cloud Team
     { name: 'Legacy Decom', purpose: 'Decommission old servers', relatedTo: undefined, type: ProjectType.Semiannual, kind: 'Track', year: 2026, median: Median.H1, priority: Priority.P3, sectionId: 2 }, // Cloud Team
     { name: 'AI Research', purpose: 'AI model training infrastructure', relatedTo: 'ML Pipeline', type: ProjectType.Semiannual, kind: 'App', year: 2026, median: Median.H2, priority: Priority.P2, sectionId: 0 }, // Backend Team
-    { name: 'Network Refresh', purpose: 'Upgrade core switches', relatedTo: 'Network Infra', type: ProjectType.Emergency, kind: 'Track', year: 2026, median: Median.H1, priority: Priority.P1, sectionId: 2 }, // Cloud Team (approx)
+    { name: 'Network Refresh', purpose: 'Upgrade core switches', relatedTo: 'Network Infra', type: ProjectType.Emergency, kind: 'Track', year: 2026, median: Median.H1, priority: Priority.P1, sectionId: 2, emergencyOption: 'Security Breach' }, // Cloud Team (approx)
     { name: 'Storage Expansion', purpose: 'Add more storage capacity', relatedTo: undefined, type: ProjectType.Semiannual, kind: 'Track', year: 2026, median: Median.H2, priority: Priority.P2, sectionId: 2 }, // Cloud Team
-    { name: 'Kubernetes Upgrade', purpose: 'Upgrade K8s clusters', relatedTo: 'K8s Platform', type: ProjectType.Emergency, kind: 'Track', year: 2026, median: Median.H1, priority: Priority.P1, sectionId: 2 }, // Cloud Team
+    { name: 'Kubernetes Upgrade', purpose: 'Upgrade K8s clusters', relatedTo: 'K8s Platform', type: ProjectType.Emergency, kind: 'Track', year: 2026, median: Median.H1, priority: Priority.P1, sectionId: 2, emergencyOption: 'Compliance Requirement' }, // Cloud Team
     { name: 'Security Audit', purpose: 'Infrastructure for security audit', relatedTo: 'Security Suite', type: ProjectType.Semiannual, kind: 'App', year: 2026, median: Median.H2, priority: Priority.P2, sectionId: 0 }, // Backend Team
     { name: 'Big Data Platform', purpose: 'Hadoop cluster setup', relatedTo: 'Big Data', type: ProjectType.Semiannual, kind: 'App', year: 2026, median: Median.H1, priority: Priority.P2, sectionId: 0 }, // Backend Team
-    { name: 'CRM Integration', purpose: 'Integrate new CRM system', relatedTo: 'CRM System', type: ProjectType.Emergency, kind: 'App', year: 2026, median: Median.H2, priority: Priority.P1, sectionId: 1 }, // Frontend Team
+    { name: 'CRM Integration', purpose: 'Integrate new CRM system', relatedTo: 'CRM System', type: ProjectType.Emergency, kind: 'App', year: 2026, median: Median.H2, priority: Priority.P1, sectionId: 1, emergencyOption: 'Data Loss' }, // Frontend Team
     { name: 'ERP Migration', purpose: 'Migrate ERP to cloud', relatedTo: undefined, type: ProjectType.Semiannual, kind: 'Track', year: 2026, median: Median.H1, priority: Priority.P1, sectionId: 4 }, // Payroll (Finance)
     { name: 'Mobile App Backend', purpose: 'Backend for new mobile app', relatedTo: 'Mobile App', type: ProjectType.Semiannual, kind: 'App', year: 2026, median: Median.H2, priority: Priority.P2, sectionId: 0 }, // Backend Team
   ];
@@ -344,6 +372,7 @@ async function main() {
           centerName: section.centerName,
           branchName: section.branchName,
           sectionName: section.name,
+          emergencyOptionName: p.type === ProjectType.Emergency ? (p as any).emergencyOption : undefined,
           createdBy: creator.username,
           createdByName: creator.name,
         },

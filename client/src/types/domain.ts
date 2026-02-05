@@ -13,6 +13,7 @@ export interface Project {
   location: DemandLocation;
   year?: number;
   median?: Median;
+  emergencyOption?: string;
   createdBy: string;
   createdByName: string;
   createdAt: string;
