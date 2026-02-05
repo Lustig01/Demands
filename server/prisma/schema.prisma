@@ -95,11 +95,12 @@ model Location {
 // ============================================
 
 model Service {
-  name      String     @id
-  resources Resource[]
-  demands   Demand[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  name       String     @id
+  moderators String[]   @default([])
+  resources  Resource[]
+  demands    Demand[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model Resource {

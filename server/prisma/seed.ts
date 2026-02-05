@@ -160,12 +160,34 @@ async function main() {
   // Service Models
   // ============================================
 
+  // Service moderator assignments - each service has at least 1 responsible moderator
+  // Moderators: mod1-mod7 (defined in Keycloak realm)
   const services = await Promise.all([
-    prisma.service.upsert({ where: { name: 'Compute' }, update: {}, create: { name: 'Compute' } }),
-    prisma.service.upsert({ where: { name: 'Storage' }, update: {}, create: { name: 'Storage' } }),
-    prisma.service.upsert({ where: { name: 'Network' }, update: {}, create: { name: 'Network' } }),
-    prisma.service.upsert({ where: { name: 'Database' }, update: {}, create: { name: 'Database' } }),
-    prisma.service.upsert({ where: { name: 'Container' }, update: {}, create: { name: 'Container' } }),
+    prisma.service.upsert({
+      where: { name: 'Compute' },
+      update: { moderators: ['mod1', 'mod2'] },
+      create: { name: 'Compute', moderators: ['mod1', 'mod2'] },
+    }),
+    prisma.service.upsert({
+      where: { name: 'Storage' },
+      update: { moderators: ['mod3', 'mod4'] },
+      create: { name: 'Storage', moderators: ['mod3', 'mod4'] },
+    }),
+    prisma.service.upsert({
+      where: { name: 'Network' },
+      update: { moderators: ['mod5'] },
+      create: { name: 'Network', moderators: ['mod5'] },
+    }),
+    prisma.service.upsert({
+      where: { name: 'Database' },
+      update: { moderators: ['mod6', 'mod1'] },
+      create: { name: 'Database', moderators: ['mod6', 'mod1'] },
+    }),
+    prisma.service.upsert({
+      where: { name: 'Container' },
+      update: { moderators: ['mod7', 'mod2'] },
+      create: { name: 'Container', moderators: ['mod7', 'mod2'] },
+    }),
   ]);
   console.log(`Created ${services.length} services`);
 
@@ -270,6 +292,11 @@ async function main() {
     admin2: { username: 'admin2', name: 'Admin Two' },
     mod1: { username: 'mod1', name: 'Moderator One' },
     mod2: { username: 'mod2', name: 'Moderator Two' },
+    mod3: { username: 'mod3', name: 'Moderator Three' },
+    mod4: { username: 'mod4', name: 'Moderator Four' },
+    mod5: { username: 'mod5', name: 'Moderator Five' },
+    mod6: { username: 'mod6', name: 'Moderator Six' },
+    mod7: { username: 'mod7', name: 'Moderator Seven' },
     user1: { username: 'user1', name: 'User One' },
     user2: { username: 'user2', name: 'User Two' },
     user3: { username: 'user3', name: 'User Three' },
