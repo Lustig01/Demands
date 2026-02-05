@@ -94,7 +94,7 @@ export default function SearchableSelect({
                         <div className="relative">
                             <MdSearch
                                 size={18}
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary"
+                                className="absolute start-3 top-1/2 -translate-y-1/2 text-text-secondary"
                             />
                             <input
                                 ref={inputRef}
@@ -102,7 +102,7 @@ export default function SearchableSelect({
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 placeholder={t('common.search', 'Search...')}
-                                className="w-full pl-9 pr-3 py-2 text-sm border border-divider rounded-lg bg-white focus:outline-none focus:border-primary text-text-primary"
+                                className="w-full ps-9 pe-3 py-2 text-sm border border-divider rounded-lg bg-white focus:outline-none focus:border-primary text-text-primary"
                             />
                         </div>
                     </div>
@@ -122,8 +122,8 @@ export default function SearchableSelect({
                                         setOpen(false);
                                     }}
                                     className={`w-full px-4 py-2 text-sm text-start rounded-lg border-none cursor-pointer transition-colors ${option.value === value
-                                            ? 'bg-primary-light text-primary font-medium'
-                                            : 'text-text-primary hover:bg-gray-100'
+                                        ? 'bg-primary-light text-primary font-medium'
+                                        : 'text-text-primary hover:bg-gray-100'
                                         }`}
                                 >
                                     {option.label}

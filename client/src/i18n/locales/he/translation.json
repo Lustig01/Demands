@@ -61,6 +61,86 @@
       "projectCreateFailed": "יצירת הפרויקט נכשלה",
       "demandCreated": "הדרישה נוצרה בהצלחה",
       "demandCreateFailed": "יצירת הדרישה נכשלה"
+    },
+    "name": "שם",
+    "displayName": "שם תצוגה",
+    "add": "הוסף",
+    "edit": "ערוך",
+    "delete": "מחק",
+    "actions": "פעולות",
+    "save": "שמור",
+    "cancel": "ביטול",
+    "saving": "שומר...",
+    "select": "בחר...",
+    "moderators": "כל המנהלים",
+    "typeAndEnter": "הקלד ולחץ ENTER..."
+  },
+  "settings": {
+    "subtitle": "ניהול ישויות מערכת והגדרות",
+    "mainTabs": {
+      "infrastructure": "תשתיות",
+      "organization": "ארגון",
+      "options": "אפשרויות",
+      "services": "שירותים"
+    },
+    "tabs": {
+      "base": "בסיס",
+      "environment": "סביבה",
+      "network": "רשת",
+      "location": "מיקום",
+      "center": "מרכז",
+      "branch": "ענף",
+      "section": "מדור",
+      "emergency": "אפשרויות חירום",
+      "projectKind": "סוג פרויקט",
+      "demandReason": "סיבת החלטה",
+      "service": "שירות",
+      "resource": "משאב"
+    },
+    "base": {
+      "title": "בסיסים"
+    },
+    "environment": {
+      "title": "סביבות"
+    },
+    "network": {
+      "title": "רשתות"
+    },
+    "location": {
+      "title": "מיקומים",
+      "base": "בסיס",
+      "environment": "סביבה",
+      "network": "רשת"
+    },
+    "center": {
+      "title": "מרכזים"
+    },
+    "branch": {
+      "title": "ענפים",
+      "center": "מרכז"
+    },
+    "section": {
+      "title": "מדורים",
+      "branch": "ענף",
+      "center": "מרכז"
+    },
+    "emergency": {
+      "title": "אפשרויות חירום"
+    },
+    "projectKind": {
+      "title": "סוגי פרויקטים"
+    },
+    "demandReason": {
+      "title": "סיבות החלטה"
+    },
+    "service": {
+      "title": "שירותים",
+      "moderatorsDesc": "הקלד ולחץ ENTER להוספת מנהל"
+    },
+    "resource": {
+      "title": "משאבים",
+      "service": "שירות",
+      "unit": "יחידה"
     }
   },
   "app": {

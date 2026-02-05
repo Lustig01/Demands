@@ -10,6 +10,7 @@ import DashboardPage from './pages/DashboardPage';
 import ProjectsPage from './pages/ProjectsPage';
 import DemandsPage from './pages/DemandsPage';
 import ManagementPage from './pages/ManagementPage';
+import SettingsPage from './pages/SettingsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import GlobalModals from './components/layout/GlobalModals';
 import { RefreshProvider } from './contexts/RefreshContext';
@@ -147,6 +148,7 @@ function AppContent() {
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/demands" element={<DemandsPage />} />
           <Route path="/management" element={<ManagementPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
