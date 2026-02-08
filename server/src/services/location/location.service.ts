@@ -53,7 +53,7 @@ export const locationService = {
 
   update: async (
     id: number,
-    data: { baseName?: string; environmentName?: string; networkName?: string }
+    data: { baseName?: string; environmentName?: string; networkName?: string; isActive?: boolean }
   ) => {
     return prisma.location.update({
       where: { id },

@@ -38,8 +38,8 @@ export const centerController = {
 
   update: async (req: Request, res: Response) => {
     try {
-      const { name: newName, displayName } = req.body;
-      const center = await centerService.update(req.params.name, newName, displayName);
+      const { name, displayName, isActive } = req.body;
+      const center = await centerService.update(req.params.name, { name, displayName, isActive });
       res.json(center);
     } catch (error) {
       console.error("centerController.update error:", error);

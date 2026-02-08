@@ -1,16 +1,41 @@
 import prisma from "../../lib/prisma";
-import { DemandType, DemandStatus } from "@prisma/client";
+import { DemandType, DemandStatus, ProjectType, Median } from "@prisma/client";
+import { NotFoundError } from "../../lib/errors";
 
 export const demandService = {
-  findAll: async () => {
-    return prisma.demand.findMany({
-      include: {
-        project: true,
-        service: true,
-        resource: true,
-        location: true,
+  findAll: async (
+    createdBy?: string,
+    pagination?: { page: number; limit: number }
+  ) => {
+    const { page = 1, limit = 10 } = pagination || {};
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      prisma.demand.findMany({
+        where: createdBy ? { createdBy } : undefined,
+        include: {
+          project: true,
+          service: true,
+          resource: true,
+          location: true,
+        },
+        skip,
+        take: limit,
+      }),
+      prisma.demand.count({
+        where: createdBy ? { createdBy } : undefined,
+      }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
       },
-    });
+    };
   },
 
   findById: async (id: number) => {
@@ -25,30 +50,30 @@ export const demandService = {
     });
   },
 
-  findByFilters: async (filters: {
-    projectName?: string;
-    resourceName?: string;
-    resourceService?: string;
-    locationId?: number;
-    baseName?: string;
-    environmentName?: string;
-    networkName?: string;
-    type?: DemandType;
-    status?: DemandStatus;
-  }) => {
-    const where: {
+  findByFilters: async (
+    filters: {
       projectName?: string;
       resourceName?: string;
       resourceService?: string;
       locationId?: number;
+      baseName?: string;
+      environmentName?: string;
+      networkName?: string;
       type?: DemandType;
       status?: DemandStatus;
-      location?: {
-        baseName?: string;
-        environmentName?: string;
-        networkName?: string;
-      };
-    } = {};
+      createdBy?: string;
+      projectType?: ProjectType;
+      projectMedian?: Median;
+      projectYear?: number;
+      projectRelatedTo?: string;
+      projectEmergencyOption?: string;
+    },
+    pagination?: { page: number; limit: number }
+  ) => {
+    const { page = 1, limit = 10 } = pagination || {};
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
 
     if (filters.projectName) where.projectName = filters.projectName;
     if (filters.resourceName) where.resourceName = filters.resourceName;
@@ -56,6 +81,7 @@ export const demandService = {
     if (filters.locationId) where.locationId = filters.locationId;
     if (filters.type) where.type = filters.type;
     if (filters.status) where.status = filters.status;
+    if (filters.createdBy) where.createdBy = filters.createdBy;
 
     if (filters.baseName || filters.environmentName || filters.networkName) {
       where.location = {};
@@ -64,15 +90,41 @@ export const demandService = {
       if (filters.networkName) where.location.networkName = filters.networkName;
     }
 
-    return prisma.demand.findMany({
-      where,
-      include: {
-        project: true,
-        service: true,
-        resource: true,
-        location: true,
+    if (filters.projectType || filters.projectMedian || filters.projectYear || filters.projectRelatedTo || filters.projectEmergencyOption) {
+      where.project = {};
+      if (filters.projectType) where.project.type = filters.projectType;
+      if (filters.projectMedian) where.project.median = filters.projectMedian;
+      if (filters.projectYear) where.project.year = filters.projectYear;
+      if (filters.projectRelatedTo) {
+        where.project.relatedTo = { contains: filters.projectRelatedTo, mode: 'insensitive' };
+      }
+      if (filters.projectEmergencyOption) where.project.emergencyOptionName = filters.projectEmergencyOption;
+    }
+
+    const [data, total] = await Promise.all([
+      prisma.demand.findMany({
+        where,
+        include: {
+          project: true,
+          service: true,
+          resource: true,
+          location: true,
+        },
+        skip,
+        take: limit,
+      }),
+      prisma.demand.count({ where }),
+    ]);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
       },
-    });
+    };
   },
 
   create: async (data: {
@@ -84,6 +136,11 @@ export const demandService = {
     locationId: number;
     type: DemandType;
     clusterName?: string;
+    centerName: string;
+    branchName: string;
+    sectionName: string;
+    createdBy?: string;
+    createdByName?: string;
   }) => {
     return prisma.demand.create({
       data: {
@@ -109,8 +166,20 @@ export const demandService = {
       locationId?: number;
       type?: DemandType;
       clusterName?: string;
-    }
+      centerName?: string;
+      branchName?: string;
+      sectionName?: string;
+    },
+    createdBy?: string
   ) => {
+    if (createdBy) {
+      const existing = await prisma.demand.findFirst({
+        where: { id, createdBy },
+      });
+      if (!existing) {
+        throw new NotFoundError("Demand");
+      }
+    }
     return prisma.demand.update({
       where: { id },
       data,
@@ -123,7 +192,15 @@ export const demandService = {
     });
   },
 
-  delete: async (id: number) => {
+  delete: async (id: number, createdBy?: string) => {
+    if (createdBy) {
+      const existing = await prisma.demand.findFirst({
+        where: { id, createdBy },
+      });
+      if (!existing) {
+        throw new NotFoundError("Demand");
+      }
+    }
     return prisma.demand.delete({
       where: { id },
     });

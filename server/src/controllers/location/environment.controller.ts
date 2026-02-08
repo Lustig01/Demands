@@ -38,8 +38,8 @@ export const environmentController = {
 
   update: async (req: Request, res: Response) => {
     try {
-      const { name: newName, displayName } = req.body;
-      const environment = await environmentService.update(req.params.name, newName, displayName);
+      const { name, displayName, isActive } = req.body;
+      const environment = await environmentService.update(req.params.name, { name, displayName, isActive });
       res.json(environment);
     } catch (error) {
       console.error("environmentController.update error:", error);

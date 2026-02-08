@@ -1,0 +1,281 @@
+{
+  "nav": {
+    "dashboard": "דשבורד",
+    "projects": "פרוייקטים",
+    "demands": "דרישות",
+    "create": "צור חדש",
+    "project": "פרויקט",
+    "demand": "דרישה",
+    "moderator": "ניהול",
+    "settings": "הגדרות"
+  },
+  "management": {
+    "tabs": {
+      "capacity": "ניהול קיבולת משאבים"
+    },
+    "capacity": {
+      "add": "הוסף קיבולת",
+      "columns": {
+        "service": "שירות",
+        "resource": "סוג משאב",
+        "unit": "יחידה",
+        "base": "בסיס",
+        "network": "רשת",
+        "environment": "סביבה",
+        "total": "קיבולת כוללת",
+        "allocated": "מוקצה",
+        "available": "זמין",
+        "utilization": "ניצול %",
+        "actions": "פעולות"
+      },
+      "modal": {
+        "createTitle": "הוסף קיבולת חדשה",
+        "editTitle": "ערוך קיבולת",
+        "location": "מיקום",
+        "serviceResource": "שירות ומשאב",
+        "value": "קיבולת כוללת",
+        "cancel": "ביטול",
+        "save": "שמור",
+        "create": "צור"
+      }
+    }
+  },
+  "common": {
+    "search": "חיפוש...",
+    "noResults": "לא נמצאו תוצאות",
+    "showing": "מציג",
+    "to": "עד",
+    "of": "מתוך",
+    "results": "תוצאות",
+    "previous": "הקודם",
+    "next": "הבא",
+    "all": "הכל",
+    "clearFilters": "נקה סינונים",
+    "filters": "סינון",
+    "submitting": "שולח...",
+    "errors": {
+      "unknown": "אירעה שגיאה בלתי צפויה. נסה שוב."
+    },
+    "toast": {
+      "projectCreated": "הפרויקט נוצר בהצלחה",
+      "projectCreateFailed": "יצירת הפרויקט נכשלה",
+      "demandCreated": "הדרישה נוצרה בהצלחה",
+      "demandCreateFailed": "יצירת הדרישה נכשלה"
+    },
+    "name": "שם",
+    "displayName": "שם תצוגה",
+    "add": "הוסף",
+    "edit": "ערוך",
+    "delete": "מחק",
+    "actions": "פעולות",
+    "save": "שמור",
+    "cancel": "ביטול",
+    "saving": "שומר...",
+    "select": "בחר...",
+    "moderators": "כל המנהלים",
+    "typeAndEnter": "הקלד ולחץ ENTER...",
+    "active": "פעיל",
+    "updated": "עודכן בהצלחה"
+  },
+  "settings": {
+    "subtitle": "ניהול ישויות מערכת והגדרות",
+    "mainTabs": {
+      "infrastructure": "תשתיות",
+      "organization": "ארגון",
+      "options": "אפשרויות",
+      "services": "שירותים"
+    },
+    "tabs": {
+      "base": "בסיס",
+      "environment": "סביבה",
+      "network": "רשת",
+      "location": "מיקום",
+      "center": "מרכז",
+      "branch": "ענף",
+      "section": "מדור",
+      "emergency": "אפשרויות חירום",
+      "projectKind": "סוג פרויקט",
+      "demandReason": "סיבת החלטה",
+      "service": "שירות",
+      "resource": "משאב"
+    },
+    "base": {
+      "title": "בסיסים"
+    },
+    "environment": {
+      "title": "סביבות"
+    },
+    "network": {
+      "title": "רשתות"
+    },
+    "location": {
+      "title": "מיקומים",
+      "base": "בסיס",
+      "environment": "סביבה",
+      "network": "רשת"
+    },
+    "center": {
+      "title": "מרכזים"
+    },
+    "branch": {
+      "title": "ענפים",
+      "center": "מרכז"
+    },
+    "section": {
+      "title": "מדורים",
+      "branch": "ענף",
+      "center": "מרכז"
+    },
+    "emergency": {
+      "title": "אפשרויות חירום"
+    },
+    "projectKind": {
+      "title": "סוגי פרויקטים"
+    },
+    "demandReason": {
+      "title": "סיבות החלטה"
+    },
+    "service": {
+      "title": "שירותים",
+      "moderatorsDesc": "הקלד ולחץ ENTER להוספת מנהל"
+    },
+    "resource": {
+      "title": "משאבים",
+      "service": "שירות",
+      "unit": "יחידה"
+    }
+  },
+  "app": {
+    "title": "מערכת דרישות"
+  },
+  "user": {
+    "profile": "פרופיל",
+    "logout": "התנתק"
+  },
+  "dashboard": {
+    "title": "Dashboard - השוואות ומגמות",
+    "subtitle": "ניתוח נתונים והשוואות בין תקופות - פנימי בלבד",
+    "placeholder": "תוכן העמוד יופיע כאן"
+  },
+  "projects": {
+    "title": "הפרוייקטים שלי",
+    "subtitle": "צפייה וניהול דרישות הפרוייקטים שלך",
+    "demands": "דרישות",
+    "searchPlaceholder": "חיפוש...",
+    "showRemoved": "הצג דרישות שהוסרו",
+    "recordCount": "מציג {{shown}} מתוך {{total}} רשומות",
+    "noDemands": "אין דרישות להצגה",
+    "projectNotFound": "הפרוייקט לא נמצא",
+    "backToProjects": "חזרה לפרוייקטים",
+    "columns": {
+      "id": "מזהה",
+      "project": "פרוייקט",
+      "service": "שירות",
+      "resource": "משאב",
+      "value": "כמות",
+      "unit": "יחידה",
+      "type": "סוג",
+      "base": "בסיס",
+      "environment": "סביבה",
+      "network": "רשת",
+      "status": "סטטוס",
+      "approvedValue": "כמות מאושרת",
+      "approvedDate": "תאריך אישור",
+      "decisionReason": "סיבת החלטה",
+      "createdAt": "תאריך יצירה",
+      "createdBy": "נוצר ע\"י",
+      "resourceService": "שירות משאב",
+      "year": "שנה",
+      "relatedTo": "מסלול / אפליקציה",
+      "median": "חציון",
+      "projectType": "סוג פרויקט",
+      "emergencyOption": "אפשרות חירום",
+      "center": "מרכז",
+      "branch": "ענף",
+      "section": "מדור"
+    },
+    "status": {
+      "Pending": "ממתין",
+      "Approved": "מאושר",
+      "Rejected": "נדחה",
+      "PartiallyApproved": "אושר חלקית"
+    },
+    "type": {
+      "Semiannual": "חצי שנתי",
+      "Emergency": "חירום"
+    },
+    "kind": {
+      "App": "אפליקציה",
+      "Track": "מסלול"
+    },
+    "demandType": {
+      "New": "חדש",
+      "Extension": "הרחבה"
+    },
+    "newProject": "פרויקט חדש",
+    "export": "ייצוא",
+    "createDemand": {
+      "title": "דרישה חדשה",
+      "newDemand": "דרישה חדשה",
+      "project": "פרויקט",
+      "service": "שירות",
+      "resource": "משאב",
+      "unit": "יחידה",
+      "value": "כמות",
+      "type": "סוג",
+      "clusterName": "שם אשכול",
+      "clusterNamePlaceholder": "הזן שם אשכול",
+      "overrideLocation": "דריסת מיקום",
+      "overrideOrganization": "דריסת ארגון",
+      "submit": "צור דרישה",
+      "selectOption": "בחר...",
+      "valuePlaceholder": "הזן כמות"
+    },
+    "createProject": {
+      "title": "פרויקט חדש",
+      "name": "שם הפרויקט",
+      "trackOrApp": "מסלול / אפליקציה",
+      "year": "שנה",
+      "median": "חציון",
+      "section": "מדור",
+      "center": "מרכז",
+      "branch": "ענף",
+      "requestType": "סוג בקשה",
+      "priority": "תעדוף",
+      "projectType": "סוג פרויקט",
+      "environment": "סביבה",
+      "network": "רשת",
+      "base": "בסיס",
+      "purpose": "ייעוד הפרויקט",
+      "submit": "צור פרויקט",
+      "autoIdentified": "זוהה אוטומטית",
+      "change": "שינוי",
+      "namePlaceholder": "טרת הפרויקט / התפוקה שהפרויקט מביא (לא שם טכני)",
+      "trackOrAppPlaceholder": "לאיזה מסלול/אפליקציה הפרויקט שייך? (אם רלוונטי)",
+      "purposePlaceholder": "פירוט קצר: למה הפרויקט קיים, למי הוא מיועד, ואיזה ערך הוא נותן",
+      "selectOption": "בחר...",
+      "priorityOptions": {
+        "P1": "דחוף - P1",
+        "P2": "רגיל - P2",
+        "P3": "נמוך - P3"
+      },
+      "emergencyOption": "אפשרות חירום"
+    }
+  },
+  "projectsTable": {
+    "columns": {
+      "name": "שם פרויקט",
+      "purpose": "ייעוד",
+      "demandCount": "דרישות",
+      "kind": "סוג פרויקט",
+      "relatedTo": "מסלול / אפליקציה",
+      "year": "שנה",
+      "median": "מחצית",
+      "emergencyOption": "אפשרות חירום"
+    },
+    "noProjects": "אין פרוייקטים להצגה"
+  },
+  "notFound": {
+    "message": "העמוד המבוקש לא נמצא"
+  }
+}

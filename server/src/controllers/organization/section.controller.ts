@@ -51,8 +51,8 @@ export const sectionController = {
   update: async (req: Request, res: Response) => {
     try {
       const { centerName, branchName, name } = req.params;
-      const { name: newName, displayName } = req.body;
-      const section = await sectionService.update(name, branchName, centerName, newName, displayName);
+      const { name: newName, displayName, isActive } = req.body;
+      const section = await sectionService.update(name, branchName, centerName, { name: newName, displayName, isActive });
       res.json(section);
     } catch (error) {
       console.error("sectionController.update error:", error);
