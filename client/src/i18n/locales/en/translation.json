@@ -324,6 +324,16 @@
     "meta": "Information",
     "viewDemands": "View Demands"
   },
+  "demandSidebar": {
+    "demandDetails": "Demand Details",
+    "approval": "Approval",
+    "location": "Location",
+    "organization": "Organization",
+    "projectInfo": "Project Information",
+    "meta": "Information",
+    "clusterName": "Cluster Name",
+    "projectType": "Project Type"
+  },
   "notFound": {
     "message": "The requested page was not found"
   }

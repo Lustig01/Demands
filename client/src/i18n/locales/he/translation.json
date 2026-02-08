@@ -318,6 +318,16 @@
     "meta": "מידע",
     "viewDemands": "צפייה בדרישות"
   },
+  "demandSidebar": {
+    "demandDetails": "פרטי דרישה",
+    "approval": "אישור",
+    "location": "מיקום",
+    "organization": "ארגון",
+    "projectInfo": "פרטי פרויקט",
+    "meta": "מידע",
+    "clusterName": "שם אשכול",
+    "projectType": "סוג פרויקט"
+  },
   "notFound": {
     "message": "העמוד המבוקש לא נמצא"
   }

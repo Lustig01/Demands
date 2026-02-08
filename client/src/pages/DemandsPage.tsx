@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { MdFilterList, MdAdd } from 'react-icons/md';
 import DemandsTable from '../components/projects/DemandsTable';
 import CreateDemandModal from '../components/projects/CreateDemandModal';
+import DemandDetailSidebar from '../components/demands/DemandDetailSidebar';
 import PageHeader from '../components/layout/PageHeader';
 import { useDemands } from '../hooks/useDemands';
 import { useCachedProjects } from '../hooks/useCachedProjects';
@@ -12,6 +13,7 @@ import { useDebounce } from '../hooks/useDebounce';
 import Select from '../components/common/Select';
 import SearchableSelect, { type SearchableSelectOption } from '../components/common/SearchableSelect';
 import type { CreateDemandPayload } from '../api/types';
+import type { Demand, Project } from '../types/domain';
 
 import Pagination from '../components/common/Pagination';
 
@@ -62,6 +64,9 @@ export default function DemandsPage() {
     // Create Modal State
     const [isCreateOpen, setIsCreateOpen] = useState(false);
 
+    // Sidebar State
+    const [selectedDemand, setSelectedDemand] = useState<Demand | null>(null);
+
     const { demands, total, totalPages, isLoading, error, createDemand } = useDemands({
         ...debouncedFilters,
         baseName: debouncedFilters.base,
@@ -80,6 +85,19 @@ export default function DemandsPage() {
     }, { page: currentPage, limit: itemsPerPage });
     const { bases, environments, networks, services, resources, emergencyOptions, centers, branches, sections } = useReferenceData();
     const { projects: allProjects } = useCachedProjects();
+
+    // Project map for table lookups
+    const projectMap = useMemo(() => {
+        const map = new Map<string, Project>();
+        allProjects.forEach(p => map.set(p.name, p));
+        return map;
+    }, [allProjects]);
+
+    // Get full project for selected demand (for sidebar)
+    const selectedProject = useMemo(() => {
+        if (!selectedDemand) return null;
+        return allProjects.find(p => p.name === selectedDemand.projectName) || null;
+    }, [selectedDemand, allProjects]);
 
     // Derive Options from Reference Data
     const projectOptions: SearchableSelectOption[] = useMemo(() =>
@@ -378,7 +396,13 @@ export default function DemandsPage() {
                     <>
                         {/* Table */}
                         <div className={`overflow-x-auto transition-opacity duration-200 ${isFiltersPending ? 'opacity-50' : 'opacity-100'}`}>
-                            <DemandsTable demands={demands} isLoading={isLoading} />
+                            <DemandsTable
+                                demands={demands}
+                                projectMap={projectMap}
+                                isLoading={isLoading}
+                                selectedDemand={selectedDemand}
+                                onSelectDemand={setSelectedDemand}
+                            />
                         </div>
 
                         {/* Pagination */}
@@ -402,6 +426,13 @@ export default function DemandsPage() {
                     onSubmit={handleCreateDemand}
                 />
             )}
+
+            <DemandDetailSidebar
+                demand={selectedDemand}
+                project={selectedProject}
+                isOpen={selectedDemand !== null}
+                onClose={() => setSelectedDemand(null)}
+            />
         </div>
     );
 }
