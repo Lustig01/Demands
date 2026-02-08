@@ -75,11 +75,12 @@ export const locationController = {
 
   update: async (req: Request, res: Response) => {
     try {
-      const { baseName, environmentName, networkName } = req.body;
+      const { baseName, environmentName, networkName, isActive } = req.body;
       const location = await locationService.update(Number(req.params.id), {
         baseName,
         environmentName,
         networkName,
+        isActive,
       });
       res.json(location);
     } catch (error) {

@@ -11,7 +11,7 @@ import api from '../../api/axiosInstance';
 export interface EntityColumn {
     key: string;
     label: string;
-    type?: 'text' | 'number' | 'boolean';
+    type?: 'text' | 'number' | 'boolean' | 'toggle';
     render?: (item: any) => React.ReactNode;
 }
 
@@ -61,6 +61,7 @@ export default function EntityManager({
     const [formData, setFormData] = useState<Record<string, any>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [togglingIds, setTogglingIds] = useState<Set<string>>(new Set());
 
     const fetchData = async () => {
         setIsLoading(true);
@@ -222,6 +223,71 @@ export default function EntityManager({
         }
     };
 
+    const handleToggle = async (item: any, key: string, currentValue: boolean) => {
+        const rowId = getRowId(item);
+
+        // Prevent double-click
+        if (togglingIds.has(rowId)) return;
+
+        // Mark as toggling
+        setTogglingIds(prev => new Set(prev).add(rowId));
+
+        // Optimistic update - immediately update the UI
+        setData(prevData =>
+            prevData.map(d =>
+                getRowId(d) === rowId ? { ...d, [key]: !currentValue } : d
+            )
+        );
+
+        try {
+            await api.put(getApiUrl(item), { [key]: !currentValue });
+            if (onSuccess) onSuccess();
+        } catch (error: any) {
+            console.error('Toggle failed', error);
+            // Revert on error
+            setData(prevData =>
+                prevData.map(d =>
+                    getRowId(d) === rowId ? { ...d, [key]: currentValue } : d
+                )
+            );
+            showToast(error.response?.data?.error || 'Operation failed', 'error');
+        } finally {
+            setTogglingIds(prev => {
+                const next = new Set(prev);
+                next.delete(rowId);
+                return next;
+            });
+        }
+    };
+
+    const renderToggle = (item: any, columnKey: string) => {
+        const isActive = item[columnKey];
+        const rowId = getRowId(item);
+        const isToggling = togglingIds.has(rowId);
+
+        return (
+            <button
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggle(item, columnKey, isActive);
+                }}
+                disabled={isToggling}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+                    isActive ? 'bg-green-500' : 'bg-gray-300'
+                } ${isToggling ? 'opacity-70 cursor-wait' : 'cursor-pointer'}`}
+                role="switch"
+                aria-checked={isActive}
+                dir="ltr"
+            >
+                <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        isActive ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                />
+            </button>
+        );
+    };
+
     return (
         <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
@@ -281,7 +347,11 @@ export default function EntityManager({
                                     <tr key={getRowId(item) || idx} className="bg-white hover:bg-gray-50 transition-colors">
                                         {columns.map(col => (
                                             <td key={col.key} className="px-6 py-4 text-text-primary whitespace-nowrap text-start">
-                                                {col.render ? col.render(item) : item[col.key]}
+                                                {col.type === 'toggle'
+                                                    ? renderToggle(item, col.key)
+                                                    : col.render
+                                                        ? col.render(item)
+                                                        : item[col.key]}
                                             </td>
                                         ))}
                                         <td className="px-6 py-4">

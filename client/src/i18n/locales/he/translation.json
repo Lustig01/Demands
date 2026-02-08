@@ -73,7 +73,9 @@
     "saving": "שומר...",
     "select": "בחר...",
     "moderators": "כל המנהלים",
-    "typeAndEnter": "הקלד ולחץ ENTER..."
+    "typeAndEnter": "הקלד ולחץ ENTER...",
+    "active": "פעיל",
+    "updated": "עודכן בהצלחה"
   },
   "settings": {
     "subtitle": "ניהול ישויות מערכת והגדרות",

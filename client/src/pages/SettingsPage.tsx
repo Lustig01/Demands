@@ -43,6 +43,7 @@ function InfrastructureSettings({
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
+                        { key: 'isActive', label: t('common.active', 'Active'), type: 'toggle' },
                     ]}
                     fields={[
                         { key: 'name', label: t('common.name', 'Name'), type: 'text', required: true },
@@ -57,6 +58,7 @@ function InfrastructureSettings({
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
+                        { key: 'isActive', label: t('common.active', 'Active'), type: 'toggle' },
                     ]}
                     fields={[
                         { key: 'name', label: t('common.name', 'Name'), type: 'text', required: true },
@@ -71,6 +73,7 @@ function InfrastructureSettings({
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
+                        { key: 'isActive', label: t('common.active', 'Active'), type: 'toggle' },
                     ]}
                     fields={[
                         { key: 'name', label: t('common.name', 'Name'), type: 'text', required: true },
@@ -87,6 +90,7 @@ function InfrastructureSettings({
                         { key: 'baseName', label: t('settings.location.base', 'Base') },
                         { key: 'environmentName', label: t('settings.location.environment', 'Environment') },
                         { key: 'networkName', label: t('settings.location.network', 'Network') },
+                        { key: 'isActive', label: t('common.active', 'Active'), type: 'toggle' },
                     ]}
                     fields={[
                         { key: 'baseName', label: t('settings.location.base', 'Base'), type: 'select', options: baseOptions, required: true },
@@ -136,6 +140,7 @@ function OrganizationSettings({
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
+                        { key: 'isActive', label: t('common.active', 'Active'), type: 'toggle' },
                     ]}
                     fields={[
                         { key: 'name', label: t('common.name', 'Name'), type: 'text', required: true },
@@ -152,6 +157,7 @@ function OrganizationSettings({
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
                         { key: 'centerName', label: t('settings.branch.center', 'Center') },
+                        { key: 'isActive', label: t('common.active', 'Active'), type: 'toggle' },
                     ]}
                     fields={[
                         { key: 'centerName', label: t('settings.branch.center', 'Center'), type: 'select', options: centerOptions, required: true },
@@ -170,6 +176,7 @@ function OrganizationSettings({
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
                         { key: 'branchName', label: t('settings.section.branch', 'Branch') },
                         { key: 'branchCenter', label: t('settings.section.center', 'Center') },
+                        { key: 'isActive', label: t('common.active', 'Active'), type: 'toggle' },
                     ]}
                     fields={[
                         {
@@ -306,6 +313,7 @@ function ServicesSettings({ serviceOptions }: { serviceOptions: { value: string;
                             label: t('common.moderators', 'Moderators'),
                             render: (item) => (item.moderators || []).join(', ')
                         },
+                        { key: 'isActive', label: t('common.active', 'Active'), type: 'toggle' },
                     ]}
                     fields={[
                         { key: 'name', label: t('common.name', 'Name'), type: 'text', required: true },
@@ -327,6 +335,7 @@ function ServicesSettings({ serviceOptions }: { serviceOptions: { value: string;
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'serviceName', label: t('settings.resource.service', 'Service') },
                         { key: 'unit', label: t('settings.resource.unit', 'Unit') },
+                        { key: 'isActive', label: t('common.active', 'Active'), type: 'toggle' },
                     ]}
                     fields={[
                         { key: 'name', label: t('common.name', 'Name'), type: 'text', required: true },

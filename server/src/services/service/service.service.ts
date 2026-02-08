@@ -10,6 +10,7 @@ interface CreateServiceInput {
 interface UpdateServiceInput {
   name?: string;
   moderators?: string[];
+  isActive?: boolean;
 }
 
 interface ModeratorValidationResult {
@@ -43,6 +44,7 @@ export const serviceService = {
       data: {
         ...(input.name !== undefined && { name: input.name }),
         ...(input.moderators !== undefined && { moderators: input.moderators }),
+        ...(input.isActive !== undefined && { isActive: input.isActive }),
       },
     });
   },

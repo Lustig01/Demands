@@ -26,7 +26,7 @@ export const resourceService = {
   update: async (
     name: string,
     serviceName: string,
-    data: { name?: string; unit?: string }
+    data: { name?: string; unit?: string; isActive?: boolean }
   ) => {
     return prisma.resource.update({
       where: { name_serviceName: { name, serviceName } },

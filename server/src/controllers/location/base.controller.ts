@@ -38,8 +38,8 @@ export const baseController = {
 
   update: async (req: Request, res: Response) => {
     try {
-      const { name: newName, displayName } = req.body;
-      const base = await baseService.update(req.params.name, newName, displayName);
+      const { name, displayName, isActive } = req.body;
+      const base = await baseService.update(req.params.name, { name, displayName, isActive });
       res.json(base);
     } catch (error) {
       console.error("baseController.update error:", error);

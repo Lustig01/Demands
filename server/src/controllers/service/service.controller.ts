@@ -99,7 +99,7 @@ export const serviceController = {
         }
       }
 
-      const { name: newName, moderators } = req.body;
+      const { name: newName, moderators, isActive } = req.body;
 
       // Validate moderators if being updated
       if (Array.isArray(moderators) && moderators.length > 0) {
@@ -115,6 +115,7 @@ export const serviceController = {
       const service = await serviceService.update(serviceName, {
         name: newName,
         moderators,
+        isActive,
       });
       res.json(service);
     } catch (error) {
