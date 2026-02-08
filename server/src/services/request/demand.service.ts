@@ -136,6 +136,9 @@ export const demandService = {
     locationId: number;
     type: DemandType;
     clusterName?: string;
+    centerName: string;
+    branchName: string;
+    sectionName: string;
     createdBy?: string;
     createdByName?: string;
   }) => {
@@ -163,6 +166,9 @@ export const demandService = {
       locationId?: number;
       type?: DemandType;
       clusterName?: string;
+      centerName?: string;
+      branchName?: string;
+      sectionName?: string;
     },
     createdBy?: string
   ) => {

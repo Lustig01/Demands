@@ -47,6 +47,9 @@ export default function DemandsPage() {
         year: '',
         relatedTo: '',
         emergencyOption: '',
+        center: '',
+        branch: '',
+        section: '',
     });
 
     const debouncedFilters = useDebounce(filters, 300);
@@ -71,8 +74,11 @@ export default function DemandsPage() {
         year: debouncedFilters.year ? Number(debouncedFilters.year) : undefined,
         relatedTo: debouncedFilters.relatedTo || undefined,
         emergencyOption: debouncedFilters.emergencyOption || undefined,
+        centerName: debouncedFilters.center || undefined,
+        branchName: debouncedFilters.branch || undefined,
+        sectionName: debouncedFilters.section || undefined,
     }, { page: currentPage, limit: itemsPerPage });
-    const { bases, environments, networks, services, resources, emergencyOptions } = useReferenceData();
+    const { bases, environments, networks, services, resources, emergencyOptions, centers, branches, sections } = useReferenceData();
     const { projects: allProjects } = useCachedProjects();
 
     // Derive Options from Reference Data
@@ -111,6 +117,9 @@ export default function DemandsPage() {
     const baseOptions = useMemo(() => bases.map(b => ({ value: b.name, label: b.displayName || b.name })), [bases]);
     const environmentOptions = useMemo(() => environments.map(e => ({ value: e.name, label: e.displayName || e.name })), [environments]);
     const networkOptions = useMemo(() => networks.map(n => ({ value: n.name, label: n.displayName || n.name })), [networks]);
+    const centerOptions = useMemo(() => centers.map(c => ({ value: c.name, label: c.displayName || c.name })), [centers]);
+    const branchOptions = useMemo(() => branches.map(b => ({ value: b.name, label: b.displayName || b.name })), [branches]);
+    const sectionOptions = useMemo(() => sections.map(s => ({ value: s.name, label: s.displayName || s.name })), [sections]);
 
     // Static options
     const typeOptions = useMemo(() => [
@@ -137,7 +146,7 @@ export default function DemandsPage() {
 
     const emergencyOptionOptions = useMemo(() =>
         emergencyOptions.map(eo => ({ value: eo.name, label: eo.name }))
-    , [emergencyOptions]);
+        , [emergencyOptions]);
 
 
     async function handleCreateDemand(payload: CreateDemandPayload) {
@@ -190,6 +199,9 @@ export default function DemandsPage() {
                                     year: '',
                                     relatedTo: '',
                                     emergencyOption: '',
+                                    center: '',
+                                    branch: '',
+                                    section: '',
                                 });
                                 setCurrentPage(1);
                             }}
@@ -260,6 +272,33 @@ export default function DemandsPage() {
                             options={[{ value: '', label: t('common.all') }, ...networkOptions]}
                             value={filters.network}
                             onChange={(val) => handleFilterChange('network', val)}
+                            placeholder={t('common.all')}
+                        />
+                    </FilterField>
+
+                    <FilterField label={t('projects.columns.center')}>
+                        <Select
+                            options={[{ value: '', label: t('common.all') }, ...centerOptions]}
+                            value={filters.center}
+                            onChange={(val) => handleFilterChange('center', val)}
+                            placeholder={t('common.all')}
+                        />
+                    </FilterField>
+
+                    <FilterField label={t('projects.columns.branch')}>
+                        <Select
+                            options={[{ value: '', label: t('common.all') }, ...branchOptions]}
+                            value={filters.branch}
+                            onChange={(val) => handleFilterChange('branch', val)}
+                            placeholder={t('common.all')}
+                        />
+                    </FilterField>
+
+                    <FilterField label={t('projects.columns.section')}>
+                        <Select
+                            options={[{ value: '', label: t('common.all') }, ...sectionOptions]}
+                            value={filters.section}
+                            onChange={(val) => handleFilterChange('section', val)}
                             placeholder={t('common.all')}
                         />
                     </FilterField>

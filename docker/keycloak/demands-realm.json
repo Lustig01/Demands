@@ -89,6 +89,91 @@
       ]
     },
     {
+      "username": "mod3",
+      "enabled": true,
+      "email": "mod3@example.org",
+      "firstName": "Moderator",
+      "lastName": "Three",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "mod123",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "moderator"
+      ]
+    },
+    {
+      "username": "mod4",
+      "enabled": true,
+      "email": "mod4@example.org",
+      "firstName": "Moderator",
+      "lastName": "Four",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "mod123",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "moderator"
+      ]
+    },
+    {
+      "username": "mod5",
+      "enabled": true,
+      "email": "mod5@example.org",
+      "firstName": "Moderator",
+      "lastName": "Five",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "mod123",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "moderator"
+      ]
+    },
+    {
+      "username": "mod6",
+      "enabled": true,
+      "email": "mod6@example.org",
+      "firstName": "Moderator",
+      "lastName": "Six",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "mod123",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "moderator"
+      ]
+    },
+    {
+      "username": "mod7",
+      "enabled": true,
+      "email": "mod7@example.org",
+      "firstName": "Moderator",
+      "lastName": "Seven",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "mod123",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "moderator"
+      ]
+    },
+    {
       "username": "user1",
       "enabled": true,
       "email": "user1@example.org",

@@ -78,6 +78,9 @@ export interface CreateDemandPayload {
   locationId?: number;
   type: DemandType;
   clusterName?: string;
+  centerName?: string;
+  branchName?: string;
+  sectionName?: string;
 }
 
 export interface DemandFilterParams {
@@ -96,6 +99,9 @@ export interface DemandFilterParams {
   year?: number;
   relatedTo?: string;
   emergencyOption?: string;
+  centerName?: string;
+  branchName?: string;
+  sectionName?: string;
 }
 
 export interface Capacity {

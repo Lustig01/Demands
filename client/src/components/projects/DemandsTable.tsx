@@ -30,6 +30,9 @@ export default function DemandsTable({ demands, isLoading }: DemandsTableProps) 
     { key: 'base', label: t('projects.columns.base') },
     { key: 'environment', label: t('projects.columns.environment') },
     { key: 'network', label: t('projects.columns.network') },
+    { key: 'center', label: t('projects.columns.center') },
+    { key: 'branch', label: t('projects.columns.branch') },
+    { key: 'section', label: t('projects.columns.section') },
     { key: 'status', label: t('projects.columns.status') },
     { key: 'approvedValue', label: t('projects.columns.approvedValue') },
     { key: 'approvedDate', label: t('projects.columns.approvedDate') },
@@ -87,6 +90,9 @@ export default function DemandsTable({ demands, isLoading }: DemandsTableProps) 
               <td className="px-4 py-3 whitespace-nowrap">{demand.location.base}</td>
               <td className="px-4 py-3 whitespace-nowrap">{demand.location.environment}</td>
               <td className="px-4 py-3 whitespace-nowrap">{demand.location.network}</td>
+              <td className="px-4 py-3 whitespace-nowrap">{demand.centerName ?? '-'}</td>
+              <td className="px-4 py-3 whitespace-nowrap">{demand.branchName ?? '-'}</td>
+              <td className="px-4 py-3 whitespace-nowrap">{demand.sectionName ?? '-'}</td>
               <td className="px-4 py-3 whitespace-nowrap">
                 <StatusBadge status={demand.status} />
               </td>

@@ -108,6 +108,9 @@ export const projectService = {
     year?: number;
     median?: Median;
     emergencyOptionName?: string;
+    centerName: string;
+    branchName: string;
+    sectionName: string;
     createdBy?: string;
     createdByName?: string;
   }) => {
@@ -128,6 +131,9 @@ export const projectService = {
       year?: number | null;
       median?: Median | null;
       emergencyOptionName?: string | null;
+      centerName?: string;
+      branchName?: string;
+      sectionName?: string;
     },
     createdBy?: string
   ) => {

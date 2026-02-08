@@ -43,6 +43,9 @@ function mapDemand(raw: any): Demand {
     createdBy: raw.createdBy ?? '',
     createdByName: raw.createdByName ?? '',
     createdAt: raw.createdAt,
+    centerName: raw.centerName,
+    branchName: raw.branchName,
+    sectionName: raw.sectionName,
   };
 }
 
@@ -65,6 +68,9 @@ function mapProject(raw: any): Project {
     createdByName: raw.createdByName ?? '',
     createdAt: raw.createdAt,
     demandCount: raw._count?.demands ?? 0,
+    centerName: raw.centerName,
+    branchName: raw.branchName,
+    sectionName: raw.sectionName,
   };
 }
 

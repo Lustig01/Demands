@@ -187,7 +187,10 @@
       "relatedTo": "Related To",
       "median": "Median",
       "projectType": "Project Type",
-      "emergencyOption": "Emergency Option"
+      "emergencyOption": "Emergency Option",
+      "center": "Center",
+      "branch": "Branch",
+      "section": "Section"
     },
     "status": {
       "Pending": "Pending",
@@ -205,7 +208,13 @@
     },
     "demandType": {
       "New": "New",
-      "Extension": "Extension"
+      "Extension": "Extension",
+      "median": "Median",
+      "relatedTo": "Related To",
+      "emergencyOption": "Emergency Option",
+      "center": "Center",
+      "branch": "Branch",
+      "section": "Section"
     },
     "newProject": "New Project",
     "export": "Export",
@@ -221,6 +230,7 @@
       "clusterName": "Cluster Name",
       "clusterNamePlaceholder": "Enter cluster name",
       "overrideLocation": "Override Location",
+      "overrideOrganization": "Override Organization",
       "submit": "Create Demand",
       "selectOption": "Select...",
       "valuePlaceholder": "Enter value"

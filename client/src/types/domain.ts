@@ -14,6 +14,9 @@ export interface Project {
   year?: number;
   median?: Median;
   emergencyOption?: string;
+  centerName?: string;
+  branchName?: string;
+  sectionName?: string;
   createdBy: string;
   createdByName: string;
   createdAt: string;
@@ -44,4 +47,7 @@ export interface Demand {
   createdBy: string;
   createdByName: string;
   createdAt: string;
+  centerName?: string;
+  branchName?: string;
+  sectionName?: string;
 }

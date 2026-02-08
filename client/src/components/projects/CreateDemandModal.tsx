@@ -27,6 +27,10 @@ const initialForm = {
   network: '',
   base: '',
   environment: '',
+  overrideOrganization: false,
+  center: '',
+  branch: '',
+  section: '',
 };
 
 const inputClass =
@@ -50,6 +54,32 @@ export default function CreateDemandModal({
     () => allProjects.find((p) => p.name === form.project) ?? null,
     [allProjects, form.project]
   );
+
+  // --- Derived State for Organization Hierarchy ---
+  const centerOptions = referenceData.centers.map((v) => ({
+    value: v.name,
+    label: v.displayName || v.name,
+  }));
+
+  const branchOptions = useMemo(() => {
+    if (!form.center) return [];
+    return referenceData.branches
+      .filter((b) => b.centerName === form.center)
+      .map((v) => ({
+        value: v.name,
+        label: v.displayName || v.name,
+      }));
+  }, [referenceData.branches, form.center]);
+
+  const sectionOptions = useMemo(() => {
+    if (!form.branch) return [];
+    return referenceData.sections
+      .filter((s) => s.branchName === form.branch && s.branchCenter === form.center)
+      .map((v) => ({
+        value: v.name,
+        label: v.displayName || v.name,
+      }));
+  }, [referenceData.sections, form.branch, form.center]);
 
   // --- Dropdown Options ---
 
@@ -147,6 +177,46 @@ export default function CreateDemandModal({
         updates.environment = '';
       } else if (name === 'base') {
         updates.environment = '';
+      } else if (name === 'center') {
+        updates.branch = '';
+        updates.section = '';
+      } else if (name === 'branch') {
+        updates.section = '';
+      } else if (name === 'overrideOrganization' && !value) {
+        // Clear organization fields if override disabled, will be refilled by project selection if any
+        updates.center = '';
+        updates.branch = '';
+        updates.section = '';
+      }
+
+      // Auto-fill from project if override is disabled (for both Location and Organization)
+      if (name === 'project' || (name === 'overrideLocation' && !value) || (name === 'overrideOrganization' && !value)) {
+        const projectName = name === 'project' ? value : prev.project;
+        if (projectName) {
+          const proj = allProjects.find(p => p.name === projectName);
+          if (proj) {
+            // Location auto-fill (existing logic preserved/enhanced)
+            if (name === 'project' || (name === 'overrideLocation' && !value)) {
+              // The original logic relied on displaying read-only fields from selectedProject derived state.
+              // We don't strictly need to set form state for location if we rely on selectedProject for display,
+              // BUT if we want unified submission logic, we might want to sets valid IDs.
+              // However, original code only set locationId in submit if overrideLocation is true.
+              // If override is false, it seemingly didn't send locationId? Needs check.
+              // Original code: if (form.overrideLocation) { locationId = ... }
+              // It seems default behavior implies server infers location from project? Or maybe it was missing?
+              // The backend likely expects locationId from project if not provided.
+            }
+
+            // Organization auto-fill
+            if (name === 'project' || (name === 'overrideOrganization' && !value)) {
+              // We don't necessarily update form state if we want to show read-only values from project object directly
+              // akin to how Location is handled. However, for Org relations, we might want to submit them?
+              // The plan says "Auto-fill from Project selection".
+              // Let's adopt the same pattern as Location: If override is FALSE, show values from Project (read-only).
+              // If override is TRUE, show Select inputs with form state.
+            }
+          }
+        }
       }
 
       return { ...prev, ...updates };
@@ -163,6 +233,9 @@ export default function CreateDemandModal({
       resourceService: form.service,
       value: Number(form.value),
       type: form.type as DemandType,
+      centerName: form.overrideOrganization ? form.center : selectedProject?.centerName,
+      branchName: form.overrideOrganization ? form.branch : selectedProject?.branchName,
+      sectionName: form.overrideOrganization ? form.section : selectedProject?.sectionName,
     };
 
     if (form.type === 'Extension') {
@@ -325,6 +398,96 @@ export default function CreateDemandModal({
               />
             </div>
           )}
+
+          {/* Organization Section */}
+          <div className="md:col-span-2 flex items-center gap-3 pt-2">
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.overrideOrganization}
+                onChange={(e) => setField('overrideOrganization', e.target.checked)}
+                className="sr-only peer"
+              />
+              <div className="w-9 h-5 bg-gray-300 rounded-full peer peer-checked:bg-primary transition-colors after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full rtl:after:right-[2px] rtl:after:left-auto rtl:peer-checked:after:-translate-x-full" />
+            </label>
+            <span className="text-sm font-medium text-text-primary">
+              {t('projects.createDemand.overrideOrganization')}
+            </span>
+          </div>
+
+          {/* Center */}
+          <div>
+            <label className="block text-sm font-medium text-text-primary mb-1.5">
+              {t('projects.createDemand.center')}{' '}
+              {form.overrideOrganization && <span className="text-danger">*</span>}
+            </label>
+            {form.overrideOrganization ? (
+              <Select
+                options={centerOptions}
+                value={form.center}
+                onChange={(v) => setField('center', v)}
+                placeholder={placeholder}
+              />
+            ) : (
+              <input
+                type="text"
+                value={selectedProject?.centerName ?? ''}
+                readOnly
+                disabled
+                className={`${inputClass} bg-gray-50 text-text-secondary`}
+              />
+            )}
+          </div>
+
+          {/* Branch */}
+          <div>
+            <label className="block text-sm font-medium text-text-primary mb-1.5">
+              {t('projects.createDemand.branch')}{' '}
+              {form.overrideOrganization && <span className="text-danger">*</span>}
+            </label>
+            {form.overrideOrganization ? (
+              <Select
+                options={branchOptions}
+                value={form.branch}
+                onChange={(v) => setField('branch', v)}
+                placeholder={placeholder}
+                disabled={!form.center}
+              />
+            ) : (
+              <input
+                type="text"
+                value={selectedProject?.branchName ?? ''}
+                readOnly
+                disabled
+                className={`${inputClass} bg-gray-50 text-text-secondary`}
+              />
+            )}
+          </div>
+
+          {/* Section */}
+          <div>
+            <label className="block text-sm font-medium text-text-primary mb-1.5">
+              {t('projects.createDemand.section')}{' '}
+              {form.overrideOrganization && <span className="text-danger">*</span>}
+            </label>
+            {form.overrideOrganization ? (
+              <Select
+                options={sectionOptions}
+                value={form.section}
+                onChange={(v) => setField('section', v)}
+                placeholder={placeholder}
+                disabled={!form.branch}
+              />
+            ) : (
+              <input
+                type="text"
+                value={selectedProject?.sectionName ?? ''}
+                readOnly
+                disabled
+                className={`${inputClass} bg-gray-50 text-text-secondary`}
+              />
+            )}
+          </div>
 
           {/* Location Section */}
           <div className="md:col-span-2 flex items-center gap-3 pt-2">

@@ -187,7 +187,10 @@
       "relatedTo": "מסלול / אפליקציה",
       "median": "חציון",
       "projectType": "סוג פרויקט",
-      "emergencyOption": "אפשרות חירום"
+      "emergencyOption": "אפשרות חירום",
+      "center": "מרכז",
+      "branch": "ענף",
+      "section": "מדור"
     },
     "status": {
       "Pending": "ממתין",
@@ -221,6 +224,7 @@
       "clusterName": "שם אשכול",
       "clusterNamePlaceholder": "הזן שם אשכול",
       "overrideLocation": "דריסת מיקום",
+      "overrideOrganization": "דריסת ארגון",
       "submit": "צור דרישה",
       "selectOption": "בחר...",
       "valuePlaceholder": "הזן כמות"

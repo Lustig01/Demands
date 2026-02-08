@@ -12,22 +12,28 @@ datasource db {
 // ============================================
 
 model Center {
-  name      String   @id
+  name        String    @id
   displayName String?
-  branches  Branch[]
-  wallets   Wallet[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isActive    Boolean   @default(true)
+  branches    Branch[]
+  wallets     Wallet[]
+  projects    Project[]
+  demands     Demand[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Branch {
-  name       String
+  name        String
   displayName String?
-  centerName String
-  center     Center    @relation(fields: [centerName], references: [name], onDelete: Cascade)
-  sections   Section[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  isActive    Boolean   @default(true)
+  centerName  String
+  center      Center    @relation(fields: [centerName], references: [name], onDelete: Cascade)
+  sections    Section[]
+  projects    Project[]
+  demands     Demand[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@id([name, centerName])
 }
@@ -35,12 +41,14 @@ model Branch {
 model Section {
   name           String
   displayName    String?
+  isActive       Boolean   @default(true)
   branchName     String
   branchCenter   String
-  branch         Branch   @relation(fields: [branchName, branchCenter], references: [name, centerName], onDelete: Cascade)
+  branch         Branch    @relation(fields: [branchName, branchCenter], references: [name, centerName], onDelete: Cascade)
   projects       Project[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  demands        Demand[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@id([name, branchName, branchCenter])
 }
@@ -50,27 +58,30 @@ model Section {
 // ============================================
 
 model Base {
-  name      String     @id
+  name        String     @id
   displayName String?
-  locations Location[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  isActive    Boolean    @default(true)
+  locations   Location[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Environment {
-  name      String     @id
+  name        String     @id
   displayName String?
-  locations Location[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  isActive    Boolean    @default(true)
+  locations   Location[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Network {
-  name      String     @id
+  name        String     @id
   displayName String?
-  locations Location[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  isActive    Boolean    @default(true)
+  locations   Location[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model Location {
@@ -78,6 +89,7 @@ model Location {
   baseName        String
   environmentName String
   networkName     String
+  isActive        Boolean     @default(true)
   base            Base        @relation(fields: [baseName], references: [name], onDelete: Cascade)
   environment     Environment @relation(fields: [environmentName], references: [name], onDelete: Cascade)
   network         Network     @relation(fields: [networkName], references: [name], onDelete: Cascade)
@@ -97,6 +109,7 @@ model Location {
 model Service {
   name       String     @id
   moderators String[]   @default([])
+  isActive   Boolean    @default(true)
   resources  Resource[]
   demands    Demand[]
   createdAt  DateTime   @default(now())
@@ -106,6 +119,7 @@ model Service {
 model Resource {
   name        String
   unit        String
+  isActive    Boolean    @default(true)
   serviceName String
   service     Service    @relation(fields: [serviceName], references: [name], onDelete: Cascade)
   capacities  Capacity[]
@@ -191,28 +205,30 @@ enum Priority {
 }
 
 model Project {
-  name          String      @id
-  purpose       String
-  relatedTo     String?
-  type          ProjectType
-  kindName      String
-  kind          ProjectKind  @relation(fields: [kindName], references: [name], onDelete: Restrict)
-  locationId    Int
-  location      Location    @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  year          Int?
-  median        Median?
-  priority      Priority?
-  centerName    String?
-  branchName    String?
-  sectionName   String?
-  section       Section?    @relation(fields: [sectionName, branchName, centerName], references: [name, branchName, branchCenter])
+  name                String           @id
+  purpose             String
+  relatedTo           String?
+  type                ProjectType
+  kindName            String
+  kind                ProjectKind      @relation(fields: [kindName], references: [name], onDelete: Restrict)
+  locationId          Int
+  location            Location         @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  year                Int?
+  median              Median?
+  priority            Priority?
+  centerName          String
+  branchName          String
+  sectionName         String
+  center              Center           @relation(fields: [centerName], references: [name])
+  branch              Branch           @relation(fields: [branchName, centerName], references: [name, centerName])
+  section             Section          @relation(fields: [sectionName, branchName, centerName], references: [name, branchName, branchCenter])
   demands             Demand[]
   emergencyOptionName String?
   emergencyOption     EmergencyOption? @relation(fields: [emergencyOptionName], references: [name])
   createdBy           String?
   createdByName       String?
-  createdAt           DateTime    @default(now())
-  updatedAt           DateTime    @updatedAt
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
 
   @@index([createdBy])
 }
@@ -236,6 +252,12 @@ model Demand {
   approvedDate       DateTime?
   decisionReasonName String?
   decisionReason     DecisionReason?  @relation(fields: [decisionReasonName], references: [name])
+  centerName         String
+  branchName         String
+  sectionName        String
+  center             Center           @relation(fields: [centerName], references: [name])
+  branch             Branch           @relation(fields: [branchName, centerName], references: [name, centerName])
+  section            Section          @relation(fields: [sectionName, branchName, centerName], references: [name, branchName, branchCenter])
   createdBy          String?
   createdByName      String?
   createdAt          DateTime         @default(now())
