@@ -17,10 +17,10 @@ export const baseService = {
     });
   },
 
-  update: async (name: string, newName: string, displayName?: string) => {
+  update: async (name: string, data: { name?: string; displayName?: string; isActive?: boolean }) => {
     return prisma.base.update({
       where: { name },
-      data: { name: newName, displayName },
+      data,
     });
   },
 

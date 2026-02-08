@@ -43,6 +43,7 @@ export interface CreateProjectPayload {
   locationId: number;
   year?: number;
   median?: Median;
+  emergencyOption?: string;
   priority?: Priority;
   centerName?: string;
   branchName?: string;
@@ -77,6 +78,9 @@ export interface CreateDemandPayload {
   locationId?: number;
   type: DemandType;
   clusterName?: string;
+  centerName?: string;
+  branchName?: string;
+  sectionName?: string;
 }
 
 export interface DemandFilterParams {
@@ -94,4 +98,31 @@ export interface DemandFilterParams {
   median?: Median;
   year?: number;
   relatedTo?: string;
+  emergencyOption?: string;
+  centerName?: string;
+  branchName?: string;
+  sectionName?: string;
+}
+
+export interface Capacity {
+  id: number;
+  locationId: number;
+  resourceName: string;
+  resourceService: string;
+  value: number;
+  allocated: number;
+  available: number;
+  location: LocationItem;
+  resource: ResourceItem;
+}
+
+export interface CreateCapacityPayload {
+  locationId: number;
+  resourceName: string;
+  resourceService: string;
+  value: number;
+}
+
+export interface UpdateCapacityPayload {
+  value: number;
 }

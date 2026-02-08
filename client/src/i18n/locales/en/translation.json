@@ -3,11 +3,42 @@
     "dashboard": "Dashboard",
     "projects": "Projects",
     "demands": "Manage Demands",
-    "moderator": "Moderator Management",
+    "moderator": "Management",
     "settings": "Settings",
     "create": "Create New",
     "project": "Project",
     "demand": "Demand"
+  },
+  "management": {
+    "tabs": {
+      "capacity": "Capacity Management"
+    },
+    "capacity": {
+      "add": "Add Capacity",
+      "columns": {
+        "service": "Service",
+        "resource": "Resource Type",
+        "unit": "Unit",
+        "base": "Base",
+        "network": "Network",
+        "environment": "Environment",
+        "total": "Total Capacity",
+        "allocated": "Allocated",
+        "available": "Available",
+        "utilization": "Utilization %",
+        "actions": "Actions"
+      },
+      "modal": {
+        "createTitle": "Add New Capacity",
+        "editTitle": "Edit Capacity",
+        "location": "Location",
+        "serviceResource": "Service & Resource",
+        "value": "Total Capacity",
+        "cancel": "Cancel",
+        "save": "Save",
+        "create": "Create"
+      }
+    }
   },
   "common": {
     "search": "Search...",
@@ -30,10 +61,92 @@
       "projectCreateFailed": "Failed to create project",
       "demandCreated": "Demand created successfully",
       "demandCreateFailed": "Failed to create demand"
+    },
+    "name": "Name",
+    "displayName": "Display Name",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "actions": "Actions",
+    "save": "Save",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "select": "Select...",
+    "moderators": "Moderators",
+    "typeAndEnter": "Type and press Enter...",
+    "active": "Active",
+    "updated": "Updated successfully"
+  },
+  "settings": {
+    "subtitle": "Manage system entities and configurations",
+    "mainTabs": {
+      "infrastructure": "Infrastructure",
+      "organization": "Organization",
+      "options": "Options",
+      "services": "Services"
+    },
+    "tabs": {
+      "base": "Base",
+      "environment": "Environment",
+      "network": "Network",
+      "location": "Location",
+      "center": "Center",
+      "branch": "Branch",
+      "section": "Section",
+      "emergency": "Emergency Options",
+      "projectKind": "Project Kind",
+      "demandReason": "Demand Reason",
+      "service": "Service",
+      "resource": "Resource"
+    },
+    "base": {
+      "title": "Bases"
+    },
+    "environment": {
+      "title": "Environments"
+    },
+    "network": {
+      "title": "Networks"
+    },
+    "location": {
+      "title": "Locations",
+      "base": "Base",
+      "environment": "Environment",
+      "network": "Network"
+    },
+    "center": {
+      "title": "Centers"
+    },
+    "branch": {
+      "title": "Branches",
+      "center": "Center"
+    },
+    "section": {
+      "title": "Sections",
+      "branch": "Branch",
+      "center": "Center"
+    },
+    "emergency": {
+      "title": "Emergency Options"
+    },
+    "projectKind": {
+      "title": "Project Kinds"
+    },
+    "demandReason": {
+      "title": "Demand Reasons"
+    },
+    "service": {
+      "title": "Services",
+      "moderatorsDesc": "Type and press Enter to add moderator"
+    },
+    "resource": {
+      "title": "Resources",
+      "service": "Service",
+      "unit": "Unit"
     }
   },
   "app": {
-    "title": "Resource Demand System"
+    "title": "Demand System"
   },
   "user": {
     "profile": "Profile",
@@ -75,7 +188,11 @@
       "year": "Year",
       "relatedTo": "Related To",
       "median": "Median",
-      "projectType": "Project Type"
+      "projectType": "Project Type",
+      "emergencyOption": "Emergency Option",
+      "center": "Center",
+      "branch": "Branch",
+      "section": "Section"
     },
     "status": {
       "Pending": "Pending",
@@ -93,7 +210,13 @@
     },
     "demandType": {
       "New": "New",
-      "Extension": "Extension"
+      "Extension": "Extension",
+      "median": "Median",
+      "relatedTo": "Related To",
+      "emergencyOption": "Emergency Option",
+      "center": "Center",
+      "branch": "Branch",
+      "section": "Section"
     },
     "newProject": "New Project",
     "export": "Export",
@@ -109,6 +232,7 @@
       "clusterName": "Cluster Name",
       "clusterNamePlaceholder": "Enter cluster name",
       "overrideLocation": "Override Location",
+      "overrideOrganization": "Override Organization",
       "submit": "Create Demand",
       "selectOption": "Select...",
       "valuePlaceholder": "Enter value"
@@ -137,7 +261,11 @@
         "P1": "Urgent - P1",
         "P2": "Normal - P2",
         "P3": "Low - P3"
-      }
+      },
+      "emergencyOption": "Emergency Option",
+      "year": "Year",
+      "median": "Median",
+      "section": "Section"
     }
   },
   "projectsTable": {
@@ -148,7 +276,8 @@
       "kind": "Kind",
       "relatedTo": "Related To",
       "year": "Year",
-      "median": "Median"
+      "median": "Median",
+      "emergencyOption": "Emergency Option"
     },
     "noProjects": "No projects to display"
   },

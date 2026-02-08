@@ -2,24 +2,29 @@ import prisma from "../../lib/prisma";
 
 export const capacityService = {
   findAll: async () => {
-    return prisma.capacity.findMany();
+    return prisma.capacity.findMany({
+      include: { location: true, resource: true },
+    });
   },
 
   findById: async (id: number) => {
     return prisma.capacity.findUnique({
       where: { id },
+      include: { location: true, resource: true },
     });
   },
 
   findByLocation: async (locationId: number) => {
     return prisma.capacity.findMany({
       where: { locationId },
+      include: { location: true, resource: true },
     });
   },
 
   findByResource: async (resourceName: string, resourceService: string) => {
     return prisma.capacity.findMany({
       where: { resourceName, resourceService },
+      include: { location: true, resource: true },
     });
   },
 
@@ -31,6 +36,7 @@ export const capacityService = {
   ) => {
     return prisma.capacity.create({
       data: { locationId, resourceName, resourceService, value },
+      include: { location: true, resource: true },
     });
   },
 
@@ -38,6 +44,7 @@ export const capacityService = {
     return prisma.capacity.update({
       where: { id },
       data: { value },
+      include: { location: true, resource: true },
     });
   },
 

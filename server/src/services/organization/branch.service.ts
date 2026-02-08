@@ -23,10 +23,10 @@ export const branchService = {
     });
   },
 
-  update: async (name: string, centerName: string, newName: string, displayName?: string) => {
+  update: async (name: string, centerName: string, data: { name?: string; displayName?: string; isActive?: boolean }) => {
     return prisma.branch.update({
       where: { name_centerName: { name, centerName } },
-      data: { name: newName, displayName },
+      data,
     });
   },
 

@@ -20,11 +20,15 @@ import serviceRoutes from "./service/service.routes";
 import resourceRoutes from "./service/resource.routes";
 import capacityRoutes from "./service/capacity.routes";
 
+// Wallet routes
+import walletRoutes from "./wallet/wallet.routes";
+
 // Request routes
 import projectRoutes from "./request/project.routes";
 import demandRoutes from "./request/demand.routes";
 import decisionReasonRoutes from "./request/decisionReason.routes";
 import projectKindRoutes from "./request/projectKind.routes";
+import emergencyOptionRoutes from "./request/emergencyOption.routes";
 
 const router = Router();
 
@@ -48,10 +52,14 @@ router.use("/services", serviceRoutes);
 router.use("/resources", resourceRoutes);
 router.use("/capacities", capacityRoutes);
 
+// Wallet endpoints
+router.use("/wallets", walletRoutes);
+
 // Request endpoints
 router.use("/projects", projectRoutes);
 router.use("/demands", demandRoutes);
 router.use("/decision-reasons", decisionReasonRoutes);
 router.use("/project-kinds", projectKindRoutes);
+router.use("/emergency-options", emergencyOptionRoutes);
 
 export default router;

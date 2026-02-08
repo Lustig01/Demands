@@ -50,8 +50,8 @@ export const branchController = {
   update: async (req: Request, res: Response) => {
     try {
       const { centerName, name } = req.params;
-      const { name: newName, displayName } = req.body;
-      const branch = await branchService.update(name, centerName, newName, displayName);
+      const { name: newName, displayName, isActive } = req.body;
+      const branch = await branchService.update(name, centerName, { name: newName, displayName, isActive });
       res.json(branch);
     } catch (error) {
       console.error("branchController.update error:", error);

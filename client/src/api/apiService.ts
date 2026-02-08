@@ -13,6 +13,9 @@ import type {
   PaginatedResponse,
   ProjectFilterParams,
   DemandFilterParams,
+  Capacity,
+  CreateCapacityPayload,
+  UpdateCapacityPayload,
 } from './types';
 
 // --- Response mappers ---
@@ -40,6 +43,9 @@ function mapDemand(raw: any): Demand {
     createdBy: raw.createdBy ?? '',
     createdByName: raw.createdByName ?? '',
     createdAt: raw.createdAt,
+    centerName: raw.centerName,
+    branchName: raw.branchName,
+    sectionName: raw.sectionName,
   };
 }
 
@@ -57,10 +63,14 @@ function mapProject(raw: any): Project {
     },
     year: raw.year ?? undefined,
     median: raw.median ?? undefined,
+    emergencyOption: raw.emergencyOptionName ?? raw.emergencyOption?.name ?? undefined,
     createdBy: raw.createdBy ?? '',
     createdByName: raw.createdByName ?? '',
     createdAt: raw.createdAt,
     demandCount: raw._count?.demands ?? 0,
+    centerName: raw.centerName,
+    branchName: raw.branchName,
+    sectionName: raw.sectionName,
   };
 }
 
@@ -121,6 +131,7 @@ export async function fetchDemands(
     if (params.median) query.append('median', params.median);
     if (params.year) query.append('year', params.year.toString());
     if (params.relatedTo) query.append('relatedTo', params.relatedTo);
+    if (params.emergencyOption) query.append('emergencyOption', params.emergencyOption);
   }
 
   // If any filter is present (besides pagination), use /demands/filter, otherwise /demands
@@ -128,7 +139,7 @@ export async function fetchDemands(
     params.projectName || params.serviceName || params.resourceName || params.resourceService ||
     params.locationId || params.baseName || params.environmentName ||
     params.networkName || params.type || params.status ||
-    params.projectType || params.median || params.year || params.relatedTo
+    params.projectType || params.median || params.year || params.relatedTo || params.emergencyOption
   );
 
   const endpoint = isFiltering ? '/demands/filter' : '/demands';
@@ -195,4 +206,30 @@ export async function fetchResources(): Promise<ResourceItem[]> {
 export async function fetchProjectKinds(): Promise<ReferenceItem[]> {
   const { data } = await api.get('/project-kinds');
   return data;
+}
+
+export async function fetchEmergencyOptions(): Promise<ReferenceItem[]> {
+  const { data } = await api.get('/emergency-options');
+  return data;
+}
+
+// --- Capacities ---
+
+export async function fetchCapacities(): Promise<Capacity[]> {
+  const { data } = await api.get('/capacities');
+  return data;
+}
+
+export async function createCapacity(payload: CreateCapacityPayload): Promise<Capacity> {
+  const { data } = await api.post('/capacities', payload);
+  return data;
+}
+
+export async function updateCapacity(id: number, payload: UpdateCapacityPayload): Promise<Capacity> {
+  const { data } = await api.put(`/capacities/${id}`, payload);
+  return data;
+}
+
+export async function deleteCapacity(id: number): Promise<void> {
+  await api.delete(`/capacities/${id}`);
 }

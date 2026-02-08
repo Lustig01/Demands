@@ -6,8 +6,39 @@
     "create": "צור חדש",
     "project": "פרויקט",
     "demand": "דרישה",
-    "moderator": "ניהול מדורייטור",
+    "moderator": "ניהול",
     "settings": "הגדרות"
+  },
+  "management": {
+    "tabs": {
+      "capacity": "ניהול קיבולת משאבים"
+    },
+    "capacity": {
+      "add": "הוסף קיבולת",
+      "columns": {
+        "service": "שירות",
+        "resource": "סוג משאב",
+        "unit": "יחידה",
+        "base": "בסיס",
+        "network": "רשת",
+        "environment": "סביבה",
+        "total": "קיבולת כוללת",
+        "allocated": "מוקצה",
+        "available": "זמין",
+        "utilization": "ניצול %",
+        "actions": "פעולות"
+      },
+      "modal": {
+        "createTitle": "הוסף קיבולת חדשה",
+        "editTitle": "ערוך קיבולת",
+        "location": "מיקום",
+        "serviceResource": "שירות ומשאב",
+        "value": "קיבולת כוללת",
+        "cancel": "ביטול",
+        "save": "שמור",
+        "create": "צור"
+      }
+    }
   },
   "common": {
     "search": "חיפוש...",
@@ -30,6 +61,88 @@
       "projectCreateFailed": "יצירת הפרויקט נכשלה",
       "demandCreated": "הדרישה נוצרה בהצלחה",
       "demandCreateFailed": "יצירת הדרישה נכשלה"
+    },
+    "name": "שם",
+    "displayName": "שם תצוגה",
+    "add": "הוסף",
+    "edit": "ערוך",
+    "delete": "מחק",
+    "actions": "פעולות",
+    "save": "שמור",
+    "cancel": "ביטול",
+    "saving": "שומר...",
+    "select": "בחר...",
+    "moderators": "כל המנהלים",
+    "typeAndEnter": "הקלד ולחץ ENTER...",
+    "active": "פעיל",
+    "updated": "עודכן בהצלחה"
+  },
+  "settings": {
+    "subtitle": "ניהול ישויות מערכת והגדרות",
+    "mainTabs": {
+      "infrastructure": "תשתיות",
+      "organization": "ארגון",
+      "options": "אפשרויות",
+      "services": "שירותים"
+    },
+    "tabs": {
+      "base": "בסיס",
+      "environment": "סביבה",
+      "network": "רשת",
+      "location": "מיקום",
+      "center": "מרכז",
+      "branch": "ענף",
+      "section": "מדור",
+      "emergency": "אפשרויות חירום",
+      "projectKind": "סוג פרויקט",
+      "demandReason": "סיבת החלטה",
+      "service": "שירות",
+      "resource": "משאב"
+    },
+    "base": {
+      "title": "בסיסים"
+    },
+    "environment": {
+      "title": "סביבות"
+    },
+    "network": {
+      "title": "רשתות"
+    },
+    "location": {
+      "title": "מיקומים",
+      "base": "בסיס",
+      "environment": "סביבה",
+      "network": "רשת"
+    },
+    "center": {
+      "title": "מרכזים"
+    },
+    "branch": {
+      "title": "ענפים",
+      "center": "מרכז"
+    },
+    "section": {
+      "title": "מדורים",
+      "branch": "ענף",
+      "center": "מרכז"
+    },
+    "emergency": {
+      "title": "אפשרויות חירום"
+    },
+    "projectKind": {
+      "title": "סוגי פרויקטים"
+    },
+    "demandReason": {
+      "title": "סיבות החלטה"
+    },
+    "service": {
+      "title": "שירותים",
+      "moderatorsDesc": "הקלד ולחץ ENTER להוספת מנהל"
+    },
+    "resource": {
+      "title": "משאבים",
+      "service": "שירות",
+      "unit": "יחידה"
     }
   },
   "app": {
@@ -75,7 +188,11 @@
       "year": "שנה",
       "relatedTo": "מסלול / אפליקציה",
       "median": "חציון",
-      "projectType": "סוג פרויקט"
+      "projectType": "סוג פרויקט",
+      "emergencyOption": "אפשרות חירום",
+      "center": "מרכז",
+      "branch": "ענף",
+      "section": "מדור"
     },
     "status": {
       "Pending": "ממתין",
@@ -109,6 +226,7 @@
       "clusterName": "שם אשכול",
       "clusterNamePlaceholder": "הזן שם אשכול",
       "overrideLocation": "דריסת מיקום",
+      "overrideOrganization": "דריסת ארגון",
       "submit": "צור דרישה",
       "selectOption": "בחר...",
       "valuePlaceholder": "הזן כמות"
@@ -140,7 +258,8 @@
         "P1": "דחוף - P1",
         "P2": "רגיל - P2",
         "P3": "נמוך - P3"
-      }
+      },
+      "emergencyOption": "אפשרות חירום"
     }
   },
   "projectsTable": {
@@ -151,7 +270,8 @@
       "kind": "סוג פרויקט",
       "relatedTo": "מסלול / אפליקציה",
       "year": "שנה",
-      "median": "מחצית"
+      "median": "מחצית",
+      "emergencyOption": "אפשרות חירום"
     },
     "noProjects": "אין פרוייקטים להצגה"
   },

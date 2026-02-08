@@ -27,12 +27,11 @@ export const sectionService = {
     name: string,
     branchName: string,
     branchCenter: string,
-    newName: string,
-    displayName?: string
+    data: { name?: string; displayName?: string; isActive?: boolean }
   ) => {
     return prisma.section.update({
       where: { name_branchName_branchCenter: { name, branchName, branchCenter } },
-      data: { name: newName, displayName },
+      data,
     });
   },
 

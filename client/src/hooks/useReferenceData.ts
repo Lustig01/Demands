@@ -10,6 +10,7 @@ import {
   fetchServices,
   fetchResources,
   fetchProjectKinds,
+  fetchEmergencyOptions,
 } from '../api/apiService';
 import type { ReferenceItem, BranchItem, SectionItem, LocationItem, ResourceItem } from '../api/types';
 
@@ -24,6 +25,7 @@ let globalFetchPromise: Promise<
     LocationItem[],
     ReferenceItem[],
     ResourceItem[],
+    ReferenceItem[],
     ReferenceItem[]
   ]
 > | null = null;
@@ -39,6 +41,7 @@ interface ReferenceData {
   services: ReferenceItem[];
   resources: ResourceItem[];
   projectKinds: ReferenceItem[];
+  emergencyOptions: ReferenceItem[];
   isLoading: boolean;
   error: string | null;
 }
@@ -54,6 +57,7 @@ export function useReferenceData(): ReferenceData {
   const [services, setServices] = useState<ReferenceItem[]>([]);
   const [resources, setResources] = useState<ResourceItem[]>([]);
   const [projectKinds, setProjectKinds] = useState<ReferenceItem[]>([]);
+  const [emergencyOptions, setEmergencyOptions] = useState<ReferenceItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,7 +67,7 @@ export function useReferenceData(): ReferenceData {
     async function load() {
       if (globalFetchPromise) {
         try {
-          const [b, e, n, c, br, sec, loc, s, r, pk] = await globalFetchPromise;
+          const [b, e, n, c, br, sec, loc, s, r, pk, eo] = await globalFetchPromise;
           if (!cancelled) {
             setBases(b);
             setEnvironments(e);
@@ -75,6 +79,7 @@ export function useReferenceData(): ReferenceData {
             setServices(s);
             setResources(r);
             setProjectKinds(pk);
+            setEmergencyOptions(eo);
             setIsLoading(false);
           }
         } catch (err: any) {
@@ -97,10 +102,11 @@ export function useReferenceData(): ReferenceData {
         fetchServices(),
         fetchResources(),
         fetchProjectKinds(),
+        fetchEmergencyOptions(),
       ]);
 
       try {
-        const [b, e, n, c, br, sec, loc, s, r, pk] = await globalFetchPromise;
+        const [b, e, n, c, br, sec, loc, s, r, pk, eo] = await globalFetchPromise;
         if (!cancelled) {
           setBases(b);
           setEnvironments(e);
@@ -112,6 +118,7 @@ export function useReferenceData(): ReferenceData {
           setServices(s);
           setResources(r);
           setProjectKinds(pk);
+          setEmergencyOptions(eo);
         }
       } catch (err: any) {
         globalFetchPromise = null; // Reset on error so we can retry
@@ -129,5 +136,5 @@ export function useReferenceData(): ReferenceData {
     return () => { cancelled = true; };
   }, []);
 
-  return { bases, environments, networks, centers, branches, sections, locations, services, resources, projectKinds, isLoading, error };
+  return { bases, environments, networks, centers, branches, sections, locations, services, resources, projectKinds, emergencyOptions, isLoading, error };
 }

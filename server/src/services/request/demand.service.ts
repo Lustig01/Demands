@@ -66,6 +66,7 @@ export const demandService = {
       projectMedian?: Median;
       projectYear?: number;
       projectRelatedTo?: string;
+      projectEmergencyOption?: string;
     },
     pagination?: { page: number; limit: number }
   ) => {
@@ -89,7 +90,7 @@ export const demandService = {
       if (filters.networkName) where.location.networkName = filters.networkName;
     }
 
-    if (filters.projectType || filters.projectMedian || filters.projectYear || filters.projectRelatedTo) {
+    if (filters.projectType || filters.projectMedian || filters.projectYear || filters.projectRelatedTo || filters.projectEmergencyOption) {
       where.project = {};
       if (filters.projectType) where.project.type = filters.projectType;
       if (filters.projectMedian) where.project.median = filters.projectMedian;
@@ -97,6 +98,7 @@ export const demandService = {
       if (filters.projectRelatedTo) {
         where.project.relatedTo = { contains: filters.projectRelatedTo, mode: 'insensitive' };
       }
+      if (filters.projectEmergencyOption) where.project.emergencyOptionName = filters.projectEmergencyOption;
     }
 
     const [data, total] = await Promise.all([
@@ -134,6 +136,9 @@ export const demandService = {
     locationId: number;
     type: DemandType;
     clusterName?: string;
+    centerName: string;
+    branchName: string;
+    sectionName: string;
     createdBy?: string;
     createdByName?: string;
   }) => {
@@ -161,6 +166,9 @@ export const demandService = {
       locationId?: number;
       type?: DemandType;
       clusterName?: string;
+      centerName?: string;
+      branchName?: string;
+      sectionName?: string;
     },
     createdBy?: string
   ) => {

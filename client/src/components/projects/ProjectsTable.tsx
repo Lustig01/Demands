@@ -21,6 +21,10 @@ export default function ProjectsTable({ projects, isLoading }: ProjectsTableProp
     { key: 'relatedTo', label: t('projectsTable.columns.relatedTo') },
     { key: 'year', label: t('projectsTable.columns.year') },
     { key: 'median', label: t('projectsTable.columns.median') },
+    { key: 'emergencyOption', label: t('projectsTable.columns.emergencyOption') },
+    { key: 'center', label: t('projects.columns.center') },
+    { key: 'branch', label: t('projects.columns.branch') },
+    { key: 'section', label: t('projects.columns.section') },
     { key: 'base', label: t('projects.columns.base') },
     { key: 'environment', label: t('projects.columns.environment') },
     { key: 'network', label: t('projects.columns.network') },
@@ -77,6 +81,10 @@ export default function ProjectsTable({ projects, isLoading }: ProjectsTableProp
               <td className="px-4 py-3 whitespace-nowrap">{project.relatedTo ?? '-'}</td>
               <td className="px-4 py-3 whitespace-nowrap">{project.year ?? '-'}</td>
               <td className="px-4 py-3 whitespace-nowrap">{project.median ?? '-'}</td>
+              <td className="px-4 py-3 whitespace-nowrap">{project.emergencyOption ?? '-'}</td>
+              <td className="px-4 py-3 whitespace-nowrap">{project.centerName ?? '-'}</td>
+              <td className="px-4 py-3 whitespace-nowrap">{project.branchName ?? '-'}</td>
+              <td className="px-4 py-3 whitespace-nowrap">{project.sectionName ?? '-'}</td>
               <td className="px-4 py-3 whitespace-nowrap">{project.location.base}</td>
               <td className="px-4 py-3 whitespace-nowrap">{project.location.environment}</td>
               <td className="px-4 py-3 whitespace-nowrap">{project.location.network}</td>

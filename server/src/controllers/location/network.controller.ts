@@ -38,8 +38,8 @@ export const networkController = {
 
   update: async (req: Request, res: Response) => {
     try {
-      const { name: newName, displayName } = req.body;
-      const network = await networkService.update(req.params.name, newName, displayName);
+      const { name, displayName, isActive } = req.body;
+      const network = await networkService.update(req.params.name, { name, displayName, isActive });
       res.json(network);
     } catch (error) {
       console.error("networkController.update error:", error);

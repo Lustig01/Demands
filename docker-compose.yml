@@ -7,7 +7,7 @@ services:
     environment:
       - NODE_ENV=${NODE_ENV:-production}
       - PORT=${PORT:-3000}
-      - DATABASE_URL=${DATABASE_URL:-postgresql://user:password@postgres:5432/demands}
+      - DATABASE_URL=postgresql://user:password@postgres:5432/demands
       # OIDC / Auth
       - OIDC_DISCOVERY_URL=http://keycloak:8080/realms/demands/.well-known/openid-configuration
       - AUTH_ISSUER=http://localhost:8080/realms/demands

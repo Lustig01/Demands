@@ -50,10 +50,11 @@ export const resourceController = {
   update: async (req: Request, res: Response) => {
     try {
       const { serviceName, name } = req.params;
-      const { name: newName, unit } = req.body;
+      const { name: newName, unit, isActive } = req.body;
       const resource = await resourceService.update(name, serviceName, {
         name: newName,
         unit,
+        isActive,
       });
       res.json(resource);
     } catch (error) {

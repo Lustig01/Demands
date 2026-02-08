@@ -46,6 +46,10 @@ export default function DemandsPage() {
         median: '',
         year: '',
         relatedTo: '',
+        emergencyOption: '',
+        center: '',
+        branch: '',
+        section: '',
     });
 
     const debouncedFilters = useDebounce(filters, 300);
@@ -69,8 +73,12 @@ export default function DemandsPage() {
         median: debouncedFilters.median as any || undefined,
         year: debouncedFilters.year ? Number(debouncedFilters.year) : undefined,
         relatedTo: debouncedFilters.relatedTo || undefined,
+        emergencyOption: debouncedFilters.emergencyOption || undefined,
+        centerName: debouncedFilters.center || undefined,
+        branchName: debouncedFilters.branch || undefined,
+        sectionName: debouncedFilters.section || undefined,
     }, { page: currentPage, limit: itemsPerPage });
-    const { bases, environments, networks, services, resources } = useReferenceData();
+    const { bases, environments, networks, services, resources, emergencyOptions, centers, branches, sections } = useReferenceData();
     const { projects: allProjects } = useCachedProjects();
 
     // Derive Options from Reference Data
@@ -109,6 +117,9 @@ export default function DemandsPage() {
     const baseOptions = useMemo(() => bases.map(b => ({ value: b.name, label: b.displayName || b.name })), [bases]);
     const environmentOptions = useMemo(() => environments.map(e => ({ value: e.name, label: e.displayName || e.name })), [environments]);
     const networkOptions = useMemo(() => networks.map(n => ({ value: n.name, label: n.displayName || n.name })), [networks]);
+    const centerOptions = useMemo(() => centers.map(c => ({ value: c.name, label: c.displayName || c.name })), [centers]);
+    const branchOptions = useMemo(() => branches.map(b => ({ value: b.name, label: b.displayName || b.name })), [branches]);
+    const sectionOptions = useMemo(() => sections.map(s => ({ value: s.name, label: s.displayName || s.name })), [sections]);
 
     // Static options
     const typeOptions = useMemo(() => [
@@ -132,6 +143,10 @@ export default function DemandsPage() {
         { value: 'H1', label: 'H1' },
         { value: 'H2', label: 'H2' }
     ], []);
+
+    const emergencyOptionOptions = useMemo(() =>
+        emergencyOptions.map(eo => ({ value: eo.name, label: eo.name }))
+        , [emergencyOptions]);
 
 
     async function handleCreateDemand(payload: CreateDemandPayload) {
@@ -183,6 +198,10 @@ export default function DemandsPage() {
                                     median: '',
                                     year: '',
                                     relatedTo: '',
+                                    emergencyOption: '',
+                                    center: '',
+                                    branch: '',
+                                    section: '',
                                 });
                                 setCurrentPage(1);
                             }}
@@ -257,6 +276,33 @@ export default function DemandsPage() {
                         />
                     </FilterField>
 
+                    <FilterField label={t('projects.columns.center')}>
+                        <Select
+                            options={[{ value: '', label: t('common.all') }, ...centerOptions]}
+                            value={filters.center}
+                            onChange={(val) => handleFilterChange('center', val)}
+                            placeholder={t('common.all')}
+                        />
+                    </FilterField>
+
+                    <FilterField label={t('projects.columns.branch')}>
+                        <Select
+                            options={[{ value: '', label: t('common.all') }, ...branchOptions]}
+                            value={filters.branch}
+                            onChange={(val) => handleFilterChange('branch', val)}
+                            placeholder={t('common.all')}
+                        />
+                    </FilterField>
+
+                    <FilterField label={t('projects.columns.section')}>
+                        <Select
+                            options={[{ value: '', label: t('common.all') }, ...sectionOptions]}
+                            value={filters.section}
+                            onChange={(val) => handleFilterChange('section', val)}
+                            placeholder={t('common.all')}
+                        />
+                    </FilterField>
+
                     <FilterField label={t('projects.columns.type')}>
                         <Select
                             options={[{ value: '', label: t('common.all') }, ...typeOptions]}
@@ -310,6 +356,15 @@ export default function DemandsPage() {
                             onChange={(e) => handleFilterChange('relatedTo', e.target.value)}
                             placeholder={t('common.search', 'Search...')}
                             className="w-full px-3 py-1.5 text-sm border border-divider rounded-lg bg-bg-paper text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-1 focus:ring-primary"
+                        />
+                    </FilterField>
+
+                    <FilterField label={t('projects.columns.emergencyOption')}>
+                        <Select
+                            options={[{ value: '', label: t('common.all') }, ...emergencyOptionOptions]}
+                            value={filters.emergencyOption}
+                            onChange={(val) => handleFilterChange('emergencyOption', val)}
+                            placeholder={t('common.all')}
                         />
                     </FilterField>
                 </div>
