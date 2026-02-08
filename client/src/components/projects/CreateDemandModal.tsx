@@ -56,15 +56,17 @@ export default function CreateDemandModal({
   );
 
   // --- Derived State for Organization Hierarchy ---
-  const centerOptions = referenceData.centers.map((v) => ({
-    value: v.name,
-    label: v.displayName || v.name,
-  }));
+  const centerOptions = referenceData.centers
+    .filter((v) => v.isActive !== false)
+    .map((v) => ({
+      value: v.name,
+      label: v.displayName || v.name,
+    }));
 
   const branchOptions = useMemo(() => {
     if (!form.center) return [];
     return referenceData.branches
-      .filter((b) => b.centerName === form.center)
+      .filter((b) => b.centerName === form.center && b.isActive !== false)
       .map((v) => ({
         value: v.name,
         label: v.displayName || v.name,
@@ -74,7 +76,7 @@ export default function CreateDemandModal({
   const sectionOptions = useMemo(() => {
     if (!form.branch) return [];
     return referenceData.sections
-      .filter((s) => s.branchName === form.branch && s.branchCenter === form.center)
+      .filter((s) => s.branchName === form.branch && s.branchCenter === form.center && s.isActive !== false)
       .map((v) => ({
         value: v.name,
         label: v.displayName || v.name,
@@ -94,6 +96,7 @@ export default function CreateDemandModal({
   const serviceOptions = useMemo(
     () =>
       referenceData.services
+        .filter((s) => s.isActive !== false)
         .map((s) => ({ value: s.name, label: s.displayName || s.name }))
         .sort((a, b) => a.label.localeCompare(b.label)),
     [referenceData.services]
@@ -102,7 +105,7 @@ export default function CreateDemandModal({
   const resourceOptions = useMemo(() => {
     if (!form.service) return [];
     return referenceData.resources
-      .filter((r) => r.serviceName === form.service)
+      .filter((r) => r.serviceName === form.service && r.isActive !== false)
       .map((r) => ({ value: r.name, label: r.name }));
   }, [referenceData.resources, form.service]);
 
@@ -117,10 +120,12 @@ export default function CreateDemandModal({
 
   // --- Location Hierarchy (same logic as CreateProjectModal) ---
 
-  const networkOptions = referenceData.networks.map((v) => ({
-    value: v.name,
-    label: v.displayName || v.name,
-  }));
+  const networkOptions = referenceData.networks
+    .filter((v) => v.isActive !== false)
+    .map((v) => ({
+      value: v.name,
+      label: v.displayName || v.name,
+    }));
 
   const baseOptions = useMemo(() => {
     if (!form.network) return [];
@@ -129,7 +134,7 @@ export default function CreateDemandModal({
     );
     const relevantBaseNames = new Set(relevantLocations.map((l) => l.baseName));
     return referenceData.bases
-      .filter((b) => relevantBaseNames.has(b.name))
+      .filter((b) => relevantBaseNames.has(b.name) && b.isActive !== false)
       .map((v) => ({ value: v.name, label: v.displayName || v.name }));
   }, [referenceData.locations, referenceData.bases, form.network]);
 
@@ -142,7 +147,7 @@ export default function CreateDemandModal({
       relevantLocations.map((l) => l.environmentName)
     );
     return referenceData.environments
-      .filter((e) => relevantEnvNames.has(e.name))
+      .filter((e) => relevantEnvNames.has(e.name) && e.isActive !== false)
       .map((v) => ({ value: v.name, label: v.displayName || v.name }));
   }, [
     referenceData.locations,

@@ -5,11 +5,12 @@ import { useReferenceData } from '../hooks/useReferenceData';
 
 // Sub-components for each tab section
 function InfrastructureSettings({
-    baseOptions, envOptions, networkOptions
+    baseOptions, envOptions, networkOptions, onSuccess
 }: {
     baseOptions: { value: string; label: string }[];
     envOptions: { value: string; label: string }[];
     networkOptions: { value: string; label: string }[];
+    onSuccess: () => void;
 }) {
     const { t } = useTranslation();
     const [subTab, setSubTab] = useState('base');
@@ -40,6 +41,7 @@ function InfrastructureSettings({
                 <EntityManager
                     title={t('settings.base.title', 'Bases')}
                     endpoint="/bases"
+                    onSuccess={onSuccess}
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
@@ -55,6 +57,7 @@ function InfrastructureSettings({
                 <EntityManager
                     title={t('settings.environment.title', 'Environments')}
                     endpoint="/environments"
+                    onSuccess={onSuccess}
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
@@ -70,6 +73,7 @@ function InfrastructureSettings({
                 <EntityManager
                     title={t('settings.network.title', 'Networks')}
                     endpoint="/networks"
+                    onSuccess={onSuccess}
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
@@ -86,6 +90,7 @@ function InfrastructureSettings({
                     title={t('settings.location.title', 'Locations')}
                     endpoint="/locations"
                     idField="id"
+                    onSuccess={onSuccess}
                     columns={[
                         { key: 'baseName', label: t('settings.location.base', 'Base') },
                         { key: 'environmentName', label: t('settings.location.environment', 'Environment') },
@@ -104,10 +109,11 @@ function InfrastructureSettings({
 }
 
 function OrganizationSettings({
-    centerOptions, branches
+    centerOptions, branches, onSuccess
 }: {
     centerOptions: { value: string; label: string }[];
     branches: any[];
+    onSuccess: () => void;
 }) {
     const { t } = useTranslation();
     const [subTab, setSubTab] = useState('center');
@@ -137,6 +143,7 @@ function OrganizationSettings({
                 <EntityManager
                     title={t('settings.center.title', 'Centers')}
                     endpoint="/centers"
+                    onSuccess={onSuccess}
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
@@ -153,6 +160,7 @@ function OrganizationSettings({
                     title={t('settings.branch.title', 'Branches')}
                     endpoint="/branches"
                     idField={['centerName', 'name']} // Order matters for API url: /branches/centerName/name
+                    onSuccess={onSuccess}
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
@@ -171,6 +179,7 @@ function OrganizationSettings({
                     title={t('settings.section.title', 'Sections')}
                     endpoint="/sections"
                     idField={['branchCenter', 'branchName', 'name']} // API: /sections/branchCenter/branchName/name
+                    onSuccess={onSuccess}
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
@@ -211,7 +220,7 @@ function OrganizationSettings({
     );
 }
 
-function OptionsSettings() {
+function OptionsSettings({ onSuccess }: { onSuccess: () => void }) {
     const { t } = useTranslation();
     const [subTab, setSubTab] = useState('emergency');
     const tabs = [
@@ -239,6 +248,7 @@ function OptionsSettings() {
                 <EntityManager
                     title={t('settings.emergency.title', 'Emergency Options')}
                     endpoint="/emergency-options"
+                    onSuccess={onSuccess}
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                     ]}
@@ -251,6 +261,7 @@ function OptionsSettings() {
                 <EntityManager
                     title={t('settings.projectKind.title', 'Project Kinds')}
                     endpoint="/project-kinds"
+                    onSuccess={onSuccess}
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
@@ -265,6 +276,7 @@ function OptionsSettings() {
                 <EntityManager
                     title={t('settings.demandReason.title', 'Demand Reasons')}
                     endpoint="/decision-reasons"
+                    onSuccess={onSuccess}
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'displayName', label: t('common.displayName', 'Display Name') },
@@ -279,7 +291,7 @@ function OptionsSettings() {
     )
 }
 
-function ServicesSettings({ serviceOptions }: { serviceOptions: { value: string; label: string }[] }) {
+function ServicesSettings({ serviceOptions, onSuccess }: { serviceOptions: { value: string; label: string }[]; onSuccess: () => void }) {
     const { t } = useTranslation();
     const [subTab, setSubTab] = useState('service');
     const tabs = [
@@ -306,6 +318,7 @@ function ServicesSettings({ serviceOptions }: { serviceOptions: { value: string;
                 <EntityManager
                     title={t('settings.service.title', 'Services')}
                     endpoint="/services"
+                    onSuccess={onSuccess}
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         {
@@ -331,6 +344,7 @@ function ServicesSettings({ serviceOptions }: { serviceOptions: { value: string;
                     title={t('settings.resource.title', 'Resources')}
                     endpoint="/resources"
                     idField={['serviceName', 'name']} // API: /resources/serviceName/name
+                    onSuccess={onSuccess}
                     columns={[
                         { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
                         { key: 'serviceName', label: t('settings.resource.service', 'Service') },
@@ -354,7 +368,7 @@ export default function SettingsPage() {
 
     // Fetch all reference data for dropdowns
     const {
-        bases, environments, networks, centers, branches, services
+        bases, environments, networks, centers, branches, services, refreshData
     } = useReferenceData();
 
     // -- Options Helpers --
@@ -407,16 +421,18 @@ export default function SettingsPage() {
                         baseOptions={baseOptions}
                         envOptions={envOptions}
                         networkOptions={networkOptions}
+                        onSuccess={refreshData}
                     />
                 )}
                 {mainTab === 'organization' && (
                     <OrganizationSettings
                         centerOptions={centerOptions}
                         branches={branches}
+                        onSuccess={refreshData}
                     />
                 )}
-                {mainTab === 'options' && <OptionsSettings />}
-                {mainTab === 'services' && <ServicesSettings serviceOptions={serviceOptions} />}
+                {mainTab === 'options' && <OptionsSettings onSuccess={refreshData} />}
+                {mainTab === 'services' && <ServicesSettings serviceOptions={serviceOptions} onSuccess={refreshData} />}
             </div>
         </div>
     );

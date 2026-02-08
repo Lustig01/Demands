@@ -15,6 +15,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import GlobalModals from './components/layout/GlobalModals';
 import { RefreshProvider } from './contexts/RefreshContext';
 import { ModalProvider, useModal } from './contexts/ModalContext';
+import { ReferenceDataProvider } from './context/ReferenceDataContext';
 import type { NavSection, UserProfile } from './types/navigation';
 
 function AppContent() {
@@ -160,9 +161,11 @@ export default function App() {
   return (
     <ToastProvider>
       <RefreshProvider>
-        <ModalProvider>
-          <AppContent />
-        </ModalProvider>
+        <ReferenceDataProvider>
+          <ModalProvider>
+            <AppContent />
+          </ModalProvider>
+        </ReferenceDataProvider>
       </RefreshProvider>
     </ToastProvider>
   );
