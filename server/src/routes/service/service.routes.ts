@@ -9,6 +9,7 @@ const requireModerator = requireRoles(settings.authAdminGroup, settings.authMode
 const router = Router();
 
 router.get("/", authenticate, requireAuth, serviceController.getAll);
+router.get("/mine", authenticate, requireAuth, serviceController.getMine);
 router.get("/:name", authenticate, requireAuth, serviceController.getByName);
 router.post("/", authenticate, requireModerator, serviceController.create);
 router.put("/:name", authenticate, requireModerator, serviceController.update);

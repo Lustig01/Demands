@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CapacityManagement from '../components/management/CapacityManagement';
+import WalletManagement from '../components/management/WalletManagement';
 
 export default function ManagementPage() {
     const { t } = useTranslation();
@@ -8,7 +9,7 @@ export default function ManagementPage() {
 
     const tabs = [
         { label: t('management.tabs.capacity'), component: <CapacityManagement /> },
-        { label: 'Placeholder', component: <div className="p-8 text-center text-text-secondary">Future Content</div> }
+        { label: t('management.tabs.wallet'), component: <WalletManagement /> }
     ];
 
     return (

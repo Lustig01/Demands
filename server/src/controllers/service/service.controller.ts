@@ -146,4 +146,32 @@ export const serviceController = {
       res.status(400).json({ error: "Failed to delete service" });
     }
   },
+  getMine: async (req: Request, res: Response) => {
+    try {
+      const { username, isModerator } = getUserContext(req);
+      if (!username) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      if (!isModerator) {
+        return res.json([]);
+      }
+
+      // We need to import capacityService to use getModeratorServices helper, or move it to serviceService 
+      // It's currently in capacityService but logically belongs to serviceService or a shared user-service map
+      // But for now let's use what's available
+      const { capacityService } = await import("../../services/service/capacity.service");
+      const myServices = await capacityService.getModeratorServices(username);
+
+      // Return full service objects or just names? The frontend select needs name and displayName
+      // So detailed fetch is better.
+      const services = await serviceService.findAll();
+      const filtered = services.filter(s => myServices.includes(s.name));
+
+      res.json(filtered);
+    } catch (error) {
+      console.error("serviceController.getMine error:", error);
+      res.status(500).json({ error: "Failed to fetch my services" });
+    }
+  },
 };

@@ -7,6 +7,25 @@ export const capacityService = {
     });
   },
 
+  findByServices: async (serviceNames: string[]) => {
+    return prisma.capacity.findMany({
+      where: {
+        resourceService: { in: serviceNames },
+      },
+      include: { location: true, resource: true },
+    });
+  },
+
+  getModeratorServices: async (username: string): Promise<string[]> => {
+    const services = await prisma.service.findMany({
+      where: {
+        moderators: { has: username },
+      },
+      select: { name: true },
+    });
+    return services.map(s => s.name);
+  },
+
   findById: async (id: number) => {
     return prisma.capacity.findUnique({
       where: { id },

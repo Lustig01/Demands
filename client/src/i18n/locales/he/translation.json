@@ -11,7 +11,36 @@
   },
   "management": {
     "tabs": {
-      "capacity": "ניהול קיבולת משאבים"
+      "capacity": "ניהול קיבולת משאבים",
+      "wallet": "ניהול ארנקים"
+    },
+    "wallet": {
+      "add": "הוסף ארנק",
+      "columns": {
+        "service": "שירות",
+        "resource": "משאב",
+        "base": "בסיס",
+        "environment": "סביבה",
+        "network": "רשת",
+        "center": "מרכז",
+        "value": "ערך",
+        "actions": "פעולות"
+      },
+      "modal": {
+        "createTitle": "הוסף ארנק חדש",
+        "editTitle": "ערוך ארנק",
+        "capacity": "קיבולת (מיקום + משאב)",
+        "selectCapacity": "בחר קיבולת...",
+        "value": "ערך הארנק",
+        "save": "שמור",
+        "create": "צור"
+      },
+      "confirmDelete": "האם אתה בטוח שברצונך למחוק ארנק זה?",
+      "deleteSuccess": "הארנק נמחק בהצלחה",
+      "deleteFailed": "מחיקת הארנק נכשלה",
+      "updateSuccess": "הארנק עודכן בהצלחה",
+      "createSuccess": "הארנק נוצר בהצלחה",
+      "operationFailed": "הפעולה נכשלה"
     },
     "capacity": {
       "add": "הוסף קיבולת",

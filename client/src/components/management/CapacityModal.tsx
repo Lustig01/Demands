@@ -1,6 +1,8 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from 'react-oidc-context';
 import { useReferenceData } from '../../hooks/useReferenceData';
+import { fetchMyServices } from '../../api/apiService';
 import Modal from '../common/Modal';
 import Select from '../common/Select';
 import SearchableSelect from '../common/SearchableSelect';
@@ -17,6 +19,12 @@ interface CapacityModalProps {
 export default function CapacityModal({ open, onClose, onSubmit, capacity, isLoading }: CapacityModalProps) {
     const { t } = useTranslation();
     const referenceData = useReferenceData();
+    const auth = useAuth();
+
+    // Auth State
+    const userGroups = (auth.user?.profile.groups as string[]) || [];
+    const isAdmin = userGroups.includes('admin');
+    const isModerator = userGroups.includes('moderator');
 
     // Form State
     const [network, setNetwork] = useState('');
@@ -26,6 +34,17 @@ export default function CapacityModal({ open, onClose, onSubmit, capacity, isLoa
     const [resource, setResource] = useState(''); // Just the resource name
     const [value, setValue] = useState<number>(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Moderator Services State
+    const [myServices, setMyServices] = useState<string[]>([]);
+
+    useEffect(() => {
+        if (open && isModerator && !isAdmin) {
+            fetchMyServices().then(services => {
+                setMyServices(services.map(s => s.name));
+            }).catch(console.error);
+        }
+    }, [open, isModerator, isAdmin]);
 
     // Derived Options - Network
     const networkOptions = useMemo(() => referenceData.networks.map((v) => ({
@@ -62,10 +81,16 @@ export default function CapacityModal({ open, onClose, onSubmit, capacity, isLoa
     }, [referenceData.locations, referenceData.environments, network, base]);
 
     // Service Options
-    const serviceOptions = useMemo(() => referenceData.services.map((s) => ({
-        value: s.name,
-        label: s.displayName || s.name,
-    })), [referenceData.services]);
+    const serviceOptions = useMemo(() => {
+        let services = referenceData.services;
+        if (isModerator && !isAdmin && myServices.length > 0) {
+            services = services.filter(s => myServices.includes(s.name));
+        }
+        return services.map((s) => ({
+            value: s.name,
+            label: s.displayName || s.name,
+        }));
+    }, [referenceData.services, isModerator, isAdmin, myServices]);
 
     // Resource Options (Filtered by Service)
     const resourceOptions = useMemo(() => {

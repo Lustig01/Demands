@@ -11,7 +11,36 @@
   },
   "management": {
     "tabs": {
-      "capacity": "Capacity Management"
+      "capacity": "Capacity Management",
+      "wallet": "Wallet Management"
+    },
+    "wallet": {
+      "add": "Add Wallet",
+      "columns": {
+        "service": "Service",
+        "resource": "Resource",
+        "base": "Base",
+        "environment": "Environment",
+        "network": "Network",
+        "center": "Center",
+        "value": "Value",
+        "actions": "Actions"
+      },
+      "modal": {
+        "createTitle": "Add New Wallet",
+        "editTitle": "Edit Wallet",
+        "capacity": "Capacity (Location + Resource)",
+        "selectCapacity": "Select a capacity...",
+        "value": "Wallet Value",
+        "save": "Save",
+        "create": "Create"
+      },
+      "confirmDelete": "Are you sure you want to delete this wallet?",
+      "deleteSuccess": "Wallet deleted successfully",
+      "deleteFailed": "Failed to delete wallet",
+      "updateSuccess": "Wallet updated successfully",
+      "createSuccess": "Wallet created successfully",
+      "operationFailed": "Operation failed"
     },
     "capacity": {
       "add": "Add Capacity",
