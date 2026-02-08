@@ -237,6 +237,11 @@
       "App": "אפליקציה",
       "Track": "מסלול"
     },
+    "priority": {
+      "P1": "P1 - דחוף",
+      "P2": "P2 - רגיל",
+      "P3": "P3 - נמוך"
+    },
     "demandType": {
       "New": "חדש",
       "Extension": "הרחבה"
@@ -300,9 +305,18 @@
       "relatedTo": "מסלול / אפליקציה",
       "year": "שנה",
       "median": "מחצית",
-      "emergencyOption": "אפשרות חירום"
+      "emergencyOption": "אפשרות חירום",
+      "location": "מיקום",
+      "organization": "ארגון"
     },
     "noProjects": "אין פרוייקטים להצגה"
+  },
+  "projectSidebar": {
+    "details": "פרטים",
+    "location": "מיקום",
+    "organization": "ארגון",
+    "meta": "מידע",
+    "viewDemands": "צפייה בדרישות"
   },
   "notFound": {
     "message": "העמוד המבוקש לא נמצא"

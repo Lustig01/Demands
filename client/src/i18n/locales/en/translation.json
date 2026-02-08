@@ -237,6 +237,11 @@
       "App": "Application",
       "Track": "Track"
     },
+    "priority": {
+      "P1": "P1 - Urgent",
+      "P2": "P2 - Normal",
+      "P3": "P3 - Low"
+    },
     "demandType": {
       "New": "New",
       "Extension": "Extension",
@@ -306,9 +311,18 @@
       "relatedTo": "Related To",
       "year": "Year",
       "median": "Median",
-      "emergencyOption": "Emergency Option"
+      "emergencyOption": "Emergency Option",
+      "location": "Location",
+      "organization": "Organization"
     },
     "noProjects": "No projects to display"
+  },
+  "projectSidebar": {
+    "details": "Details",
+    "location": "Location",
+    "organization": "Organization",
+    "meta": "Information",
+    "viewDemands": "View Demands"
   },
   "notFound": {
     "message": "The requested page was not found"
