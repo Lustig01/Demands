@@ -50,15 +50,17 @@ export default function CreateProjectModal({
   // --- Derived State for Hierarchies ---
 
   // Organization Hierarchy: Center -> Branch -> Section
-  const centerOptions = referenceData.centers.map((v) => ({
-    value: v.name,
-    label: v.displayName || v.name,
-  }));
+  const centerOptions = referenceData.centers
+    .filter((v) => v.isActive !== false)
+    .map((v) => ({
+      value: v.name,
+      label: v.displayName || v.name,
+    }));
 
   const branchOptions = useMemo(() => {
     if (!form.center) return [];
     return referenceData.branches
-      .filter((b) => b.centerName === form.center)
+      .filter((b) => b.centerName === form.center && b.isActive !== false)
       .map((v) => ({
         value: v.name,
         label: v.displayName || v.name,
@@ -70,7 +72,7 @@ export default function CreateProjectModal({
     // Note: Section also depends on branchCenter, but practically branch names are unique or scoped.
     // Ideally we check both branchName and branchCenter.
     return referenceData.sections
-      .filter((s) => s.branchName === form.branch && s.branchCenter === form.center)
+      .filter((s) => s.branchName === form.branch && s.branchCenter === form.center && s.isActive !== false)
       .map((v) => ({
         value: v.name,
         label: v.displayName || v.name,
@@ -79,10 +81,12 @@ export default function CreateProjectModal({
 
 
   // Location Hierarchy: Network -> Base -> Environment
-  const networkOptions = referenceData.networks.map((v) => ({
-    value: v.name,
-    label: v.displayName || v.name,
-  }));
+  const networkOptions = referenceData.networks
+    .filter((v) => v.isActive !== false)
+    .map((v) => ({
+      value: v.name,
+      label: v.displayName || v.name,
+    }));
 
   const baseOptions = useMemo(() => {
     if (!form.network) return [];
@@ -91,7 +95,7 @@ export default function CreateProjectModal({
     const relevantBaseNames = new Set(relevantLocations.map(l => l.baseName));
 
     return referenceData.bases
-      .filter(b => relevantBaseNames.has(b.name))
+      .filter(b => relevantBaseNames.has(b.name) && b.isActive !== false)
       .map((v) => ({
         value: v.name,
         label: v.displayName || v.name,
@@ -107,7 +111,7 @@ export default function CreateProjectModal({
     const relevantEnvNames = new Set(relevantLocations.map(l => l.environmentName));
 
     return referenceData.environments
-      .filter(e => relevantEnvNames.has(e.name))
+      .filter(e => relevantEnvNames.has(e.name) && e.isActive !== false)
       .map((v) => ({
         value: v.name,
         label: v.displayName || v.name,
@@ -126,20 +130,24 @@ export default function CreateProjectModal({
     label: t(`projects.createProject.priorityOptions.${p}`),
   }));
 
-  const projectKindOptions = referenceData.projectKinds.map((v) => ({
-    value: v.name,
-    label: v.displayName || v.name,
-  }));
+  const projectKindOptions = referenceData.projectKinds
+    .filter((v) => v.isActive !== false)
+    .map((v) => ({
+      value: v.name,
+      label: v.displayName || v.name,
+    }));
 
   const medianOptions = (['H1', 'H2'] as Median[]).map((m) => ({
     value: m,
     label: m,
   }));
 
-  const emergencyOptionOptions = referenceData.emergencyOptions.map((v) => ({
-    value: v.name,
-    label: v.name,
-  }));
+  const emergencyOptionOptions = referenceData.emergencyOptions
+    .filter((v) => v.isActive !== false)
+    .map((v) => ({
+      value: v.name,
+      label: v.name,
+    }));
 
   // --- Handlers ---
 

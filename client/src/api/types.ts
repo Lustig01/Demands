@@ -3,6 +3,7 @@ import type { ProjectType, ProjectKind, Median, DemandType, DemandStatus } from 
 export interface ReferenceItem {
   name: string;
   displayName?: string;
+  isActive?: boolean;
 }
 
 
@@ -10,6 +11,7 @@ export interface BranchItem {
   name: string;
   centerName: string;
   displayName?: string;
+  isActive?: boolean;
 }
 
 export interface SectionItem {
@@ -17,6 +19,7 @@ export interface SectionItem {
   displayName?: string;
   branchName: string;
   branchCenter: string;
+  isActive?: boolean;
 }
 
 export interface LocationItem {
@@ -24,12 +27,14 @@ export interface LocationItem {
   baseName: string;
   environmentName: string;
   networkName: string;
+  isActive?: boolean;
 }
 
 export interface ResourceItem {
   name: string;
   unit: string;
   serviceName: string;
+  isActive?: boolean;
 }
 
 export type Priority = 'P1' | 'P2' | 'P3';
