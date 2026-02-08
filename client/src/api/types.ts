@@ -126,3 +126,40 @@ export interface CreateCapacityPayload {
 export interface UpdateCapacityPayload {
   value: number;
 }
+
+export interface Wallet {
+  id: number;
+  centerName: string;
+  capacityId: number;
+  value: number;
+  center: {
+    name: string;
+    displayName?: string;
+  };
+  capacity: {
+    id: number;
+    resourceName: string;
+    resourceService: string;
+    location: {
+      id: number;
+      baseName: string;
+      environmentName: string;
+      networkName: string;
+    };
+    resource: {
+      name: string;
+      unit: string;
+      serviceName: string;
+    };
+  };
+}
+
+export interface CreateWalletPayload {
+  centerName: string;
+  capacityId: number;
+  value: number;
+}
+
+export interface UpdateWalletPayload {
+  value: number;
+}

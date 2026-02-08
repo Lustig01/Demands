@@ -16,6 +16,9 @@ import type {
   Capacity,
   CreateCapacityPayload,
   UpdateCapacityPayload,
+  Wallet,
+  CreateWalletPayload,
+  UpdateWalletPayload,
 } from './types';
 
 // --- Response mappers ---
@@ -198,6 +201,11 @@ export async function fetchServices(): Promise<ReferenceItem[]> {
   return data;
 }
 
+export async function fetchMyServices(): Promise<ReferenceItem[]> {
+  const { data } = await api.get('/services/mine');
+  return data;
+}
+
 export async function fetchResources(): Promise<ResourceItem[]> {
   const { data } = await api.get('/resources');
   return data;
@@ -232,4 +240,25 @@ export async function updateCapacity(id: number, payload: UpdateCapacityPayload)
 
 export async function deleteCapacity(id: number): Promise<void> {
   await api.delete(`/capacities/${id}`);
+}
+
+// --- Wallets ---
+
+export async function fetchWallets(): Promise<Wallet[]> {
+  const { data } = await api.get('/wallets');
+  return data;
+}
+
+export async function createWallet(payload: CreateWalletPayload): Promise<Wallet> {
+  const { data } = await api.post('/wallets', payload);
+  return data;
+}
+
+export async function updateWallet(id: number, payload: UpdateWalletPayload): Promise<Wallet> {
+  const { data } = await api.put(`/wallets/${id}`, payload);
+  return data;
+}
+
+export async function deleteWallet(id: number): Promise<void> {
+  await api.delete(`/wallets/${id}`);
 }

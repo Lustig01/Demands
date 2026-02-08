@@ -27,6 +27,17 @@ export const walletService = {
     });
   },
 
+  findByServices: async (serviceNames: string[]) => {
+    return prisma.wallet.findMany({
+      where: {
+        capacity: {
+          resourceService: { in: serviceNames },
+        },
+      },
+      include: walletInclude,
+    });
+  },
+
   findById: async (id: number) => {
     return prisma.wallet.findUnique({
       where: { id },
