@@ -319,6 +319,9 @@ export const projectController = {
       if (error instanceof NotFoundError) {
         return res.status(404).json({ error: "Project not found" });
       }
+      if (error instanceof Error && error.message.includes("existing demands")) {
+        return res.status(400).json({ error: error.message });
+      }
       console.error("projectController.delete error:", error);
       res.status(400).json({ error: "Failed to delete project" });
     }

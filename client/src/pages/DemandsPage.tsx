@@ -12,8 +12,9 @@ import { useReferenceData } from '../hooks/useReferenceData';
 import { useDebounce } from '../hooks/useDebounce';
 import Select from '../components/common/Select';
 import SearchableSelect, { type SearchableSelectOption } from '../components/common/SearchableSelect';
-import type { CreateDemandPayload } from '../api/types';
+import type { CreateDemandPayload, UpdateDemandPayload } from '../api/types';
 import type { Demand, Project } from '../types/domain';
+import { useToast } from '../components/common/Toast';
 
 import Pagination from '../components/common/Pagination';
 
@@ -61,13 +62,16 @@ export default function DemandsPage() {
         [filters, debouncedFilters]
     );
 
-    // Create Modal State
-    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    // Modal State
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingDemand, setEditingDemand] = useState<Demand | null>(null);
 
     // Sidebar State
     const [selectedDemand, setSelectedDemand] = useState<Demand | null>(null);
 
-    const { demands, total, totalPages, isLoading, error, createDemand } = useDemands({
+    const { showToast } = useToast();
+
+    const { demands, total, totalPages, isLoading, error, createDemand, updateDemand, cancelDemand } = useDemands({
         ...debouncedFilters,
         baseName: debouncedFilters.base,
         environmentName: debouncedFilters.environment,
@@ -167,10 +171,42 @@ export default function DemandsPage() {
         , [emergencyOptions]);
 
 
-    async function handleCreateDemand(payload: CreateDemandPayload) {
-        await createDemand(payload);
-        setFilters(prev => ({ ...prev, projectName: payload.projectName }));
+    async function handleSubmitDemand(payload: CreateDemandPayload | UpdateDemandPayload, demandId?: number) {
+        if (demandId) {
+            await updateDemand(demandId, payload as UpdateDemandPayload);
+        } else {
+            await createDemand(payload as CreateDemandPayload);
+            setFilters(prev => ({ ...prev, projectName: (payload as CreateDemandPayload).projectName }));
+        }
         setCurrentPage(1);
+    }
+
+    function handleEditDemand(demand: Demand) {
+        setEditingDemand(demand);
+        setIsModalOpen(true);
+        setSelectedDemand(null);
+    }
+
+    async function handleCancelDemand(demand: Demand) {
+        if (window.confirm(t('demands.confirmCancel'))) {
+            try {
+                await cancelDemand(demand.id);
+                showToast(t('demands.cancelSuccess'), 'success');
+                setSelectedDemand(null);
+            } catch (err: any) {
+                showToast(err?.response?.data?.error || t('demands.cancelFailed'), 'error');
+            }
+        }
+    }
+
+    function handleCloseModal() {
+        setIsModalOpen(false);
+        setEditingDemand(null);
+    }
+
+    function handleOpenCreateModal() {
+        setEditingDemand(null);
+        setIsModalOpen(true);
     }
 
     const handleFilterChange = (key: keyof typeof filters, value: string) => {
@@ -186,7 +222,7 @@ export default function DemandsPage() {
                 <PageHeader title={t('nav.demands')} />
                 <button
                     type="button"
-                    onClick={() => setIsCreateOpen(true)}
+                    onClick={handleOpenCreateModal}
                     className="flex items-center gap-2 px-4 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none whitespace-nowrap"
                 >
                     <MdAdd size={18} />
@@ -402,6 +438,8 @@ export default function DemandsPage() {
                                 isLoading={isLoading}
                                 selectedDemand={selectedDemand}
                                 onSelectDemand={setSelectedDemand}
+                                onEdit={handleEditDemand}
+                                onCancel={handleCancelDemand}
                             />
                         </div>
 
@@ -419,11 +457,12 @@ export default function DemandsPage() {
                 )}
             </div>
 
-            {isCreateOpen && (
+            {isModalOpen && (
                 <CreateDemandModal
-                    isOpen={isCreateOpen}
-                    onClose={() => setIsCreateOpen(false)}
-                    onSubmit={handleCreateDemand}
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    onSubmit={handleSubmitDemand}
+                    editingDemand={editingDemand}
                 />
             )}
 
@@ -432,6 +471,8 @@ export default function DemandsPage() {
                 project={selectedProject}
                 isOpen={selectedDemand !== null}
                 onClose={() => setSelectedDemand(null)}
+                onEdit={handleEditDemand}
+                onCancel={handleCancelDemand}
             />
         </div>
     );

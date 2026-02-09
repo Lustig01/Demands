@@ -196,6 +196,7 @@ enum DemandStatus {
   Approved
   Rejected
   PartiallyApproved
+  Cancelled
 }
 
 enum Priority {

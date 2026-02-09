@@ -8,7 +8,9 @@ import type {
   LocationItem,
   ResourceItem,
   CreateProjectPayload,
+  UpdateProjectPayload,
   CreateDemandPayload,
+  UpdateDemandPayload,
   PaginationParams,
   PaginatedResponse,
   ProjectFilterParams,
@@ -104,6 +106,15 @@ export async function createProject(payload: CreateProjectPayload): Promise<Proj
   return mapProject(data);
 }
 
+export async function updateProject(name: string, payload: UpdateProjectPayload): Promise<Project> {
+  const { data } = await api.put(`/projects/${encodeURIComponent(name)}`, payload);
+  return mapProject(data);
+}
+
+export async function deleteProject(name: string): Promise<void> {
+  await api.delete(`/projects/${encodeURIComponent(name)}`);
+}
+
 // --- Demands ---
 
 export async function fetchDemands(
@@ -157,6 +168,20 @@ export async function fetchDemands(
 
 export async function createDemand(payload: CreateDemandPayload): Promise<Demand> {
   const { data } = await api.post('/demands', payload);
+  return mapDemand(data);
+}
+
+export async function updateDemand(id: number, payload: UpdateDemandPayload): Promise<Demand> {
+  const { data } = await api.patch(`/demands/${id}`, payload);
+  return mapDemand(data);
+}
+
+export async function deleteDemand(id: number): Promise<void> {
+  await api.delete(`/demands/${id}`);
+}
+
+export async function cancelDemand(id: number): Promise<Demand> {
+  const { data } = await api.patch(`/demands/${id}/cancel`);
   return mapDemand(data);
 }
 

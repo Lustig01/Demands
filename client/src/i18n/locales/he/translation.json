@@ -227,8 +227,20 @@
       "Pending": "ממתין",
       "Approved": "מאושר",
       "Rejected": "נדחה",
-      "PartiallyApproved": "אושר חלקית"
+      "PartiallyApproved": "אושר חלקית",
+      "Cancelled": "בוטל"
     },
+    "editProject": {
+      "title": "עריכת פרויקט"
+    },
+    "actions": {
+      "cannotDeleteWithDemands": "לא ניתן למחוק פרויקט עם דרישות קיימות"
+    },
+    "confirmDelete": "האם אתה בטוח שברצונך למחוק פרויקט זה?",
+    "deleteSuccess": "הפרויקט נמחק בהצלחה",
+    "deleteFailed": "מחיקת הפרויקט נכשלה",
+    "updateSuccess": "הפרויקט עודכן בהצלחה",
+    "updateFailed": "עדכון הפרויקט נכשל",
     "type": {
       "Semiannual": "חצי שנתי",
       "Emergency": "חירום"
@@ -263,7 +275,10 @@
       "overrideOrganization": "דריסת ארגון",
       "submit": "צור דרישה",
       "selectOption": "בחר...",
-      "valuePlaceholder": "הזן כמות"
+      "valuePlaceholder": "הזן כמות",
+      "center": "מרכז",
+      "branch": "ענף",
+      "section": "מדור"
     },
     "createProject": {
       "title": "פרויקט חדש",
@@ -327,6 +342,19 @@
     "meta": "מידע",
     "clusterName": "שם אשכול",
     "projectType": "סוג פרויקט"
+  },
+  "demands": {
+    "editDemand": {
+      "title": "עריכת דרישה"
+    },
+    "actions": {
+      "cancel": "ביטול"
+    },
+    "confirmCancel": "האם אתה בטוח שברצונך לבטל דרישה זו?",
+    "cancelSuccess": "הדרישה בוטלה בהצלחה",
+    "cancelFailed": "ביטול הדרישה נכשל",
+    "updateSuccess": "הדרישה עודכנה בהצלחה",
+    "updateFailed": "עדכון הדרישה נכשל"
   },
   "notFound": {
     "message": "העמוד המבוקש לא נמצא"

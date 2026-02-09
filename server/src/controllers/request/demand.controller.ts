@@ -323,6 +323,9 @@ export const demandController = {
       if (error instanceof NotFoundError) {
         return res.status(404).json({ error: "Demand not found" });
       }
+      if (error instanceof Error && error.message.includes("pending")) {
+        return res.status(400).json({ error: error.message });
+      }
       console.error("demandController.update error:", error);
       res.status(400).json({ error: "Failed to update demand" });
     }
@@ -352,6 +355,26 @@ export const demandController = {
     } catch (error) {
       console.error("demandController.reject error:", error);
       res.status(400).json({ error: "Failed to reject demand" });
+    }
+  },
+
+  cancel: async (req: Request, res: Response) => {
+    try {
+      const { username, isPrivileged } = getUserContext(req);
+      const demand = await demandService.cancel(
+        Number(req.params.id),
+        isPrivileged ? undefined : username
+      );
+      res.json(demand);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        return res.status(404).json({ error: "Demand not found" });
+      }
+      if (error instanceof Error && error.message.includes("pending")) {
+        return res.status(400).json({ error: error.message });
+      }
+      console.error("demandController.cancel error:", error);
+      res.status(400).json({ error: "Failed to cancel demand" });
     }
   },
 

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchProjects, createProject as apiCreateProject } from '../api/apiService';
+import { fetchProjects, createProject as apiCreateProject, updateProject as apiUpdateProject, deleteProject as apiDeleteProject } from '../api/apiService';
 import { useRefresh } from '../contexts/RefreshContext';
 import type { Project } from '../types/domain';
-import type { CreateProjectPayload, PaginationParams, ProjectFilterParams } from '../api/types';
+import type { CreateProjectPayload, UpdateProjectPayload, PaginationParams, ProjectFilterParams } from '../api/types';
 
 interface UseProjectsResult {
   projects: Project[];
@@ -11,6 +11,8 @@ interface UseProjectsResult {
   total: number;
   totalPages: number;
   createProject: (payload: CreateProjectPayload) => Promise<void>;
+  updateProject: (name: string, payload: UpdateProjectPayload) => Promise<void>;
+  deleteProject: (name: string) => Promise<void>;
 }
 
 export function useProjects(
@@ -59,5 +61,15 @@ export function useProjects(
     triggerRefreshProjects();
   }, [triggerRefreshProjects]);
 
-  return { projects, isLoading, error, total, totalPages, createProject };
+  const updateProject = useCallback(async (name: string, payload: UpdateProjectPayload) => {
+    await apiUpdateProject(name, payload);
+    triggerRefreshProjects();
+  }, [triggerRefreshProjects]);
+
+  const deleteProject = useCallback(async (name: string) => {
+    await apiDeleteProject(name);
+    triggerRefreshProjects();
+  }, [triggerRefreshProjects]);
+
+  return { projects, isLoading, error, total, totalPages, createProject, updateProject, deleteProject };
 }

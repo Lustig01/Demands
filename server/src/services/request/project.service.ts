@@ -153,14 +153,20 @@ export const projectService = {
   },
 
   delete: async (name: string, createdBy?: string) => {
-    if (createdBy) {
-      const existing = await prisma.project.findFirst({
-        where: { name, createdBy },
-      });
-      if (!existing) {
-        throw new NotFoundError("Project");
-      }
+    const existing = await prisma.project.findFirst({
+      where: createdBy ? { name, createdBy } : { name },
+    });
+    if (!existing) {
+      throw new NotFoundError("Project");
     }
+
+    const demandCount = await prisma.demand.count({
+      where: { projectName: name },
+    });
+    if (demandCount > 0) {
+      throw new Error("Cannot delete project with existing demands");
+    }
+
     return prisma.project.delete({
       where: { name },
     });

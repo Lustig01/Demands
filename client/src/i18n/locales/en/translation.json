@@ -227,8 +227,20 @@
       "Pending": "Pending",
       "Approved": "Approved",
       "Rejected": "Rejected",
-      "PartiallyApproved": "Partially Approved"
+      "PartiallyApproved": "Partially Approved",
+      "Cancelled": "Cancelled"
     },
+    "editProject": {
+      "title": "Edit Project"
+    },
+    "actions": {
+      "cannotDeleteWithDemands": "Cannot delete project with existing demands"
+    },
+    "confirmDelete": "Are you sure you want to delete this project?",
+    "deleteSuccess": "Project deleted successfully",
+    "deleteFailed": "Failed to delete project",
+    "updateSuccess": "Project updated successfully",
+    "updateFailed": "Failed to update project",
     "type": {
       "Semiannual": "Semiannual",
       "Emergency": "Emergency"
@@ -269,7 +281,10 @@
       "overrideOrganization": "Override Organization",
       "submit": "Create Demand",
       "selectOption": "Select...",
-      "valuePlaceholder": "Enter value"
+      "valuePlaceholder": "Enter value",
+      "center": "Center",
+      "branch": "Branch",
+      "section": "Section"
     },
     "createProject": {
       "title": "New Project",
@@ -333,6 +348,19 @@
     "meta": "Information",
     "clusterName": "Cluster Name",
     "projectType": "Project Type"
+  },
+  "demands": {
+    "editDemand": {
+      "title": "Edit Demand"
+    },
+    "actions": {
+      "cancel": "Cancel"
+    },
+    "confirmCancel": "Are you sure you want to cancel this demand?",
+    "cancelSuccess": "Demand cancelled successfully",
+    "cancelFailed": "Failed to cancel demand",
+    "updateSuccess": "Demand updated successfully",
+    "updateFailed": "Failed to update demand"
   },
   "notFound": {
     "message": "The requested page was not found"
