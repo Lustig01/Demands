@@ -56,6 +56,20 @@ export default function CreateDemandModal({
   // Populate form when editing
   useEffect(() => {
     if (editingDemand && isOpen) {
+      const project = allProjects.find(p => p.name === editingDemand.projectName);
+
+      const hasDifferentLocation = project ? (
+        editingDemand.location.network !== project.location.network ||
+        editingDemand.location.base !== project.location.base ||
+        editingDemand.location.environment !== project.location.environment
+      ) : false;
+
+      const hasDifferentOrganization = project ? (
+        (editingDemand.centerName || '') !== (project.centerName || '') ||
+        (editingDemand.branchName || '') !== (project.branchName || '') ||
+        (editingDemand.sectionName || '') !== (project.sectionName || '')
+      ) : false;
+
       setForm({
         project: editingDemand.projectName,
         service: editingDemand.serviceName,
@@ -64,11 +78,11 @@ export default function CreateDemandModal({
         value: editingDemand.value,
         type: editingDemand.type,
         clusterName: editingDemand.clusterName || '',
-        overrideLocation: false,
+        overrideLocation: hasDifferentLocation,
         network: editingDemand.location.network,
         base: editingDemand.location.base,
         environment: editingDemand.location.environment,
-        overrideOrganization: false,
+        overrideOrganization: hasDifferentOrganization,
         center: editingDemand.centerName || '',
         branch: editingDemand.branchName || '',
         section: editingDemand.sectionName || '',
@@ -76,7 +90,7 @@ export default function CreateDemandModal({
     } else if (!editingDemand && isOpen) {
       setForm(initialForm);
     }
-  }, [editingDemand, isOpen]);
+  }, [editingDemand, isOpen, allProjects]);
 
   // --- Derived: selected project for location display ---
   const selectedProject = useMemo(

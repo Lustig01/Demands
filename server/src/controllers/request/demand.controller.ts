@@ -267,37 +267,50 @@ export const demandController = {
         }
       }
 
+      // Fetch current demand to compare values
+      const currentDemand = await demandService.findById(Number(req.params.id));
+      if (!currentDemand) {
+        return res.status(404).json({ error: "Demand not found" });
+      }
+
       // Validate organization fields if provided
       if (centerName) {
         const center = await prisma.center.findUnique({ where: { name: centerName } });
         if (!center) {
           return res.status(400).json({ error: "Center not found" });
         }
-        if (!center.isActive) {
+        // Only validate active status if the value is changing
+        if (!center.isActive && center.name !== currentDemand.centerName) {
           return res.status(400).json({ error: "Center is not active" });
         }
       }
 
-      if (branchName && centerName) {
+      const targetCenter = centerName || currentDemand.centerName;
+
+      if (branchName) {
         const branch = await prisma.branch.findUnique({
-          where: { name_centerName: { name: branchName, centerName } },
+          where: { name_centerName: { name: branchName, centerName: targetCenter } },
         });
         if (!branch) {
           return res.status(400).json({ error: "Branch not found" });
         }
-        if (!branch.isActive) {
+        // Only validate active status if the value is changing
+        if (!branch.isActive && branch.name !== currentDemand.branchName) {
           return res.status(400).json({ error: "Branch is not active" });
         }
       }
 
-      if (sectionName && branchName && centerName) {
+      const targetBranch = branchName || currentDemand.branchName;
+
+      if (sectionName) {
         const sectionEntity = await prisma.section.findUnique({
-          where: { name_branchName_branchCenter: { name: sectionName, branchName, branchCenter: centerName } },
+          where: { name_branchName_branchCenter: { name: sectionName, branchName: targetBranch, branchCenter: targetCenter } },
         });
         if (!sectionEntity) {
           return res.status(400).json({ error: "Section not found" });
         }
-        if (!sectionEntity.isActive) {
+        // Only validate active status if the value is changing
+        if (!sectionEntity.isActive && sectionEntity.name !== currentDemand.sectionName) {
           return res.status(400).json({ error: "Section is not active" });
         }
       }

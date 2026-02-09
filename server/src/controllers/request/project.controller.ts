@@ -213,37 +213,50 @@ export const projectController = {
           .json({ error: "emergencyOption is required for Emergency projects" });
       }
 
+      // Fetch current project to compare values
+      const currentProject = await projectService.findByName(req.params.name);
+      if (!currentProject) {
+        return res.status(404).json({ error: "Project not found" });
+      }
+
       // Validate organization fields if provided
       if (centerName) {
         const center = await prisma.center.findUnique({ where: { name: centerName } });
         if (!center) {
           return res.status(400).json({ error: "Center not found" });
         }
-        if (!center.isActive) {
+        // Only validate active status if the value is changing
+        if (!center.isActive && center.name !== currentProject.centerName) {
           return res.status(400).json({ error: "Center is not active" });
         }
       }
 
-      if (branchName && centerName) {
+      const targetCenter = centerName || currentProject.centerName;
+
+      if (branchName) {
         const branch = await prisma.branch.findUnique({
-          where: { name_centerName: { name: branchName, centerName } },
+          where: { name_centerName: { name: branchName, centerName: targetCenter } },
         });
         if (!branch) {
           return res.status(400).json({ error: "Branch not found" });
         }
-        if (!branch.isActive) {
+        // Only validate active status if the value is changing
+        if (!branch.isActive && branch.name !== currentProject.branchName) {
           return res.status(400).json({ error: "Branch is not active" });
         }
       }
 
-      if (sectionName && branchName && centerName) {
+      const targetBranch = branchName || currentProject.branchName;
+
+      if (sectionName) {
         const section = await prisma.section.findUnique({
-          where: { name_branchName_branchCenter: { name: sectionName, branchName, branchCenter: centerName } },
+          where: { name_branchName_branchCenter: { name: sectionName, branchName: targetBranch, branchCenter: targetCenter } },
         });
         if (!section) {
           return res.status(400).json({ error: "Section not found" });
         }
-        if (!section.isActive) {
+        // Only validate active status if the value is changing
+        if (!section.isActive && section.name !== currentProject.sectionName) {
           return res.status(400).json({ error: "Section is not active" });
         }
       }
