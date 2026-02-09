@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchDemands, createDemand as apiCreateDemand } from '../api/apiService';
+import { fetchDemands, createDemand as apiCreateDemand, updateDemand as apiUpdateDemand, cancelDemand as apiCancelDemand } from '../api/apiService';
 import { useRefresh } from '../contexts/RefreshContext';
 import type { Demand } from '../types/domain';
-import type { PaginationParams, DemandFilterParams, CreateDemandPayload } from '../api/types';
+import type { PaginationParams, DemandFilterParams, CreateDemandPayload, UpdateDemandPayload } from '../api/types';
 
 interface UseDemandsResult {
   demands: Demand[];
@@ -11,6 +11,8 @@ interface UseDemandsResult {
   total: number;
   totalPages: number;
   createDemand: (payload: CreateDemandPayload) => Promise<void>;
+  updateDemand: (id: number, payload: UpdateDemandPayload) => Promise<void>;
+  cancelDemand: (id: number) => Promise<void>;
 }
 
 export function useDemands(
@@ -57,5 +59,15 @@ export function useDemands(
     triggerRefreshDemands();
   }, [triggerRefreshDemands]);
 
-  return { demands, isLoading, error, total, totalPages, createDemand };
+  const updateDemand = useCallback(async (id: number, payload: UpdateDemandPayload) => {
+    await apiUpdateDemand(id, payload);
+    triggerRefreshDemands();
+  }, [triggerRefreshDemands]);
+
+  const cancelDemand = useCallback(async (id: number) => {
+    await apiCancelDemand(id);
+    triggerRefreshDemands();
+  }, [triggerRefreshDemands]);
+
+  return { demands, isLoading, error, total, totalPages, createDemand, updateDemand, cancelDemand };
 }

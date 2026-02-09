@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { MdEdit, MdCancel } from 'react-icons/md';
 import type { Demand, Project } from '../../types/domain';
 import StatusBadge from './StatusBadge';
 import PriorityBadge from './PriorityBadge';
@@ -9,6 +10,8 @@ interface DemandsTableProps {
   isLoading?: boolean;
   selectedDemand?: Demand | null;
   onSelectDemand: (demand: Demand) => void;
+  onEdit: (demand: Demand) => void;
+  onCancel: (demand: Demand) => void;
 }
 
 export default function DemandsTable({
@@ -17,6 +20,8 @@ export default function DemandsTable({
   isLoading,
   selectedDemand,
   onSelectDemand,
+  onEdit,
+  onCancel,
 }: DemandsTableProps) {
   const { t } = useTranslation();
 
@@ -31,6 +36,7 @@ export default function DemandsTable({
     { key: 'organization', label: t('projectsTable.columns.organization') },
     { key: 'priority', label: t('projects.createProject.priority') },
     { key: 'projectType', label: t('projects.columns.projectType') },
+    { key: 'actions', label: t('common.actions') },
   ];
 
   if (isLoading) {
@@ -104,6 +110,26 @@ export default function DemandsTable({
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
                   {project?.type ? t(`projects.type.${project.type}`) : '-'}
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  {demand.status === 'Pending' && (
+                    <div className="flex items-center justify-center gap-1">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onEdit(demand); }}
+                        className="p-1.5 text-text-secondary hover:text-primary transition-colors bg-transparent border-none cursor-pointer"
+                        title={t('common.edit')}
+                      >
+                        <MdEdit size={18} />
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onCancel(demand); }}
+                        className="p-1.5 text-text-secondary hover:text-danger transition-colors bg-transparent border-none cursor-pointer"
+                        title={t('demands.actions.cancel')}
+                      >
+                        <MdCancel size={18} />
+                      </button>
+                    </div>
+                  )}
                 </td>
               </tr>
             );

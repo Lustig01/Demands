@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Modal from '../common/Modal';
 import Select from '../common/Select';
@@ -6,13 +6,14 @@ import SearchableSelect from '../common/SearchableSelect';
 import { useToast } from '../common/Toast';
 import { useReferenceData } from '../../hooks/useReferenceData';
 import { useCachedProjects } from '../../hooks/useCachedProjects';
-import type { CreateDemandPayload } from '../../api/types';
-import type { DemandType } from '../../types/domain';
+import type { CreateDemandPayload, UpdateDemandPayload } from '../../api/types';
+import type { Demand, DemandType } from '../../types/domain';
 
 interface CreateDemandModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (payload: CreateDemandPayload) => Promise<void>;
+  onSubmit: (payload: CreateDemandPayload | UpdateDemandPayload, demandId?: number) => Promise<void>;
+  editingDemand?: Demand | null;
 }
 
 const initialForm = {
@@ -40,6 +41,7 @@ export default function CreateDemandModal({
   isOpen,
   onClose,
   onSubmit,
+  editingDemand,
 }: CreateDemandModalProps) {
   const { t } = useTranslation();
   const { showToast } = useToast();
@@ -49,6 +51,47 @@ export default function CreateDemandModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isEditMode = !!editingDemand;
+
+  // Populate form when editing
+  useEffect(() => {
+    if (editingDemand && isOpen) {
+      const project = allProjects.find(p => p.name === editingDemand.projectName);
+
+      const hasDifferentLocation = project ? (
+        editingDemand.location.network !== project.location.network ||
+        editingDemand.location.base !== project.location.base ||
+        editingDemand.location.environment !== project.location.environment
+      ) : false;
+
+      const hasDifferentOrganization = project ? (
+        (editingDemand.centerName || '') !== (project.centerName || '') ||
+        (editingDemand.branchName || '') !== (project.branchName || '') ||
+        (editingDemand.sectionName || '') !== (project.sectionName || '')
+      ) : false;
+
+      setForm({
+        project: editingDemand.projectName,
+        service: editingDemand.serviceName,
+        resource: editingDemand.resourceName,
+        unit: editingDemand.unit,
+        value: editingDemand.value,
+        type: editingDemand.type,
+        clusterName: editingDemand.clusterName || '',
+        overrideLocation: hasDifferentLocation,
+        network: editingDemand.location.network,
+        base: editingDemand.location.base,
+        environment: editingDemand.location.environment,
+        overrideOrganization: hasDifferentOrganization,
+        center: editingDemand.centerName || '',
+        branch: editingDemand.branchName || '',
+        section: editingDemand.sectionName || '',
+      });
+    } else if (!editingDemand && isOpen) {
+      setForm(initialForm);
+    }
+  }, [editingDemand, isOpen, allProjects]);
+
   // --- Derived: selected project for location display ---
   const selectedProject = useMemo(
     () => allProjects.find((p) => p.name === form.project) ?? null,
@@ -56,8 +99,9 @@ export default function CreateDemandModal({
   );
 
   // --- Derived State for Organization Hierarchy ---
+  // --- Derived State for Organization Hierarchy ---
   const centerOptions = referenceData.centers
-    .filter((v) => v.isActive !== false)
+    .filter((v) => v.isActive !== false || v.name === form.center)
     .map((v) => ({
       value: v.name,
       label: v.displayName || v.name,
@@ -66,22 +110,22 @@ export default function CreateDemandModal({
   const branchOptions = useMemo(() => {
     if (!form.center) return [];
     return referenceData.branches
-      .filter((b) => b.centerName === form.center && b.isActive !== false)
+      .filter((b) => b.centerName === form.center && (b.isActive !== false || b.name === form.branch))
       .map((v) => ({
         value: v.name,
         label: v.displayName || v.name,
       }));
-  }, [referenceData.branches, form.center]);
+  }, [referenceData.branches, form.center, form.branch]);
 
   const sectionOptions = useMemo(() => {
     if (!form.branch) return [];
     return referenceData.sections
-      .filter((s) => s.branchName === form.branch && s.branchCenter === form.center && s.isActive !== false)
+      .filter((s) => s.branchName === form.branch && s.branchCenter === form.center && (s.isActive !== false || s.name === form.section))
       .map((v) => ({
         value: v.name,
         label: v.displayName || v.name,
       }));
-  }, [referenceData.sections, form.branch, form.center]);
+  }, [referenceData.sections, form.branch, form.center, form.section]);
 
   // --- Dropdown Options ---
 
@@ -96,18 +140,18 @@ export default function CreateDemandModal({
   const serviceOptions = useMemo(
     () =>
       referenceData.services
-        .filter((s) => s.isActive !== false)
+        .filter((s) => s.isActive !== false || s.name === form.service)
         .map((s) => ({ value: s.name, label: s.displayName || s.name }))
         .sort((a, b) => a.label.localeCompare(b.label)),
-    [referenceData.services]
+    [referenceData.services, form.service]
   );
 
   const resourceOptions = useMemo(() => {
     if (!form.service) return [];
     return referenceData.resources
-      .filter((r) => r.serviceName === form.service && r.isActive !== false)
+      .filter((r) => r.serviceName === form.service && (r.isActive !== false || r.name === form.resource))
       .map((r) => ({ value: r.name, label: r.name }));
-  }, [referenceData.resources, form.service]);
+  }, [referenceData.resources, form.service, form.resource]);
 
   const typeOptions = useMemo(
     () =>
@@ -121,7 +165,7 @@ export default function CreateDemandModal({
   // --- Location Hierarchy (same logic as CreateProjectModal) ---
 
   const networkOptions = referenceData.networks
-    .filter((v) => v.isActive !== false)
+    .filter((v) => v.isActive !== false || v.name === form.network)
     .map((v) => ({
       value: v.name,
       label: v.displayName || v.name,
@@ -134,9 +178,9 @@ export default function CreateDemandModal({
     );
     const relevantBaseNames = new Set(relevantLocations.map((l) => l.baseName));
     return referenceData.bases
-      .filter((b) => relevantBaseNames.has(b.name) && b.isActive !== false)
+      .filter((b) => relevantBaseNames.has(b.name) && (b.isActive !== false || b.name === form.base))
       .map((v) => ({ value: v.name, label: v.displayName || v.name }));
-  }, [referenceData.locations, referenceData.bases, form.network]);
+  }, [referenceData.locations, referenceData.bases, form.network, form.base]);
 
   const environmentOptions = useMemo(() => {
     if (!form.network || !form.base) return [];
@@ -147,13 +191,14 @@ export default function CreateDemandModal({
       relevantLocations.map((l) => l.environmentName)
     );
     return referenceData.environments
-      .filter((e) => relevantEnvNames.has(e.name) && e.isActive !== false)
+      .filter((e) => relevantEnvNames.has(e.name) && (e.isActive !== false || e.name === form.environment))
       .map((v) => ({ value: v.name, label: v.displayName || v.name }));
   }, [
     referenceData.locations,
     referenceData.environments,
     form.network,
     form.base,
+    form.environment
   ]);
 
   // --- Handlers ---
@@ -262,8 +307,8 @@ export default function CreateDemandModal({
     setError(null);
     setIsSubmitting(true);
     try {
-      await onSubmit(payload);
-      showToast(t('common.toast.demandCreated'), 'success');
+      await onSubmit(payload, editingDemand?.id);
+      showToast(isEditMode ? t('demands.updateSuccess') : t('common.toast.demandCreated'), 'success');
       handleClose();
     } catch (err: any) {
       const message =
@@ -271,7 +316,7 @@ export default function CreateDemandModal({
         err?.message ||
         t('common.errors.unknown');
       setError(message);
-      showToast(t('common.toast.demandCreateFailed'), 'error');
+      showToast(isEditMode ? t('demands.updateFailed') : t('common.toast.demandCreateFailed'), 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -291,7 +336,7 @@ export default function CreateDemandModal({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={t('projects.createDemand.title')}
+      title={isEditMode ? t('demands.editDemand.title') : t('projects.createDemand.title')}
     >
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
@@ -301,12 +346,22 @@ export default function CreateDemandModal({
               {t('projects.createDemand.project')}{' '}
               <span className="text-danger">*</span>
             </label>
-            <SearchableSelect
-              options={projectOptions}
-              value={form.project}
-              onChange={(v) => setField('project', v)}
-              placeholder={placeholder}
-            />
+            {isEditMode ? (
+              <input
+                type="text"
+                value={form.project}
+                readOnly
+                disabled
+                className={`${inputClass} bg-gray-50 text-text-secondary`}
+              />
+            ) : (
+              <SearchableSelect
+                options={projectOptions}
+                value={form.project}
+                onChange={(v) => setField('project', v)}
+                placeholder={placeholder}
+              />
+            )}
           </div>
 
           {/* Service */}
@@ -597,7 +652,7 @@ export default function CreateDemandModal({
             disabled={isSubmitting}
             className="px-6 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? t('common.submitting') : t('projects.createDemand.submit')}
+            {isSubmitting ? t('common.submitting') : isEditMode ? t('common.save') : t('projects.createDemand.submit')}
           </button>
         </div>
       </form>

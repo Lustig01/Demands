@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { MdEdit, MdDelete } from 'react-icons/md';
 import type { Project } from '../../types/domain';
 import PriorityBadge from './PriorityBadge';
 
@@ -7,6 +8,8 @@ interface ProjectsTableProps {
   isLoading?: boolean;
   selectedProject?: Project | null;
   onSelectProject: (project: Project) => void;
+  onEdit: (project: Project) => void;
+  onDelete: (project: Project) => void;
 }
 
 export default function ProjectsTable({
@@ -14,6 +17,8 @@ export default function ProjectsTable({
   isLoading,
   selectedProject,
   onSelectProject,
+  onEdit,
+  onDelete,
 }: ProjectsTableProps) {
   const { t } = useTranslation();
 
@@ -24,6 +29,7 @@ export default function ProjectsTable({
     { key: 'location', label: t('projectsTable.columns.location') },
     { key: 'organization', label: t('projectsTable.columns.organization') },
     { key: 'priority', label: t('projects.createProject.priority') },
+    { key: 'actions', label: t('common.actions') },
   ];
 
   if (isLoading) {
@@ -93,6 +99,25 @@ export default function ProjectsTable({
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
                 <PriorityBadge priority={project.priority} />
+              </td>
+              <td className="px-4 py-3 whitespace-nowrap">
+                <div className="flex items-center justify-center gap-1">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onEdit(project); }}
+                    className="p-1.5 text-text-secondary hover:text-primary transition-colors bg-transparent border-none cursor-pointer"
+                    title={t('common.edit')}
+                  >
+                    <MdEdit size={18} />
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onDelete(project); }}
+                    className="p-1.5 text-text-secondary hover:text-danger transition-colors bg-transparent border-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    title={(project.demandCount ?? 0) > 0 ? t('projects.actions.cannotDeleteWithDemands') : t('common.delete')}
+                    disabled={(project.demandCount ?? 0) > 0}
+                  >
+                    <MdDelete size={18} />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

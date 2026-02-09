@@ -172,13 +172,14 @@ export const demandService = {
     },
     createdBy?: string
   ) => {
-    if (createdBy) {
-      const existing = await prisma.demand.findFirst({
-        where: { id, createdBy },
-      });
-      if (!existing) {
-        throw new NotFoundError("Demand");
-      }
+    const existing = await prisma.demand.findFirst({
+      where: createdBy ? { id, createdBy } : { id },
+    });
+    if (!existing) {
+      throw new NotFoundError("Demand");
+    }
+    if (existing.status !== "Pending") {
+      throw new Error("Only pending demands can be edited");
     }
     return prisma.demand.update({
       where: { id },
@@ -211,6 +212,30 @@ export const demandService = {
       where: { id },
       data: {
         status: "Rejected",
+      },
+      include: {
+        project: true,
+        service: true,
+        resource: true,
+        location: true,
+      },
+    });
+  },
+
+  cancel: async (id: number, createdBy?: string) => {
+    const existing = await prisma.demand.findFirst({
+      where: createdBy ? { id, createdBy } : { id },
+    });
+    if (!existing) {
+      throw new NotFoundError("Demand");
+    }
+    if (existing.status !== "Pending") {
+      throw new Error("Only pending demands can be cancelled");
+    }
+    return prisma.demand.update({
+      where: { id },
+      data: {
+        status: "Cancelled",
       },
       include: {
         project: true,

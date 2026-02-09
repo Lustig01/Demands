@@ -1,17 +1,17 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Modal from '../common/Modal';
 import Select from '../common/Select';
 import { useToast } from '../common/Toast';
 import { useReferenceData } from '../../hooks/useReferenceData';
-import type { ProjectType } from '../../types/domain';
-import type { CreateProjectPayload, Priority } from '../../api/types';
-import type { Median } from '../../types/domain';
+import type { Project, ProjectType, Median } from '../../types/domain';
+import type { CreateProjectPayload, UpdateProjectPayload, Priority } from '../../api/types';
 
 interface CreateProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (payload: CreateProjectPayload) => Promise<void>;
+  onSubmit: (payload: CreateProjectPayload | UpdateProjectPayload, projectName?: string) => Promise<void>;
+  editingProject?: Project | null;
 }
 
 const initialForm = {
@@ -39,6 +39,7 @@ export default function CreateProjectModal({
   isOpen,
   onClose,
   onSubmit,
+  editingProject,
 }: CreateProjectModalProps) {
   const { t } = useTranslation();
   const { showToast } = useToast();
@@ -47,11 +48,38 @@ export default function CreateProjectModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isEditMode = !!editingProject;
+
+  // Populate form when editing
+  useEffect(() => {
+    if (editingProject && isOpen) {
+      setForm({
+        name: editingProject.name,
+        trackOrApp: editingProject.relatedTo || '',
+        center: editingProject.centerName || '',
+        branch: editingProject.branchName || '',
+        section: editingProject.sectionName || '',
+        requestType: editingProject.type,
+        priority: editingProject.priority || '',
+        projectKind: editingProject.kind || '',
+        environment: editingProject.location.environment,
+        network: editingProject.location.network,
+        base: editingProject.location.base,
+        purpose: editingProject.purpose,
+        median: editingProject.median || '',
+        year: editingProject.year || '' as unknown as number,
+        emergencyOption: editingProject.emergencyOption || '',
+      });
+    } else if (!editingProject && isOpen) {
+      setForm(initialForm);
+    }
+  }, [editingProject, isOpen]);
+
   // --- Derived State for Hierarchies ---
 
   // Organization Hierarchy: Center -> Branch -> Section
   const centerOptions = referenceData.centers
-    .filter((v) => v.isActive !== false)
+    .filter((v) => v.isActive !== false || v.name === form.center)
     .map((v) => ({
       value: v.name,
       label: v.displayName || v.name,
@@ -60,29 +88,29 @@ export default function CreateProjectModal({
   const branchOptions = useMemo(() => {
     if (!form.center) return [];
     return referenceData.branches
-      .filter((b) => b.centerName === form.center && b.isActive !== false)
+      .filter((b) => b.centerName === form.center && (b.isActive !== false || b.name === form.branch))
       .map((v) => ({
         value: v.name,
         label: v.displayName || v.name,
       }));
-  }, [referenceData.branches, form.center]);
+  }, [referenceData.branches, form.center, form.branch]);
 
   const sectionOptions = useMemo(() => {
     if (!form.branch) return [];
     // Note: Section also depends on branchCenter, but practically branch names are unique or scoped.
     // Ideally we check both branchName and branchCenter.
     return referenceData.sections
-      .filter((s) => s.branchName === form.branch && s.branchCenter === form.center && s.isActive !== false)
+      .filter((s) => s.branchName === form.branch && s.branchCenter === form.center && (s.isActive !== false || s.name === form.section))
       .map((v) => ({
         value: v.name,
         label: v.displayName || v.name,
       }));
-  }, [referenceData.sections, form.branch, form.center]);
+  }, [referenceData.sections, form.branch, form.center, form.section]);
 
 
   // Location Hierarchy: Network -> Base -> Environment
   const networkOptions = referenceData.networks
-    .filter((v) => v.isActive !== false)
+    .filter((v) => v.isActive !== false || v.name === form.network)
     .map((v) => ({
       value: v.name,
       label: v.displayName || v.name,
@@ -95,12 +123,12 @@ export default function CreateProjectModal({
     const relevantBaseNames = new Set(relevantLocations.map(l => l.baseName));
 
     return referenceData.bases
-      .filter(b => relevantBaseNames.has(b.name) && b.isActive !== false)
+      .filter(b => relevantBaseNames.has(b.name) && (b.isActive !== false || b.name === form.base))
       .map((v) => ({
         value: v.name,
         label: v.displayName || v.name,
       }));
-  }, [referenceData.locations, referenceData.bases, form.network]);
+  }, [referenceData.locations, referenceData.bases, form.network, form.base]);
 
   const environmentOptions = useMemo(() => {
     if (!form.network || !form.base) return [];
@@ -111,12 +139,12 @@ export default function CreateProjectModal({
     const relevantEnvNames = new Set(relevantLocations.map(l => l.environmentName));
 
     return referenceData.environments
-      .filter(e => relevantEnvNames.has(e.name) && e.isActive !== false)
+      .filter(e => relevantEnvNames.has(e.name) && (e.isActive !== false || e.name === form.environment))
       .map((v) => ({
         value: v.name,
         label: v.displayName || v.name,
       }));
-  }, [referenceData.locations, referenceData.environments, form.network, form.base]);
+  }, [referenceData.locations, referenceData.environments, form.network, form.base, form.environment]);
 
 
   // --- Other Options ---
@@ -131,7 +159,7 @@ export default function CreateProjectModal({
   }));
 
   const projectKindOptions = referenceData.projectKinds
-    .filter((v) => v.isActive !== false)
+    .filter((v) => v.isActive !== false || v.name === form.projectKind)
     .map((v) => ({
       value: v.name,
       label: v.displayName || v.name,
@@ -143,7 +171,7 @@ export default function CreateProjectModal({
   }));
 
   const emergencyOptionOptions = referenceData.emergencyOptions
-    .filter((v) => v.isActive !== false)
+    .filter((v) => v.isActive !== false || v.name === form.emergencyOption)
     .map((v) => ({
       value: v.name,
       label: v.name,
@@ -215,8 +243,8 @@ export default function CreateProjectModal({
     setError(null);
     setIsSubmitting(true);
     try {
-      await onSubmit(payload);
-      showToast(t('common.toast.projectCreated'), 'success');
+      await onSubmit(payload, editingProject?.name);
+      showToast(isEditMode ? t('projects.updateSuccess') : t('common.toast.projectCreated'), 'success');
       handleClose();
     } catch (err: any) {
       const message =
@@ -224,7 +252,7 @@ export default function CreateProjectModal({
         err?.message ||
         t('common.errors.unknown');
       setError(message);
-      showToast(t('common.toast.projectCreateFailed'), 'error');
+      showToast(isEditMode ? t('projects.updateFailed') : t('common.toast.projectCreateFailed'), 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -245,7 +273,7 @@ export default function CreateProjectModal({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      title={t('projects.createProject.title')}
+      title={isEditMode ? t('projects.editProject.title') : t('projects.createProject.title')}
     >
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
@@ -262,7 +290,9 @@ export default function CreateProjectModal({
               value={form.name}
               onChange={handleChange}
               placeholder={t('projects.createProject.namePlaceholder')}
-              className={inputClass}
+              className={isEditMode ? `${inputClass} bg-gray-50 text-text-secondary` : inputClass}
+              readOnly={isEditMode}
+              disabled={isEditMode}
             />
           </div>
 
@@ -481,7 +511,7 @@ export default function CreateProjectModal({
             disabled={isSubmitting}
             className="px-6 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? t('common.submitting') : t('projects.createProject.submit')}
+            {isSubmitting ? t('common.submitting') : isEditMode ? t('common.save') : t('projects.createProject.submit')}
           </button>
         </div>
       </form>

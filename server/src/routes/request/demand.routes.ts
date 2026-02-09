@@ -14,6 +14,7 @@ router.get("/:id", authenticate, requireAuth, demandController.getById);
 router.post("/", authenticate, requireAuth, demandController.create);
 router.patch("/:id", authenticate, requireAuth, demandController.update);
 router.delete("/:id", authenticate, requireAuth, demandController.delete);
+router.patch("/:id/cancel", authenticate, requireAuth, demandController.cancel);
 router.patch("/:id/reject", authenticate, requireModerator, demandController.reject);
 router.patch("/:id/approve", authenticate, requireModerator, demandController.approve);
 

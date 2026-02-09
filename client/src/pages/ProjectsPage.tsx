@@ -7,7 +7,8 @@ import ProjectDetailSidebar from '../components/projects/ProjectDetailSidebar';
 import CreateProjectModal from '../components/projects/CreateProjectModal';
 import { useProjects } from '../hooks/useProjects';
 import { useDebounce } from '../hooks/useDebounce';
-import type { CreateProjectPayload } from '../api/types';
+import { useToast } from '../components/common/Toast';
+import type { CreateProjectPayload, UpdateProjectPayload } from '../api/types';
 import type { Project } from '../types/domain';
 import Pagination from '../components/common/Pagination';
 
@@ -20,7 +21,7 @@ export default function ProjectsPage() {
   const [searchName, setSearchName] = useState('');
   const debouncedSearchName = useDebounce(searchName, 500);
 
-  const { projects, total, totalPages, isLoading, error, createProject } = useProjects(
+  const { projects, total, totalPages, isLoading, error, createProject, updateProject, deleteProject } = useProjects(
     { name: debouncedSearchName },
     { page: currentPage, limit: itemsPerPage }
   );
@@ -30,13 +31,48 @@ export default function ProjectsPage() {
     [searchName, debouncedSearchName]
   );
 
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const { showToast } = useToast();
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-  async function handleCreateProject(payload: CreateProjectPayload) {
-    await createProject(payload);
-    setSearchName(payload.name);
+  async function handleSubmitProject(payload: CreateProjectPayload | UpdateProjectPayload, projectName?: string) {
+    if (projectName) {
+      await updateProject(projectName, payload as UpdateProjectPayload);
+    } else {
+      await createProject(payload as CreateProjectPayload);
+      setSearchName((payload as CreateProjectPayload).name);
+    }
     setCurrentPage(1);
+  }
+
+  function handleEditProject(project: Project) {
+    setEditingProject(project);
+    setIsModalOpen(true);
+    setSelectedProject(null);
+  }
+
+  async function handleDeleteProject(project: Project) {
+    if (window.confirm(t('projects.confirmDelete'))) {
+      try {
+        await deleteProject(project.name);
+        showToast(t('projects.deleteSuccess'), 'success');
+        setSelectedProject(null);
+      } catch (err: any) {
+        showToast(err?.response?.data?.error || t('projects.deleteFailed'), 'error');
+      }
+    }
+  }
+
+  function handleCloseModal() {
+    setIsModalOpen(false);
+    setEditingProject(null);
+  }
+
+  function handleOpenCreateModal() {
+    setEditingProject(null);
+    setIsModalOpen(true);
   }
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,7 +114,7 @@ export default function ProjectsPage() {
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={() => setIsCreateOpen(true)}
+              onClick={handleOpenCreateModal}
               className="flex items-center gap-2 px-4 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none whitespace-nowrap"
             >
               <MdAdd size={18} />
@@ -95,6 +131,8 @@ export default function ProjectsPage() {
             isLoading={isLoading}
             selectedProject={selectedProject}
             onSelectProject={setSelectedProject}
+            onEdit={handleEditProject}
+            onDelete={handleDeleteProject}
           />
         </div>
 
@@ -109,11 +147,12 @@ export default function ProjectsPage() {
         )}
       </div>
 
-      {isCreateOpen && (
+      {isModalOpen && (
         <CreateProjectModal
-          isOpen={isCreateOpen}
-          onClose={() => setIsCreateOpen(false)}
-          onSubmit={handleCreateProject}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleSubmitProject}
+          editingProject={editingProject}
         />
       )}
 
@@ -121,6 +160,8 @@ export default function ProjectsPage() {
         project={selectedProject}
         isOpen={selectedProject !== null}
         onClose={() => setSelectedProject(null)}
+        onEdit={handleEditProject}
+        onDelete={handleDeleteProject}
       />
     </div>
   );

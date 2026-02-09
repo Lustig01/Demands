@@ -55,6 +55,21 @@ export interface CreateProjectPayload {
   sectionName?: string;
 }
 
+export interface UpdateProjectPayload {
+  purpose?: string;
+  relatedTo?: string;
+  type?: ProjectType;
+  kind?: ProjectKind;
+  locationId?: number;
+  year?: number;
+  median?: Median;
+  emergencyOption?: string;
+  priority?: Priority;
+  centerName?: string;
+  branchName?: string;
+  sectionName?: string;
+}
+
 export interface PaginationParams {
   page?: number;
   limit?: number;
@@ -82,6 +97,19 @@ export interface CreateDemandPayload {
   value: number;
   locationId?: number;
   type: DemandType;
+  clusterName?: string;
+  centerName?: string;
+  branchName?: string;
+  sectionName?: string;
+}
+
+export interface UpdateDemandPayload {
+  serviceName?: string;
+  resourceName?: string;
+  resourceService?: string;
+  value?: number;
+  locationId?: number;
+  type?: DemandType;
   clusterName?: string;
   centerName?: string;
   branchName?: string;

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MdClose } from 'react-icons/md';
+import { MdClose, MdEdit, MdDelete } from 'react-icons/md';
 import type { Project } from '../../types/domain';
 import PriorityBadge from './PriorityBadge';
 
@@ -10,12 +10,16 @@ interface ProjectDetailSidebarProps {
   project: Project | null;
   isOpen: boolean;
   onClose: () => void;
+  onEdit: (project: Project) => void;
+  onDelete: (project: Project) => void;
 }
 
 export default function ProjectDetailSidebar({
   project,
   isOpen,
   onClose,
+  onEdit,
+  onDelete,
 }: ProjectDetailSidebarProps) {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -180,7 +184,7 @@ export default function ProjectDetailSidebar({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-divider">
+        <div className="p-6 border-t border-divider flex flex-col gap-3">
           <button
             type="button"
             onClick={handleViewDemands}
@@ -188,6 +192,27 @@ export default function ProjectDetailSidebar({
           >
             {t('projectSidebar.viewDemands')} ({project.demandCount ?? 0})
           </button>
+
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => onEdit(project)}
+              className="flex-1 px-4 py-2 bg-primary text-white rounded-xl text-sm font-medium hover:bg-primary-dark transition-colors cursor-pointer border-none flex items-center justify-center gap-2"
+            >
+              <MdEdit size={16} />
+              {t('common.edit')}
+            </button>
+            <button
+              type="button"
+              onClick={() => onDelete(project)}
+              disabled={(project.demandCount ?? 0) > 0}
+              className="flex-1 px-4 py-2 bg-danger text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors cursor-pointer border-none disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              title={(project.demandCount ?? 0) > 0 ? t('projects.actions.cannotDeleteWithDemands') : ''}
+            >
+              <MdDelete size={16} />
+              {t('common.delete')}
+            </button>
+          </div>
         </div>
       </div>
     </div>,
