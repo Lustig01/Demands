@@ -2,11 +2,13 @@ import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MdAdd, MdSearch } from 'react-icons/md';
 import PageHeader from '../components/layout/PageHeader';
-import ProjectsTable from '../components/projects/ProjectsTable';
+import ProjectsTable, { projectColumnConfig, type ProjectColumnKey } from '../components/projects/ProjectsTable';
 import ProjectDetailSidebar from '../components/projects/ProjectDetailSidebar';
 import CreateProjectModal from '../components/projects/CreateProjectModal';
+import ColumnSettingsDropdown from '../components/common/ColumnSettingsDropdown';
 import { useProjects } from '../hooks/useProjects';
 import { useDebounce } from '../hooks/useDebounce';
+import { useTableColumns } from '../hooks/useTableColumns';
 import { useToast } from '../components/common/Toast';
 import type { CreateProjectPayload, UpdateProjectPayload } from '../api/types';
 import type { Project } from '../types/domain';
@@ -14,6 +16,18 @@ import Pagination from '../components/common/Pagination';
 
 export default function ProjectsPage() {
   const { t } = useTranslation();
+
+  // Column settings
+  const {
+    orderedVisibleColumns,
+    allColumns,
+    toggleColumn,
+    reorderColumns,
+    resetToDefaults,
+  } = useTableColumns<ProjectColumnKey>({
+    tableId: 'projects',
+    columns: projectColumnConfig,
+  });
 
   // Pagination & Filter State
   const [currentPage, setCurrentPage] = useState(1);
@@ -112,6 +126,13 @@ export default function ProjectsPage() {
           </div>
 
           <div className="flex gap-3">
+            <ColumnSettingsDropdown
+              columns={allColumns}
+              visibleColumns={orderedVisibleColumns.map((c) => c.key)}
+              onToggleColumn={toggleColumn}
+              onReorder={reorderColumns}
+              onReset={resetToDefaults}
+            />
             <button
               type="button"
               onClick={handleOpenCreateModal}
@@ -133,6 +154,7 @@ export default function ProjectsPage() {
             onSelectProject={setSelectedProject}
             onEdit={handleEditProject}
             onDelete={handleDeleteProject}
+            visibleColumns={orderedVisibleColumns}
           />
         </div>
 

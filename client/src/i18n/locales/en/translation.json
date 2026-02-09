@@ -364,5 +364,9 @@
   },
   "notFound": {
     "message": "The requested page was not found"
+  },
+  "table": {
+    "columns": "Columns",
+    "resetColumns": "Reset to defaults"
   }
 }

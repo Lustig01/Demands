@@ -2,14 +2,16 @@ import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { MdFilterList, MdAdd } from 'react-icons/md';
-import DemandsTable from '../components/projects/DemandsTable';
+import DemandsTable, { demandColumnConfig, type DemandColumnKey } from '../components/projects/DemandsTable';
 import CreateDemandModal from '../components/projects/CreateDemandModal';
 import DemandDetailSidebar from '../components/demands/DemandDetailSidebar';
 import PageHeader from '../components/layout/PageHeader';
+import ColumnSettingsDropdown from '../components/common/ColumnSettingsDropdown';
 import { useDemands } from '../hooks/useDemands';
 import { useCachedProjects } from '../hooks/useCachedProjects';
 import { useReferenceData } from '../hooks/useReferenceData';
 import { useDebounce } from '../hooks/useDebounce';
+import { useTableColumns } from '../hooks/useTableColumns';
 import Select from '../components/common/Select';
 import SearchableSelect, { type SearchableSelectOption } from '../components/common/SearchableSelect';
 import type { CreateDemandPayload, UpdateDemandPayload } from '../api/types';
@@ -29,6 +31,18 @@ const FilterField = ({ label, children }: { label: string; children: React.React
 export default function DemandsPage() {
     const { t } = useTranslation();
     const [searchParams] = useSearchParams();
+
+    // Column settings
+    const {
+        orderedVisibleColumns,
+        allColumns,
+        toggleColumn,
+        reorderColumns,
+        resetToDefaults,
+    } = useTableColumns<DemandColumnKey>({
+        tableId: 'demands',
+        columns: demandColumnConfig,
+    });
 
     // Pagination State
     const [currentPage, setCurrentPage] = useState(1);
@@ -220,14 +234,23 @@ export default function DemandsPage() {
         <div className="p-6 space-y-6">
             <div className="flex items-center justify-between">
                 <PageHeader title={t('nav.demands')} />
-                <button
-                    type="button"
-                    onClick={handleOpenCreateModal}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none whitespace-nowrap"
-                >
-                    <MdAdd size={18} />
-                    {t('projects.createDemand.newDemand')}
-                </button>
+                <div className="flex gap-3">
+                    <ColumnSettingsDropdown
+                        columns={allColumns}
+                        visibleColumns={orderedVisibleColumns.map((c) => c.key)}
+                        onToggleColumn={toggleColumn}
+                        onReorder={reorderColumns}
+                        onReset={resetToDefaults}
+                    />
+                    <button
+                        type="button"
+                        onClick={handleOpenCreateModal}
+                        className="flex items-center gap-2 px-4 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none whitespace-nowrap"
+                    >
+                        <MdAdd size={18} />
+                        {t('projects.createDemand.newDemand')}
+                    </button>
+                </div>
             </div>
 
             {/* Filters Card */}
@@ -440,6 +463,7 @@ export default function DemandsPage() {
                                 onSelectDemand={setSelectedDemand}
                                 onEdit={handleEditDemand}
                                 onCancel={handleCancelDemand}
+                                visibleColumns={orderedVisibleColumns}
                             />
                         </div>
 

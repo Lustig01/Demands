@@ -358,5 +358,9 @@
   },
   "notFound": {
     "message": "העמוד המבוקש לא נמצא"
+  },
+  "table": {
+    "columns": "עמודות",
+    "resetColumns": "איפוס לברירת מחדל"
   }
 }
