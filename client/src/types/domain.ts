@@ -1,6 +1,7 @@
 export type ProjectType = 'Semiannual' | 'Emergency';
 export type ProjectKind = string;
 export type Median = 'H1' | 'H2';
+export type Priority = 'P1' | 'P2' | 'P3';
 export type DemandType = 'New' | 'Extension';
 export type DemandStatus = 'Pending' | 'Approved' | 'Rejected' | 'PartiallyApproved';
 
@@ -13,6 +14,7 @@ export interface Project {
   location: DemandLocation;
   year?: number;
   median?: Median;
+  priority?: Priority;
   emergencyOption?: string;
   centerName?: string;
   branchName?: string;

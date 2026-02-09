@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { MdAdd, MdSearch } from 'react-icons/md';
 import PageHeader from '../components/layout/PageHeader';
 import ProjectsTable from '../components/projects/ProjectsTable';
+import ProjectDetailSidebar from '../components/projects/ProjectDetailSidebar';
 import CreateProjectModal from '../components/projects/CreateProjectModal';
 import { useProjects } from '../hooks/useProjects';
 import { useDebounce } from '../hooks/useDebounce';
 import type { CreateProjectPayload } from '../api/types';
+import type { Project } from '../types/domain';
 import Pagination from '../components/common/Pagination';
 
 export default function ProjectsPage() {
@@ -29,6 +31,7 @@ export default function ProjectsPage() {
   );
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   async function handleCreateProject(payload: CreateProjectPayload) {
     await createProject(payload);
@@ -87,7 +90,12 @@ export default function ProjectsPage() {
 
       <div className="bg-bg-paper rounded-2xl border border-divider shadow-sm overflow-hidden mb-6">
         <div className={`overflow-x-auto transition-opacity duration-200 ${isFiltersPending ? 'opacity-50' : 'opacity-100'}`}>
-          <ProjectsTable projects={projects} isLoading={isLoading} />
+          <ProjectsTable
+            projects={projects}
+            isLoading={isLoading}
+            selectedProject={selectedProject}
+            onSelectProject={setSelectedProject}
+          />
         </div>
 
         {!isLoading && (
@@ -108,6 +116,12 @@ export default function ProjectsPage() {
           onSubmit={handleCreateProject}
         />
       )}
+
+      <ProjectDetailSidebar
+        project={selectedProject}
+        isOpen={selectedProject !== null}
+        onClose={() => setSelectedProject(null)}
+      />
     </div>
   );
 }

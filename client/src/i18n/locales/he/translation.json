@@ -237,6 +237,11 @@
       "App": "אפליקציה",
       "Track": "מסלול"
     },
+    "priority": {
+      "P1": "P1 - דחוף",
+      "P2": "P2 - רגיל",
+      "P3": "P3 - נמוך"
+    },
     "demandType": {
       "New": "חדש",
       "Extension": "הרחבה"
@@ -279,7 +284,7 @@
       "submit": "צור פרויקט",
       "autoIdentified": "זוהה אוטומטית",
       "change": "שינוי",
-      "namePlaceholder": "טרת הפרויקט / התפוקה שהפרויקט מביא (לא שם טכני)",
+      "namePlaceholder": "מטרת הפרויקט / התפוקה שהפרויקט מביא (לא שם טכני)",
       "trackOrAppPlaceholder": "לאיזה מסלול/אפליקציה הפרויקט שייך? (אם רלוונטי)",
       "purposePlaceholder": "פירוט קצר: למה הפרויקט קיים, למי הוא מיועד, ואיזה ערך הוא נותן",
       "selectOption": "בחר...",
@@ -300,9 +305,28 @@
       "relatedTo": "מסלול / אפליקציה",
       "year": "שנה",
       "median": "מחצית",
-      "emergencyOption": "אפשרות חירום"
+      "emergencyOption": "אפשרות חירום",
+      "location": "מיקום",
+      "organization": "ארגון"
     },
     "noProjects": "אין פרוייקטים להצגה"
+  },
+  "projectSidebar": {
+    "details": "פרטים",
+    "location": "מיקום",
+    "organization": "ארגון",
+    "meta": "מידע",
+    "viewDemands": "צפייה בדרישות"
+  },
+  "demandSidebar": {
+    "demandDetails": "פרטי דרישה",
+    "approval": "אישור",
+    "location": "מיקום",
+    "organization": "ארגון",
+    "projectInfo": "פרטי פרויקט",
+    "meta": "מידע",
+    "clusterName": "שם אשכול",
+    "projectType": "סוג פרויקט"
   },
   "notFound": {
     "message": "העמוד המבוקש לא נמצא"

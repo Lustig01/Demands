@@ -66,6 +66,7 @@ function mapProject(raw: any): Project {
     },
     year: raw.year ?? undefined,
     median: raw.median ?? undefined,
+    priority: raw.priority ?? undefined,
     emergencyOption: raw.emergencyOptionName ?? raw.emergencyOption?.name ?? undefined,
     createdBy: raw.createdBy ?? '',
     createdByName: raw.createdByName ?? '',
