@@ -52,7 +52,7 @@ export function useDemands(
 
     load();
     return () => { controller.abort(); };
-  }, [JSON.stringify(filters), pagination.page, pagination.limit, demandsRefreshTrigger]);
+  }, [JSON.stringify(filters), pagination.page, pagination.limit, pagination.sortBy, pagination.sortDir, demandsRefreshTrigger]);
 
   const createDemand = useCallback(async (payload: CreateDemandPayload) => {
     await apiCreateDemand(payload);

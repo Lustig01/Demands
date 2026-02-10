@@ -2,7 +2,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "projects": "Projects",
-    "demands": "Manage Demands",
+    "demands": "Demands",
     "moderator": "Management",
     "settings": "Settings",
     "create": "Create New",
@@ -81,6 +81,10 @@
     "all": "All",
     "clearFilters": "Clear all filters",
     "filters": "Filters",
+    "sortBy": "Sort by",
+    "none": "None",
+    "ascending": "Ascending",
+    "descending": "Descending",
     "submitting": "Submitting...",
     "errors": {
       "unknown": "An unexpected error occurred. Please try again."
@@ -221,7 +225,8 @@
       "emergencyOption": "Emergency Option",
       "center": "Center",
       "branch": "Branch",
-      "section": "Section"
+      "section": "Section",
+      "kind": "Kind"
     },
     "status": {
       "Pending": "Pending",
@@ -243,7 +248,13 @@
     "updateFailed": "Failed to update project",
     "type": {
       "Semiannual": "Semiannual",
-      "Emergency": "Emergency"
+      "Emergency": "Emergency",
+      "median": "Median",
+      "relatedTo": "Related To",
+      "emergencyOption": "Emergency Option",
+      "center": "Center",
+      "branch": "Branch",
+      "section": "Section"
     },
     "kind": {
       "App": "Application",
@@ -368,5 +379,16 @@
   "table": {
     "columns": "Columns",
     "resetColumns": "Reset to defaults"
+  },
+  "filters": {
+    "groups": {
+      "general": "General",
+      "project": "Project",
+      "service": "Service",
+      "organization": "Organization",
+      "location": "Location",
+      "timeline": "Timeline",
+      "other": "Other"
+    }
   }
 }
