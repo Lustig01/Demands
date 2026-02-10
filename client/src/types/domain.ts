@@ -53,3 +53,12 @@ export interface Demand {
   branchName?: string;
   sectionName?: string;
 }
+
+export interface DemandComment {
+  id: number;
+  demandId: number;
+  content: string;
+  createdBy: string;
+  createdByName: string;
+  createdAt: string;
+}

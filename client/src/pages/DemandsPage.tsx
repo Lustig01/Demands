@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MdAdd } from 'react-icons/md';
 import { useSearchParams } from 'react-router-dom';
+import { useAuth } from 'react-oidc-context';
 import DemandsTable, { demandColumnConfig, type DemandColumnKey } from '../components/projects/DemandsTable';
 import CreateDemandModal from '../components/projects/CreateDemandModal';
 import DemandDetailSidebar from '../components/demands/DemandDetailSidebar';
@@ -29,6 +30,12 @@ import type { FilterGroupConfig, SortState, SortDirection } from '../types/filte
 export default function DemandsPage() {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
+  const auth = useAuth();
+
+  // Get current user info for comments
+  const currentUser = auth.user?.profile.preferred_username || auth.user?.profile.email || '';
+  const userRole = ((auth.user?.profile.groups as string[]) || [])[0]?.toLowerCase() || 'user';
+  const isPrivileged = userRole === 'admin' || userRole === 'moderator';
 
   // Column settings
   const {
@@ -340,6 +347,8 @@ export default function DemandsPage() {
         onClose={() => setSelectedDemand(null)}
         onEdit={handleEditDemand}
         onCancel={handleCancelDemand}
+        currentUser={currentUser}
+        isPrivileged={isPrivileged}
       />
     </div>
   );

@@ -1,5 +1,5 @@
 import api from './axiosInstance';
-import type { Demand, Project } from '../types/domain';
+import type { Demand, Project, DemandComment } from '../types/domain';
 
 import type {
   ReferenceItem,
@@ -291,4 +291,26 @@ export async function updateWallet(id: number, payload: UpdateWalletPayload): Pr
 
 export async function deleteWallet(id: number): Promise<void> {
   await api.delete(`/wallets/${id}`);
+}
+
+// --- Demand Comments ---
+
+export async function fetchDemandComments(demandId: number): Promise<DemandComment[]> {
+  const { data } = await api.get(`/demands/${demandId}/comments`);
+  return data;
+}
+
+export async function createDemandComment(
+  demandId: number,
+  content: string
+): Promise<DemandComment> {
+  const { data } = await api.post(`/demands/${demandId}/comments`, { content });
+  return data;
+}
+
+export async function deleteDemandComment(
+  demandId: number,
+  commentId: number
+): Promise<void> {
+  await api.delete(`/demands/${demandId}/comments/${commentId}`);
 }

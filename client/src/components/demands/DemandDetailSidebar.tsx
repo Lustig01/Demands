@@ -5,6 +5,7 @@ import { MdClose, MdEdit, MdCancel } from 'react-icons/md';
 import type { Demand, Project } from '../../types/domain';
 import StatusBadge from '../projects/StatusBadge';
 import PriorityBadge from '../projects/PriorityBadge';
+import DemandComments from './DemandComments';
 
 interface DemandDetailSidebarProps {
   demand: Demand | null;
@@ -13,6 +14,8 @@ interface DemandDetailSidebarProps {
   onClose: () => void;
   onEdit: (demand: Demand) => void;
   onCancel: (demand: Demand) => void;
+  currentUser: string;
+  isPrivileged: boolean;
 }
 
 export default function DemandDetailSidebar({
@@ -22,6 +25,8 @@ export default function DemandDetailSidebar({
   onClose,
   onEdit,
   onCancel,
+  currentUser,
+  isPrivileged,
 }: DemandDetailSidebarProps) {
   const { t, i18n } = useTranslation();
 
@@ -216,6 +221,13 @@ export default function DemandDetailSidebar({
               value={formatDate(demand.createdAt)}
             />
           </DetailSection>
+
+          {/* Comments Section */}
+          <DemandComments
+            demandId={demand.id}
+            currentUser={currentUser}
+            isPrivileged={isPrivileged}
+          />
         </div>
 
         {/* Footer with Actions */}

@@ -108,7 +108,8 @@
     "moderators": "כל המנהלים",
     "typeAndEnter": "הקלד ולחץ ENTER...",
     "active": "פעיל",
-    "updated": "עודכן בהצלחה"
+    "updated": "עודכן בהצלחה",
+    "loading": "טוען..."
   },
   "settings": {
     "subtitle": "ניהול ישויות מערכת והגדרות",
@@ -384,5 +385,14 @@
       "timeline": "לוח זמנים",
       "other": "אחר"
     }
+  },
+  "comments": {
+    "title": "תגובות",
+    "noComments": "אין תגובות עדיין",
+    "placeholder": "הוסף תגובה...",
+    "send": "שלח",
+    "loadError": "טעינת התגובות נכשלה",
+    "submitError": "הוספת התגובה נכשלה",
+    "deleteError": "מחיקת התגובה נכשלה"
   }
 }

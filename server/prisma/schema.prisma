@@ -259,12 +259,26 @@ model Demand {
   center             Center           @relation(fields: [centerName], references: [name])
   branch             Branch           @relation(fields: [branchName, centerName], references: [name, centerName])
   section            Section          @relation(fields: [sectionName, branchName, centerName], references: [name, branchName, branchCenter])
+  comments           DemandComment[]
   createdBy          String?
   createdByName      String?
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
 
   @@index([createdBy])
+}
+
+model DemandComment {
+  id            Int      @id @default(autoincrement())
+  demandId      Int
+  demand        Demand   @relation(fields: [demandId], references: [id], onDelete: Cascade)
+  content       String
+  createdBy     String
+  createdByName String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([demandId])
 }
 
 model DecisionReason {

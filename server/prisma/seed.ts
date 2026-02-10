@@ -522,6 +522,66 @@ async function main() {
     console.log('Updated a demand with decision reason');
   }
 
+  // ============================================
+  // Demand Comments
+  // ============================================
+
+  // Clear existing comments
+  await prisma.demandComment.deleteMany({});
+
+  // Add comments to some demands to simulate discussions
+  const commentsData = [
+    // Discussion on first demand
+    { demandIndex: 0, user: USERS.user1, content: 'I need this urgently for the upcoming release.' },
+    { demandIndex: 0, user: USERS.mod1, content: 'Can you provide more details about the expected workload?' },
+    { demandIndex: 0, user: USERS.user1, content: 'We expect around 1000 concurrent users during peak hours.' },
+    { demandIndex: 0, user: USERS.mod1, content: 'Thanks for clarifying. I will review and get back to you.' },
+
+    // Discussion on second demand
+    { demandIndex: 1, user: USERS.user2, content: 'This is for our new analytics pipeline.' },
+    { demandIndex: 1, user: USERS.mod2, content: 'The requested amount seems high. Can you reduce it by 20%?' },
+    { demandIndex: 1, user: USERS.user2, content: 'We can work with 80% but it will limit our growth capacity.' },
+
+    // Discussion on third demand
+    { demandIndex: 2, user: USERS.mod3, content: 'Please provide justification for this request.' },
+    { demandIndex: 2, user: USERS.user3, content: 'This is needed for the database migration project scheduled for Q2.' },
+
+    // Simple comment on fourth demand
+    { demandIndex: 3, user: USERS.user1, content: 'This is aligned with our approved budget for this quarter.' },
+
+    // Moderator feedback on fifth demand
+    { demandIndex: 4, user: USERS.mod4, content: 'Approved pending security review.' },
+
+    // Discussion on sixth demand
+    { demandIndex: 5, user: USERS.user2, content: 'We need additional storage for backup purposes.' },
+    { demandIndex: 5, user: USERS.mod5, content: 'Have you considered using the archival tier instead?' },
+    { demandIndex: 5, user: USERS.user2, content: 'Good point, I will update the request.' },
+
+    // Quick approval note
+    { demandIndex: 6, user: USERS.mod6, content: 'This looks good. Forwarding for final approval.' },
+
+    // Multi-party discussion
+    { demandIndex: 7, user: USERS.user3, content: 'Critical for production stability.' },
+    { demandIndex: 7, user: USERS.mod1, content: 'Can you share the incident report that triggered this?' },
+    { demandIndex: 7, user: USERS.user3, content: 'Incident #INC-2024-001 - attached to the project documentation.' },
+    { demandIndex: 7, user: USERS.mod1, content: 'Reviewed. This is approved as emergency request.' },
+  ];
+
+  const comments = await Promise.all(
+    commentsData.map((c, index) =>
+      prisma.demandComment.create({
+        data: {
+          demandId: demands[c.demandIndex].id,
+          content: c.content,
+          createdBy: c.user.username,
+          createdByName: c.user.name,
+          createdAt: new Date(Date.now() - (commentsData.length - index) * 3600000), // Stagger timestamps
+        },
+      })
+    )
+  );
+  console.log(`Created ${comments.length} demand comments`);
+
   console.log('Seeding completed.');
 }
 

@@ -108,7 +108,8 @@
     "moderators": "Moderators",
     "typeAndEnter": "Type and press Enter...",
     "active": "Active",
-    "updated": "Updated successfully"
+    "updated": "Updated successfully",
+    "loading": "Loading..."
   },
   "settings": {
     "subtitle": "Manage system entities and configurations",
@@ -390,5 +391,14 @@
       "timeline": "Timeline",
       "other": "Other"
     }
+  },
+  "comments": {
+    "title": "Comments",
+    "noComments": "No comments yet",
+    "placeholder": "Add a comment...",
+    "send": "Send",
+    "loadError": "Failed to load comments",
+    "submitError": "Failed to add comment",
+    "deleteError": "Failed to delete comment"
   }
 }

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { demandController } from "../../controllers/request/demand.controller";
+import { commentController } from "../../controllers/request/comment.controller";
 import { authenticate } from "../../middleware/openIdConnect";
 import { requireAuth, requireRoles } from "../../middleware/authorization";
 import { settings } from "../../lib/settings";
@@ -17,5 +18,10 @@ router.delete("/:id", authenticate, requireAuth, demandController.delete);
 router.patch("/:id/cancel", authenticate, requireAuth, demandController.cancel);
 router.patch("/:id/reject", authenticate, requireModerator, demandController.reject);
 router.patch("/:id/approve", authenticate, requireModerator, demandController.approve);
+
+// Comment routes
+router.get("/:demandId/comments", authenticate, requireAuth, commentController.getByDemandId);
+router.post("/:demandId/comments", authenticate, requireAuth, commentController.create);
+router.delete("/:demandId/comments/:id", authenticate, requireAuth, commentController.delete);
 
 export default router;
