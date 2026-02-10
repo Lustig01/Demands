@@ -81,6 +81,10 @@
     "all": "הכל",
     "clearFilters": "נקה סינונים",
     "filters": "סינון",
+    "sortBy": "מיין לפי",
+    "none": "ללא",
+    "ascending": "עולה",
+    "descending": "יורד",
     "submitting": "שולח...",
     "errors": {
       "unknown": "אירעה שגיאה בלתי צפויה. נסה שוב."
@@ -203,7 +207,7 @@
       "resource": "משאב",
       "value": "כמות",
       "unit": "יחידה",
-      "type": "סוג",
+      "type": "סוג בקשה",
       "base": "בסיס",
       "environment": "סביבה",
       "network": "רשת",
@@ -217,11 +221,12 @@
       "year": "שנה",
       "relatedTo": "מסלול / אפליקציה",
       "median": "חציון",
-      "projectType": "סוג פרויקט",
+      "projectType": "סוג בקשה",
       "emergencyOption": "אפשרות חירום",
       "center": "מרכז",
       "branch": "ענף",
-      "section": "מדור"
+      "section": "מדור",
+      "kind": "סוג פרויקט"
     },
     "status": {
       "Pending": "ממתין",
@@ -243,7 +248,13 @@
     "updateFailed": "עדכון הפרויקט נכשל",
     "type": {
       "Semiannual": "חצי שנתי",
-      "Emergency": "חירום"
+      "Emergency": "חירום",
+      "median": "חציון",
+      "relatedTo": "מסלול / אפליקציה",
+      "emergencyOption": "אפשרות חירום",
+      "center": "מרכז",
+      "branch": "ענף",
+      "section": "מדור"
     },
     "kind": {
       "App": "אפליקציה",
@@ -269,8 +280,8 @@
       "unit": "יחידה",
       "value": "כמות",
       "type": "סוג",
-      "clusterName": "שם אשכול",
-      "clusterNamePlaceholder": "הזן שם אשכול",
+      "clusterName": "שם קלאסטר",
+      "clusterNamePlaceholder": "הזן שם קלאסטר",
       "overrideLocation": "דריסת מיקום",
       "overrideOrganization": "דריסת ארגון",
       "submit": "צור דרישה",
@@ -340,7 +351,7 @@
     "organization": "ארגון",
     "projectInfo": "פרטי פרויקט",
     "meta": "מידע",
-    "clusterName": "שם אשכול",
+    "clusterName": "שם קלאסטר",
     "projectType": "סוג פרויקט"
   },
   "demands": {
@@ -358,5 +369,20 @@
   },
   "notFound": {
     "message": "העמוד המבוקש לא נמצא"
+  },
+  "table": {
+    "columns": "עמודות",
+    "resetColumns": "איפוס לברירת מחדל"
+  },
+  "filters": {
+    "groups": {
+      "general": "כללי",
+      "project": "פרויקט",
+      "service": "שירות",
+      "organization": "ארגון",
+      "location": "מיקום",
+      "timeline": "לוח זמנים",
+      "other": "אחר"
+    }
   }
 }

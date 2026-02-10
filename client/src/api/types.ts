@@ -73,6 +73,8 @@ export interface UpdateProjectPayload {
 export interface PaginationParams {
   page?: number;
   limit?: number;
+  sortBy?: string;
+  sortDir?: 'asc' | 'desc';
 }
 
 export interface PaginatedResponse<T> {
@@ -135,6 +137,7 @@ export interface DemandFilterParams {
   centerName?: string;
   branchName?: string;
   sectionName?: string;
+  projectPriority?: Priority;
 }
 
 export interface Capacity {

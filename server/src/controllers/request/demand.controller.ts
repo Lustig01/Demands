@@ -26,9 +26,18 @@ export const demandController = {
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 10;
 
-      const result = await demandService.findAll(
-        isPrivileged ? undefined : username,
-        { page, limit }
+      const { sortBy, sortDir } = req.query;
+
+      const result = await demandService.findByFilters(
+        {
+          createdBy: isPrivileged ? undefined : username,
+        },
+        {
+          page,
+          limit,
+          sortBy: typeof sortBy === 'string' ? sortBy : undefined,
+          sortDir: sortDir === 'asc' ? 'asc' : 'desc'
+        }
       );
       res.json(result);
     } catch (error) {
@@ -74,6 +83,8 @@ export const demandController = {
         emergencyOption,
         page: pageQuery,
         limit: limitQuery,
+        sortBy,
+        sortDir,
       } = req.query;
 
       const page = Number(pageQuery) || 1;
@@ -96,8 +107,14 @@ export const demandController = {
           projectYear: year ? Number(year) : undefined,
           projectRelatedTo: relatedTo as string | undefined,
           projectEmergencyOption: emergencyOption as string | undefined,
+          projectPriority: req.query.priority as string | undefined,
         },
-        { page, limit }
+        {
+          page,
+          limit,
+          sortBy: typeof sortBy === 'string' ? sortBy : undefined,
+          sortDir: sortDir === 'asc' ? 'asc' : 'desc'
+        }
       );
       res.json(result);
     } catch (error) {

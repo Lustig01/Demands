@@ -3,40 +3,7 @@ import { DemandType, DemandStatus, ProjectType, Median } from "@prisma/client";
 import { NotFoundError } from "../../lib/errors";
 
 export const demandService = {
-  findAll: async (
-    createdBy?: string,
-    pagination?: { page: number; limit: number }
-  ) => {
-    const { page = 1, limit = 10 } = pagination || {};
-    const skip = (page - 1) * limit;
 
-    const [data, total] = await Promise.all([
-      prisma.demand.findMany({
-        where: createdBy ? { createdBy } : undefined,
-        include: {
-          project: true,
-          service: true,
-          resource: true,
-          location: true,
-        },
-        skip,
-        take: limit,
-      }),
-      prisma.demand.count({
-        where: createdBy ? { createdBy } : undefined,
-      }),
-    ]);
-
-    return {
-      data,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
-  },
 
   findById: async (id: number) => {
     return prisma.demand.findUnique({
@@ -67,10 +34,11 @@ export const demandService = {
       projectYear?: number;
       projectRelatedTo?: string;
       projectEmergencyOption?: string;
+      projectPriority?: string;
     },
-    pagination?: { page: number; limit: number }
+    pagination?: { page: number; limit: number; sortBy?: string; sortDir?: 'asc' | 'desc' }
   ) => {
-    const { page = 1, limit = 10 } = pagination || {};
+    const { page = 1, limit = 10, sortBy, sortDir = 'desc' } = pagination || {};
     const skip = (page - 1) * limit;
 
     const where: any = {};
@@ -90,7 +58,7 @@ export const demandService = {
       if (filters.networkName) where.location.networkName = filters.networkName;
     }
 
-    if (filters.projectType || filters.projectMedian || filters.projectYear || filters.projectRelatedTo || filters.projectEmergencyOption) {
+    if (filters.projectType || filters.projectMedian || filters.projectYear || filters.projectRelatedTo || filters.projectEmergencyOption || filters.projectPriority) {
       where.project = {};
       if (filters.projectType) where.project.type = filters.projectType;
       if (filters.projectMedian) where.project.median = filters.projectMedian;
@@ -99,6 +67,35 @@ export const demandService = {
         where.project.relatedTo = { contains: filters.projectRelatedTo, mode: 'insensitive' };
       }
       if (filters.projectEmergencyOption) where.project.emergencyOptionName = filters.projectEmergencyOption;
+      if (filters.projectPriority) where.project.priority = filters.projectPriority;
+    }
+
+    let orderBy: any = undefined;
+    if (sortBy) {
+      switch (sortBy) {
+        case 'project':
+          orderBy = { projectName: sortDir };
+          break;
+        case 'status':
+          orderBy = { status: sortDir };
+          break;
+        case 'value':
+          orderBy = { value: sortDir };
+          break;
+        case 'service':
+          orderBy = { serviceName: sortDir };
+          break;
+        case 'resource':
+          orderBy = { resourceName: sortDir };
+          break;
+        case 'createdAt':
+          orderBy = { createdAt: sortDir };
+          break;
+        default:
+          orderBy = { [sortBy]: sortDir };
+      }
+    } else {
+      orderBy = { createdAt: 'desc' };
     }
 
     const [data, total] = await Promise.all([
@@ -110,6 +107,7 @@ export const demandService = {
           resource: true,
           location: true,
         },
+        orderBy,
         skip,
         take: limit,
       }),

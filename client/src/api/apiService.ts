@@ -124,6 +124,8 @@ export async function fetchDemands(
   const query = new URLSearchParams();
   if (params?.page) query.append('page', params.page.toString());
   if (params?.limit) query.append('limit', params.limit.toString());
+  if (params?.sortBy) query.append('sortBy', params.sortBy);
+  if (params?.sortDir) query.append('sortDir', params.sortDir);
 
   if (params) {
     if (params.projectName) query.append('project', params.projectName);
@@ -154,10 +156,12 @@ export async function fetchDemands(
     params.projectName || params.serviceName || params.resourceName || params.resourceService ||
     params.locationId || params.baseName || params.environmentName ||
     params.networkName || params.type || params.status ||
-    params.projectType || params.median || params.year || params.relatedTo || params.emergencyOption
+    params.projectType || params.median || params.year || params.relatedTo || params.emergencyOption || params.projectPriority
   );
 
   const endpoint = isFiltering ? '/demands/filter' : '/demands';
+
+  if (params?.projectPriority) query.append('priority', params.projectPriority);
 
   const { data } = await api.get(`${endpoint}?${query.toString()}`, { signal });
   return {
