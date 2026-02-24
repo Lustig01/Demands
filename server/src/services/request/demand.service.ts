@@ -26,6 +26,7 @@ export const demandService = {
       baseName?: string;
       environmentName?: string;
       networkName?: string;
+      clusterName?: string;
       type?: DemandType;
       status?: DemandStatus;
       createdBy?: string;
@@ -51,11 +52,12 @@ export const demandService = {
     if (filters.status) where.status = filters.status;
     if (filters.createdBy) where.createdBy = filters.createdBy;
 
-    if (filters.baseName || filters.environmentName || filters.networkName) {
+    if (filters.baseName || filters.environmentName || filters.networkName || filters.clusterName) {
       where.location = {};
       if (filters.baseName) where.location.baseName = filters.baseName;
       if (filters.environmentName) where.location.environmentName = filters.environmentName;
       if (filters.networkName) where.location.networkName = filters.networkName;
+      if (filters.clusterName) where.location.clusterName = filters.clusterName;
     }
 
     if (filters.projectType || filters.projectMedian || filters.projectYear || filters.projectRelatedTo || filters.projectEmergencyOption || filters.projectPriority) {

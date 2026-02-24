@@ -13,6 +13,7 @@ import sectionRoutes from "./organization/section.routes";
 import baseRoutes from "./location/base.routes";
 import environmentRoutes from "./location/environment.routes";
 import networkRoutes from "./location/network.routes";
+import clusterRoutes from "./location/cluster.routes";
 import locationRoutes from "./location/location.routes";
 
 // Service routes
@@ -45,6 +46,7 @@ router.use("/sections", sectionRoutes);
 router.use("/bases", baseRoutes);
 router.use("/environments", environmentRoutes);
 router.use("/networks", networkRoutes);
+router.use("/clusters", clusterRoutes);
 router.use("/locations", locationRoutes);
 
 // Service endpoints

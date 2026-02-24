@@ -27,11 +27,12 @@ export const locationController = {
 
   getByComposite: async (req: Request, res: Response) => {
     try {
-      const { baseName, environmentName, networkName } = req.params;
+      const { baseName, environmentName, networkName, clusterName } = req.params;
       const location = await locationService.findByComposite(
         baseName,
         environmentName,
-        networkName
+        networkName,
+        clusterName
       );
       if (!location) {
         return res.status(404).json({ error: "Location not found" });
@@ -45,11 +46,12 @@ export const locationController = {
 
   getByFilters: async (req: Request, res: Response) => {
     try {
-      const { base, environment, network } = req.query;
+      const { base, environment, network, cluster } = req.query;
       const locations = await locationService.findByFilters({
         baseName: base as string | undefined,
         environmentName: environment as string | undefined,
         networkName: network as string | undefined,
+        clusterName: cluster as string | undefined,
       });
       res.json(locations);
     } catch (error) {
@@ -60,11 +62,12 @@ export const locationController = {
 
   create: async (req: Request, res: Response) => {
     try {
-      const { baseName, environmentName, networkName } = req.body;
+      const { baseName, environmentName, networkName, clusterName } = req.body;
       const location = await locationService.create(
         baseName,
         environmentName,
-        networkName
+        networkName,
+        clusterName
       );
       res.status(201).json(location);
     } catch (error) {
@@ -75,11 +78,12 @@ export const locationController = {
 
   update: async (req: Request, res: Response) => {
     try {
-      const { baseName, environmentName, networkName, isActive } = req.body;
+      const { baseName, environmentName, networkName, clusterName, isActive } = req.body;
       const location = await locationService.update(Number(req.params.id), {
         baseName,
         environmentName,
         networkName,
+        clusterName,
         isActive,
       });
       res.json(location);

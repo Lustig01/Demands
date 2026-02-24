@@ -13,6 +13,7 @@ export type ProjectFilterKey =
   | 'base'
   | 'environment'
   | 'network'
+  | 'cluster'
   | 'relatedTo'
   | 'emergencyOption';
 
@@ -63,6 +64,7 @@ export const projectFilterGroups: FilterGroupConfig<ProjectFilterKey>[] = [
       { key: 'base', label: 'projects.columns.base', inputType: 'select' },
       { key: 'environment', label: 'projects.columns.environment', inputType: 'select' },
       { key: 'network', label: 'projects.columns.network', inputType: 'select' },
+      { key: 'cluster', label: 'projects.columns.cluster', inputType: 'select' },
     ],
   },
   {
@@ -98,6 +100,7 @@ export const initialProjectFilters: Record<ProjectFilterKey, string> = {
   base: '',
   environment: '',
   network: '',
+  cluster: '',
   relatedTo: '',
   emergencyOption: '',
 };

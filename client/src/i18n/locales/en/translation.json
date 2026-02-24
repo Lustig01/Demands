@@ -122,6 +122,7 @@
       "base": "Base",
       "environment": "Environment",
       "network": "Network",
+      "cluster": "Cluster",
       "location": "Location",
       "center": "Center",
       "branch": "Branch",
@@ -141,11 +142,15 @@
     "network": {
       "title": "Networks"
     },
+    "cluster": {
+      "title": "Clusters"
+    },
     "location": {
       "title": "Locations",
       "base": "Base",
       "environment": "Environment",
-      "network": "Network"
+      "network": "Network",
+      "cluster": "Cluster"
     },
     "center": {
       "title": "Centers"
@@ -211,6 +216,7 @@
       "base": "Base",
       "environment": "Environment",
       "network": "Network",
+      "cluster": "Cluster",
       "status": "Status",
       "approvedValue": "Approved Value",
       "approvedDate": "Approved Date",
@@ -309,6 +315,7 @@
       "environment": "Environment",
       "network": "Network",
       "base": "Base",
+      "cluster": "Cluster",
       "purpose": "Project Purpose",
       "submit": "Create Project",
       "autoIdentified": "Auto-identified",

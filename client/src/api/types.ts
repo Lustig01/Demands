@@ -27,6 +27,7 @@ export interface LocationItem {
   baseName: string;
   environmentName: string;
   networkName: string;
+  clusterName: string;
   isActive?: boolean;
 }
 
@@ -127,6 +128,7 @@ export interface DemandFilterParams {
   baseName?: string;
   environmentName?: string;
   networkName?: string;
+  clusterName?: string;
   type?: DemandType;
   status?: DemandStatus;
   projectType?: ProjectType;
@@ -181,6 +183,7 @@ export interface Wallet {
       baseName: string;
       environmentName: string;
       networkName: string;
+      clusterName: string;
     };
     resource: {
       name: string;

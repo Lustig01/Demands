@@ -137,6 +137,10 @@ export default function DemandDetailSidebar({
               label={t('projects.columns.network')}
               value={demand.location.network}
             />
+            <DetailRow
+              label={t('projects.columns.cluster')}
+              value={demand.location.cluster}
+            />
           </DetailSection>
 
           {/* Organization Section */}

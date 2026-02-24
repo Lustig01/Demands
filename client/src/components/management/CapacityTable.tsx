@@ -38,6 +38,7 @@ export default function CapacityTable({ capacities, onEdit, onDelete, isLoading 
                             <th className="px-6 py-3 font-semibold">{t('projects.createProject.base')}</th>
                             <th className="px-6 py-3 font-semibold">{t('management.capacity.columns.network')}</th>
                             <th className="px-6 py-3 font-semibold">{t('management.capacity.columns.environment')}</th>
+                            <th className="px-6 py-3 font-semibold">{t('projects.createProject.cluster')}</th>
                             <th className="px-6 py-3 font-semibold text-end">{t('management.capacity.columns.total')}</th>
                             <th className="px-6 py-3 font-semibold text-end">{t('management.capacity.columns.allocated')}</th>
                             <th className="px-6 py-3 font-semibold text-end">{t('management.capacity.columns.available')}</th>
@@ -48,7 +49,7 @@ export default function CapacityTable({ capacities, onEdit, onDelete, isLoading 
                     <tbody className="divide-y divide-divider">
                         {capacities.length === 0 ? (
                             <tr>
-                                <td colSpan={10} className="px-6 py-12 text-center text-text-secondary">
+                                <td colSpan={11} className="px-6 py-12 text-center text-text-secondary">
                                     {t('common.noResults')}
                                 </td>
                             </tr>
@@ -66,6 +67,7 @@ export default function CapacityTable({ capacities, onEdit, onDelete, isLoading 
                                         <td className="px-6 py-4 text-text-secondary">{capacity.location.baseName}</td>
                                         <td className="px-6 py-4 text-text-secondary">{capacity.location.networkName}</td>
                                         <td className="px-6 py-4 text-text-secondary">{capacity.location.environmentName}</td>
+                                        <td className="px-6 py-4 text-text-secondary">{capacity.location.clusterName}</td>
                                         <td className="px-6 py-4 text-end font-bold text-text-primary">{capacity.value}</td>
                                         <td className="px-6 py-4 text-end text-orange-600 font-medium">{capacity.allocated}</td>
                                         <td className="px-6 py-4 text-end text-green-600 font-medium">{capacity.available}</td>

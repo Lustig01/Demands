@@ -14,11 +14,12 @@ export const locationService = {
   findByComposite: async (
     baseName: string,
     environmentName: string,
-    networkName: string
+    networkName: string,
+    clusterName: string
   ) => {
     return prisma.location.findUnique({
       where: {
-        baseName_environmentName_networkName: { baseName, environmentName, networkName },
+        baseName_environmentName_networkName_clusterName: { baseName, environmentName, networkName, clusterName },
       },
     });
   },
@@ -27,16 +28,19 @@ export const locationService = {
     baseName?: string;
     environmentName?: string;
     networkName?: string;
+    clusterName?: string;
   }) => {
     const where: {
       baseName?: string;
       environmentName?: string;
       networkName?: string;
+      clusterName?: string;
     } = {};
 
     if (filters.baseName) where.baseName = filters.baseName;
     if (filters.environmentName) where.environmentName = filters.environmentName;
     if (filters.networkName) where.networkName = filters.networkName;
+    if (filters.clusterName) where.clusterName = filters.clusterName;
 
     return prisma.location.findMany({ where });
   },
@@ -44,16 +48,17 @@ export const locationService = {
   create: async (
     baseName: string,
     environmentName: string,
-    networkName: string
+    networkName: string,
+    clusterName: string
   ) => {
     return prisma.location.create({
-      data: { baseName, environmentName, networkName },
+      data: { baseName, environmentName, networkName, clusterName },
     });
   },
 
   update: async (
     id: number,
-    data: { baseName?: string; environmentName?: string; networkName?: string; isActive?: boolean }
+    data: { baseName?: string; environmentName?: string; networkName?: string; clusterName?: string; isActive?: boolean }
   ) => {
     return prisma.location.update({
       where: { id },

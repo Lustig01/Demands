@@ -116,7 +116,7 @@ export default function DemandsTable({
       case 'location':
         return (
           <td key={columnKey} className="px-4 py-3 whitespace-nowrap">
-            {[demand.location.base, demand.location.environment, demand.location.network]
+            {[demand.location.base, demand.location.environment, demand.location.network, demand.location.cluster]
               .filter(Boolean)
               .join(' / ')}
           </td>

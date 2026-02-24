@@ -66,7 +66,7 @@ export default function ProjectsPage() {
   );
 
   const { showToast } = useToast();
-  const { bases, environments, networks, projectKinds, emergencyOptions, centers, branches, sections } = useReferenceData();
+  const { bases, environments, networks, clusters, projectKinds, emergencyOptions, centers, branches, sections } = useReferenceData();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -95,6 +95,7 @@ export default function ProjectsPage() {
     const baseOptions = bases.map((b) => ({ value: b.name, label: b.displayName || b.name }));
     const environmentOptions = environments.map((e) => ({ value: e.name, label: e.displayName || e.name }));
     const networkOptions = networks.map((n) => ({ value: n.name, label: n.displayName || n.name }));
+    const clusterOptions = clusters.map((c) => ({ value: c.name, label: c.displayName || c.name }));
     const centerOptions = centers.map((c) => ({ value: c.name, label: c.displayName || c.name }));
     const branchOptions = branches.map((b) => ({ value: b.name, label: b.displayName || b.name }));
     const sectionOptions = sections.map((s) => ({ value: s.name, label: s.displayName || s.name }));
@@ -113,6 +114,7 @@ export default function ProjectsPage() {
       base: baseOptions,
       environment: environmentOptions,
       network: networkOptions,
+      cluster: clusterOptions,
       relatedTo: [],
       emergencyOption: emergencyOptionOptions,
     };
@@ -124,7 +126,7 @@ export default function ProjectsPage() {
         options: optionsMap[field.key],
       })),
     }));
-  }, [projectKinds, bases, environments, networks, centers, branches, sections, emergencyOptions]);
+  }, [projectKinds, bases, environments, networks, clusters, centers, branches, sections, emergencyOptions]);
 
   // Apply client-side filtering
   const filteredProjects = useMemo(() => {
@@ -175,6 +177,10 @@ export default function ProjectsPage() {
       }
 
       if (debouncedFilters.network && project.location?.network !== debouncedFilters.network) {
+        return false;
+      }
+
+      if (debouncedFilters.cluster && project.location?.cluster !== debouncedFilters.cluster) {
         return false;
       }
 

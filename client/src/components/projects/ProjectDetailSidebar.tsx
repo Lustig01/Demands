@@ -124,6 +124,10 @@ export default function ProjectDetailSidebar({
               label={t('projects.columns.network')}
               value={project.location.network}
             />
+            <DetailRow
+              label={t('projects.columns.cluster')}
+              value={project.location.cluster}
+            />
           </DetailSection>
 
           {/* Organization Section */}

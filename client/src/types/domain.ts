@@ -29,6 +29,7 @@ export interface DemandLocation {
   base: string;
   environment: string;
   network: string;
+  cluster: string;
 }
 
 export interface Demand {

@@ -80,6 +80,7 @@ export default function DemandsPage() {
       baseName: debouncedFilters.base,
       environmentName: debouncedFilters.environment,
       networkName: debouncedFilters.network,
+      clusterName: debouncedFilters.cluster || undefined,
       type: debouncedFilters.type as any,
       status: debouncedFilters.status as any,
       projectType: (debouncedFilters.projectType as any) || undefined,
@@ -100,7 +101,7 @@ export default function DemandsPage() {
     }
   );
 
-  const { bases, environments, networks, services, resources, emergencyOptions, centers, branches, sections } =
+  const { bases, environments, networks, clusters, services, resources, emergencyOptions, centers, branches, sections } =
     useReferenceData();
   const { projects: allProjects } = useCachedProjects();
 
@@ -140,6 +141,7 @@ export default function DemandsPage() {
     const baseOptions = bases.map((b) => ({ value: b.name, label: b.displayName || b.name }));
     const environmentOptions = environments.map((e) => ({ value: e.name, label: e.displayName || e.name }));
     const networkOptions = networks.map((n) => ({ value: n.name, label: n.displayName || n.name }));
+    const clusterOptions = clusters.map((c) => ({ value: c.name, label: c.displayName || c.name }));
     const centerOptions = centers.map((c) => ({ value: c.name, label: c.displayName || c.name }));
     const branchOptions = branches.map((b) => ({ value: b.name, label: b.displayName || b.name }));
     const sectionOptions = sections.map((s) => ({ value: s.name, label: s.displayName || s.name }));
@@ -180,6 +182,7 @@ export default function DemandsPage() {
       base: baseOptions,
       environment: environmentOptions,
       network: networkOptions,
+      cluster: clusterOptions,
       type: typeOptions,
       status: statusOptions,
       projectType: projectTypeOptions,
@@ -200,7 +203,7 @@ export default function DemandsPage() {
         options: optionsMap[field.key],
       })),
     }));
-  }, [allProjects, services, resources, bases, environments, networks, centers, branches, sections, emergencyOptions]);
+  }, [allProjects, services, resources, bases, environments, networks, clusters, centers, branches, sections, emergencyOptions]);
 
   async function handleSubmitDemand(payload: CreateDemandPayload | UpdateDemandPayload, demandId?: number) {
     if (demandId) {
