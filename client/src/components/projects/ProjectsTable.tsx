@@ -82,19 +82,26 @@ export default function ProjectsTable({
             {project.relatedTo ?? '-'}
           </td>
         );
-      case 'location':
+      case 'location': {
+        const fullLocation = [
+          project.location.base,
+          project.location.environment,
+          project.location.network,
+          project.location.cluster,
+        ]
+          .filter(Boolean)
+          .join(' / ');
         return (
           <td key={columnKey} className="px-4 py-3 whitespace-nowrap">
-            {[
-              project.location.base,
-              project.location.environment,
-              project.location.network,
-              project.location.cluster,
-            ]
-              .filter(Boolean)
-              .join(' / ')}
+            <span className="relative group cursor-default">
+              {project.location.base || '-'}
+              <span className="invisible group-hover:visible absolute z-50 bottom-full start-0 mb-1 px-2 py-1 text-xs bg-gray-800 text-white rounded whitespace-nowrap shadow-lg">
+                {fullLocation}
+              </span>
+            </span>
           </td>
         );
+      }
       case 'organization':
         return (
           <td key={columnKey} className="px-4 py-3 whitespace-nowrap">
