@@ -207,11 +207,12 @@ export const demandService = {
     });
   },
 
-  reject: async (id: number) => {
+  reject: async (id: number, reason: string) => {
     return prisma.demand.update({
       where: { id },
       data: {
         status: "Rejected",
+        reason,
       },
       include: {
         project: true,
@@ -249,8 +250,9 @@ export const demandService = {
   approve: async (
     id: number,
     data: {
-      status: "Approved" | "PartiallyApproved";
+      status: "Approved" | "PartiallyApproved" | "ApprovedWithCondition";
       approvedValue?: number;
+      reason?: string;
     }
   ) => {
     return prisma.demand.update({
@@ -259,6 +261,7 @@ export const demandService = {
         status: data.status,
         approvedValue: data.approvedValue,
         approvedDate: new Date(),
+        reason: data.reason,
       },
       include: {
         project: true,

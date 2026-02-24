@@ -202,3 +202,15 @@ export interface CreateWalletPayload {
 export interface UpdateWalletPayload {
   value: number;
 }
+
+export type ApprovalStatus = 'Approved' | 'PartiallyApproved' | 'ApprovedWithCondition';
+
+export interface ApproveDemandPayload {
+  status: ApprovalStatus;
+  approvedValue?: number;
+  reason?: string;
+}
+
+export interface RejectDemandPayload {
+  reason: string;
+}

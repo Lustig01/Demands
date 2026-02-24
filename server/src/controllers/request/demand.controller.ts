@@ -382,7 +382,14 @@ export const demandController = {
 
   reject: async (req: Request, res: Response) => {
     try {
-      const demand = await demandService.reject(Number(req.params.id));
+      const { reason } = req.body;
+
+      // Validate: reason is required for rejection
+      if (!reason || typeof reason !== 'string' || reason.trim() === '') {
+        return res.status(400).json({ error: "reason is required for rejection" });
+      }
+
+      const demand = await demandService.reject(Number(req.params.id), reason.trim());
       res.json(demand);
     } catch (error) {
       console.error("demandController.reject error:", error);
@@ -412,21 +419,31 @@ export const demandController = {
 
   approve: async (req: Request, res: Response) => {
     try {
-      const { status, approvedValue } = req.body;
+      const { status, approvedValue, reason } = req.body;
+
+      const validStatuses = [DemandStatus.Approved, DemandStatus.PartiallyApproved, DemandStatus.ApprovedWithCondition];
 
       // Validate status
-      if (status !== DemandStatus.Approved && status !== DemandStatus.PartiallyApproved) {
-        return res.status(400).json({ error: "status must be Approved or PartiallyApproved" });
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({ error: "status must be Approved, PartiallyApproved, or ApprovedWithCondition" });
       }
 
-      // Validate: approvedValue is required if status is PartiallyApproved
-      if (status === DemandStatus.PartiallyApproved && (approvedValue === undefined || approvedValue === null)) {
-        return res.status(400).json({ error: "approvedValue is required for PartiallyApproved status" });
+      const requiresValueAndReason = status === DemandStatus.PartiallyApproved || status === DemandStatus.ApprovedWithCondition;
+
+      // Validate: approvedValue is required for PartiallyApproved and ApprovedWithCondition
+      if (requiresValueAndReason && (approvedValue === undefined || approvedValue === null)) {
+        return res.status(400).json({ error: "approvedValue is required for PartiallyApproved and ApprovedWithCondition status" });
+      }
+
+      // Validate: reason is required for PartiallyApproved and ApprovedWithCondition
+      if (requiresValueAndReason && (!reason || typeof reason !== 'string' || reason.trim() === '')) {
+        return res.status(400).json({ error: "reason is required for PartiallyApproved and ApprovedWithCondition status" });
       }
 
       const demand = await demandService.approve(Number(req.params.id), {
         status,
-        approvedValue: status === DemandStatus.PartiallyApproved ? approvedValue : undefined,
+        approvedValue: requiresValueAndReason ? approvedValue : undefined,
+        reason: requiresValueAndReason ? reason.trim() : undefined,
       });
       res.json(demand);
     } catch (error) {

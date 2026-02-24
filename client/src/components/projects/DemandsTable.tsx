@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { MdEdit, MdCancel } from 'react-icons/md';
+import { MdEdit, MdCancel, MdGavel } from 'react-icons/md';
 import type { Demand, Project } from '../../types/domain';
 import type { ColumnConfig } from '../../types/table';
 import StatusBadge from './StatusBadge';
@@ -22,7 +22,7 @@ export type DemandColumnKey =
   | 'demandType'
   | 'clusterName'
   | 'approvedDate'
-  | 'decisionReason'
+  | 'reason'
   | 'createdBy'
   | 'createdAt'
   | 'actions';
@@ -44,7 +44,7 @@ export const demandColumnConfig: ColumnConfig<DemandColumnKey>[] = [
   { key: 'demandType', label: 'projects.columns.type', defaultVisible: false },
   { key: 'clusterName', label: 'demandSidebar.clusterName', defaultVisible: false },
   { key: 'approvedDate', label: 'projects.columns.approvedDate', defaultVisible: false },
-  { key: 'decisionReason', label: 'projects.columns.decisionReason', defaultVisible: false },
+  { key: 'reason', label: 'projects.columns.reason', defaultVisible: false },
   { key: 'createdBy', label: 'projects.columns.createdBy', defaultVisible: false },
   { key: 'createdAt', label: 'projects.columns.createdAt', defaultVisible: false },
   { key: 'actions', label: 'common.actions', canHide: false },
@@ -56,9 +56,12 @@ interface DemandsTableProps {
   isLoading?: boolean;
   selectedDemand?: Demand | null;
   onSelectDemand: (demand: Demand) => void;
-  onEdit: (demand: Demand) => void;
-  onCancel: (demand: Demand) => void;
+  onEdit?: (demand: Demand) => void;
+  onCancel?: (demand: Demand) => void;
+  onMakeDecision?: (demand: Demand) => void;
   visibleColumns: ColumnConfig<DemandColumnKey>[];
+  hideActions?: boolean;
+  isModerator?: boolean;
 }
 
 export default function DemandsTable({
@@ -69,7 +72,10 @@ export default function DemandsTable({
   onSelectDemand,
   onEdit,
   onCancel,
+  onMakeDecision,
   visibleColumns,
+  hideActions = false,
+  isModerator = false,
 }: DemandsTableProps) {
   const { t } = useTranslation();
 
@@ -184,10 +190,10 @@ export default function DemandsTable({
             {demand.approvedDate ? new Date(demand.approvedDate).toLocaleDateString() : '-'}
           </td>
         );
-      case 'decisionReason':
+      case 'reason':
         return (
           <td key={columnKey} className="px-4 py-3 whitespace-nowrap">
-            {demand.decisionReasonName ?? '-'}
+            {demand.reason ?? '-'}
           </td>
         );
       case 'createdBy':
@@ -203,24 +209,39 @@ export default function DemandsTable({
           </td>
         );
       case 'actions':
+        if (hideActions) {
+          return <td key={columnKey} className="px-4 py-3 whitespace-nowrap"></td>;
+        }
         return (
           <td key={columnKey} className="px-4 py-3 whitespace-nowrap">
             {demand.status === 'Pending' && (
               <div className="flex items-center justify-center gap-1">
-                <button
-                  onClick={(e) => { e.stopPropagation(); onEdit(demand); }}
-                  className="p-1.5 text-text-secondary hover:text-primary transition-colors bg-transparent border-none cursor-pointer"
-                  title={t('common.edit')}
-                >
-                  <MdEdit size={18} />
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); onCancel(demand); }}
-                  className="p-1.5 text-text-secondary hover:text-danger transition-colors bg-transparent border-none cursor-pointer"
-                  title={t('demands.actions.cancel')}
-                >
-                  <MdCancel size={18} />
-                </button>
+                {isModerator ? (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onMakeDecision?.(demand); }}
+                    className="p-1.5 text-text-secondary hover:text-primary transition-colors bg-transparent border-none cursor-pointer"
+                    title={t('management.makeDecision')}
+                  >
+                    <MdGavel size={18} />
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onEdit?.(demand); }}
+                      className="p-1.5 text-text-secondary hover:text-primary transition-colors bg-transparent border-none cursor-pointer"
+                      title={t('common.edit')}
+                    >
+                      <MdEdit size={18} />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onCancel?.(demand); }}
+                      className="p-1.5 text-text-secondary hover:text-danger transition-colors bg-transparent border-none cursor-pointer"
+                      title={t('demands.actions.cancel')}
+                    >
+                      <MdCancel size={18} />
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </td>

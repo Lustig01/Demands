@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchDemands, createDemand as apiCreateDemand, updateDemand as apiUpdateDemand, cancelDemand as apiCancelDemand } from '../api/apiService';
+import { fetchDemands, createDemand as apiCreateDemand, updateDemand as apiUpdateDemand, cancelDemand as apiCancelDemand, approveDemand as apiApproveDemand, rejectDemand as apiRejectDemand } from '../api/apiService';
 import { useRefresh } from '../contexts/RefreshContext';
 import type { Demand } from '../types/domain';
-import type { PaginationParams, DemandFilterParams, CreateDemandPayload, UpdateDemandPayload } from '../api/types';
+import type { PaginationParams, DemandFilterParams, CreateDemandPayload, UpdateDemandPayload, ApproveDemandPayload, RejectDemandPayload } from '../api/types';
 
 interface UseDemandsResult {
   demands: Demand[];
@@ -13,6 +13,8 @@ interface UseDemandsResult {
   createDemand: (payload: CreateDemandPayload) => Promise<void>;
   updateDemand: (id: number, payload: UpdateDemandPayload) => Promise<void>;
   cancelDemand: (id: number) => Promise<void>;
+  approveDemand: (id: number, payload: ApproveDemandPayload) => Promise<void>;
+  rejectDemand: (id: number, payload: RejectDemandPayload) => Promise<void>;
 }
 
 export function useDemands(
@@ -69,5 +71,15 @@ export function useDemands(
     triggerRefreshDemands();
   }, [triggerRefreshDemands]);
 
-  return { demands, isLoading, error, total, totalPages, createDemand, updateDemand, cancelDemand };
+  const approveDemand = useCallback(async (id: number, payload: ApproveDemandPayload) => {
+    await apiApproveDemand(id, payload);
+    triggerRefreshDemands();
+  }, [triggerRefreshDemands]);
+
+  const rejectDemand = useCallback(async (id: number, payload: RejectDemandPayload) => {
+    await apiRejectDemand(id, payload);
+    triggerRefreshDemands();
+  }, [triggerRefreshDemands]);
+
+  return { demands, isLoading, error, total, totalPages, createDemand, updateDemand, cancelDemand, approveDemand, rejectDemand };
 }

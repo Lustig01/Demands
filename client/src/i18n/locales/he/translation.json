@@ -10,6 +10,29 @@
     "settings": "הגדרות"
   },
   "management": {
+    "demandsTitle": "ניהול דרישות",
+    "makeDecision": "קבלת החלטה",
+    "decisionModal": {
+      "title": "קבלת החלטה",
+      "decisionType": "סוג החלטה",
+      "Approved": "אישור",
+      "PartiallyApproved": "אישור חלקי",
+      "ApprovedWithCondition": "אישור עם תנאי",
+      "Rejected": "דחייה",
+      "approvedValue": "כמות מאושרת",
+      "requestedValue": "כמות מבוקשת",
+      "reason": "סיבה",
+      "reasonPlaceholder": "הזן סיבה להחלטה זו...",
+      "submit": "שלח החלטה"
+    },
+    "success": {
+      "approved": "הדרישה אושרה בהצלחה",
+      "rejected": "הדרישה נדחתה בהצלחה"
+    },
+    "error": {
+      "approveFailed": "אישור הדרישה נכשל",
+      "rejectFailed": "דחיית הדרישה נכשלה"
+    },
     "tabs": {
       "capacity": "ניהול קיבולת משאבים",
       "wallet": "ניהול ארנקים"
@@ -145,7 +168,7 @@
       "title": "רשתות"
     },
     "cluster": {
-      "title": "קלאסטרות"
+      "title": "קלאסטרים"
     },
     "location": {
       "title": "מיקומים",
@@ -222,7 +245,7 @@
       "status": "סטטוס",
       "approvedValue": "כמות מאושרת",
       "approvedDate": "תאריך אישור",
-      "decisionReason": "סיבת החלטה",
+      "reason": "סיבה",
       "createdAt": "תאריך יצירה",
       "createdBy": "נוצר ע\"י",
       "resourceService": "שירות משאב",
@@ -241,6 +264,7 @@
       "Approved": "מאושר",
       "Rejected": "נדחה",
       "PartiallyApproved": "אושר חלקית",
+      "ApprovedWithCondition": "אושר עם תנאי",
       "Cancelled": "בוטל"
     },
     "editProject": {

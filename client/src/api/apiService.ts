@@ -21,6 +21,8 @@ import type {
   Wallet,
   CreateWalletPayload,
   UpdateWalletPayload,
+  ApproveDemandPayload,
+  RejectDemandPayload,
 } from './types';
 
 // --- Response mappers ---
@@ -45,7 +47,7 @@ function mapDemand(raw: any): Demand {
     clusterName: raw.clusterName,
     approvedValue: raw.approvedValue,
     approvedDate: raw.approvedDate,
-    decisionReasonName: raw.decisionReasonName,
+    reason: raw.reason,
     createdBy: raw.createdBy ?? '',
     createdByName: raw.createdByName ?? '',
     createdAt: raw.createdAt,
@@ -189,6 +191,16 @@ export async function deleteDemand(id: number): Promise<void> {
 
 export async function cancelDemand(id: number): Promise<Demand> {
   const { data } = await api.patch(`/demands/${id}/cancel`);
+  return mapDemand(data);
+}
+
+export async function approveDemand(id: number, payload: ApproveDemandPayload): Promise<Demand> {
+  const { data } = await api.patch(`/demands/${id}/approve`, payload);
+  return mapDemand(data);
+}
+
+export async function rejectDemand(id: number, payload: RejectDemandPayload): Promise<Demand> {
+  const { data } = await api.patch(`/demands/${id}/reject`, payload);
   return mapDemand(data);
 }
 

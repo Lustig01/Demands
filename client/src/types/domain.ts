@@ -3,7 +3,7 @@ export type ProjectKind = string;
 export type Median = 'H1' | 'H2';
 export type Priority = 'P1' | 'P2' | 'P3';
 export type DemandType = 'New' | 'Extension';
-export type DemandStatus = 'Pending' | 'Approved' | 'Rejected' | 'PartiallyApproved' | 'Cancelled';
+export type DemandStatus = 'Pending' | 'Approved' | 'Rejected' | 'PartiallyApproved' | 'ApprovedWithCondition' | 'Cancelled';
 
 export interface Project {
   name: string;
@@ -46,7 +46,7 @@ export interface Demand {
   clusterName?: string;
   approvedValue?: number;
   approvedDate?: string;
-  decisionReasonName?: string;
+  reason?: string;
   createdBy: string;
   createdByName: string;
   createdAt: string;

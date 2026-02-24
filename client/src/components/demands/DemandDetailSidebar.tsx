@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { MdClose, MdEdit, MdCancel } from 'react-icons/md';
+import { MdClose, MdEdit, MdCancel, MdGavel } from 'react-icons/md';
 import type { Demand, Project } from '../../types/domain';
 import StatusBadge from '../projects/StatusBadge';
 import PriorityBadge from '../projects/PriorityBadge';
@@ -11,8 +11,10 @@ interface DemandDetailSidebarProps {
   project: Project | null;
   isOpen: boolean;
   onClose: () => void;
-  onEdit: (demand: Demand) => void;
-  onCancel: (demand: Demand) => void;
+  onEdit?: (demand: Demand) => void;
+  onCancel?: (demand: Demand) => void;
+  isModerator?: boolean;
+  onMakeDecision?: (demand: Demand) => void;
 }
 
 export default function DemandDetailSidebar({
@@ -22,6 +24,8 @@ export default function DemandDetailSidebar({
   onClose,
   onEdit,
   onCancel,
+  isModerator = false,
+  onMakeDecision,
 }: DemandDetailSidebarProps) {
   const { t, i18n } = useTranslation();
 
@@ -106,20 +110,24 @@ export default function DemandDetailSidebar({
           </DetailSection>
 
           {/* Approval Section */}
-          {demand.status !== 'Pending' && (
+          {demand.status !== 'Pending' && demand.status !== 'Cancelled' && (
             <DetailSection title={t('demandSidebar.approval')}>
-              <DetailRow
-                label={t('projects.columns.approvedValue')}
-                value={demand.approvedValue}
-              />
+              {demand.approvedValue !== undefined && demand.approvedValue !== null && (
+                <DetailRow
+                  label={t('projects.columns.approvedValue')}
+                  value={`${demand.approvedValue} ${demand.unit}`}
+                />
+              )}
               <DetailRow
                 label={t('projects.columns.approvedDate')}
                 value={formatDate(demand.approvedDate)}
               />
-              <DetailRow
-                label={t('projects.columns.decisionReason')}
-                value={demand.decisionReasonName}
-              />
+              {demand.reason && (
+                <DetailRow
+                  label={t('projects.columns.reason')}
+                  value={demand.reason}
+                />
+              )}
             </DetailSection>
           )}
 
@@ -225,22 +233,35 @@ export default function DemandDetailSidebar({
         {/* Footer with Actions */}
         {demand.status === 'Pending' && (
           <div className="p-6 border-t border-divider flex gap-3">
-            <button
-              type="button"
-              onClick={() => onEdit(demand)}
-              className="flex-1 px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-medium hover:bg-primary-dark transition-colors cursor-pointer border-none flex items-center justify-center gap-2"
-            >
-              <MdEdit size={18} />
-              {t('common.edit')}
-            </button>
-            <button
-              type="button"
-              onClick={() => onCancel(demand)}
-              className="flex-1 px-6 py-2.5 bg-danger text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors cursor-pointer border-none flex items-center justify-center gap-2"
-            >
-              <MdCancel size={18} />
-              {t('demands.actions.cancel')}
-            </button>
+            {isModerator ? (
+              <button
+                type="button"
+                onClick={() => onMakeDecision?.(demand)}
+                className="flex-1 px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-medium hover:bg-primary-dark transition-colors cursor-pointer border-none flex items-center justify-center gap-2"
+              >
+                <MdGavel size={18} />
+                {t('management.makeDecision')}
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => onEdit?.(demand)}
+                  className="flex-1 px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-medium hover:bg-primary-dark transition-colors cursor-pointer border-none flex items-center justify-center gap-2"
+                >
+                  <MdEdit size={18} />
+                  {t('common.edit')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onCancel?.(demand)}
+                  className="flex-1 px-6 py-2.5 bg-danger text-white rounded-xl text-sm font-medium hover:bg-red-700 transition-colors cursor-pointer border-none flex items-center justify-center gap-2"
+                >
+                  <MdCancel size={18} />
+                  {t('demands.actions.cancel')}
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>

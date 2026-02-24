@@ -27,7 +27,6 @@ import walletRoutes from "./wallet/wallet.routes";
 // Request routes
 import projectRoutes from "./request/project.routes";
 import demandRoutes from "./request/demand.routes";
-import decisionReasonRoutes from "./request/decisionReason.routes";
 import projectKindRoutes from "./request/projectKind.routes";
 import emergencyOptionRoutes from "./request/emergencyOption.routes";
 
@@ -60,7 +59,6 @@ router.use("/wallets", walletRoutes);
 // Request endpoints
 router.use("/projects", projectRoutes);
 router.use("/demands", demandRoutes);
-router.use("/decision-reasons", decisionReasonRoutes);
 router.use("/project-kinds", projectKindRoutes);
 router.use("/emergency-options", emergencyOptionRoutes);
 

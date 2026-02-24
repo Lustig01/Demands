@@ -10,6 +10,29 @@
     "demand": "Demand"
   },
   "management": {
+    "demandsTitle": "Demands Management",
+    "makeDecision": "Make Decision",
+    "decisionModal": {
+      "title": "Make Decision",
+      "decisionType": "Decision Type",
+      "Approved": "Approve",
+      "PartiallyApproved": "Partially Approve",
+      "ApprovedWithCondition": "Approve With Condition",
+      "Rejected": "Reject",
+      "approvedValue": "Approved Value",
+      "requestedValue": "Requested",
+      "reason": "Reason",
+      "reasonPlaceholder": "Enter reason for this decision...",
+      "submit": "Submit Decision"
+    },
+    "success": {
+      "approved": "Demand approved successfully",
+      "rejected": "Demand rejected successfully"
+    },
+    "error": {
+      "approveFailed": "Failed to approve demand",
+      "rejectFailed": "Failed to reject demand"
+    },
     "tabs": {
       "capacity": "Capacity Management",
       "wallet": "Wallet Management"
@@ -220,7 +243,7 @@
       "status": "Status",
       "approvedValue": "Approved Value",
       "approvedDate": "Approved Date",
-      "decisionReason": "Decision Reason",
+      "reason": "Reason",
       "createdAt": "Created At",
       "createdBy": "Created By",
       "resourceService": "Resource Service",
@@ -239,6 +262,7 @@
       "Approved": "Approved",
       "Rejected": "Rejected",
       "PartiallyApproved": "Partially Approved",
+      "ApprovedWithCondition": "Approved With Condition",
       "Cancelled": "Cancelled"
     },
     "editProject": {
