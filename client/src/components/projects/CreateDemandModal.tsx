@@ -28,6 +28,7 @@ const initialForm = {
   network: '',
   base: '',
   environment: '',
+  cluster: '',
   overrideOrganization: false,
   center: '',
   branch: '',
@@ -61,7 +62,8 @@ export default function CreateDemandModal({
       const hasDifferentLocation = project ? (
         editingDemand.location.network !== project.location.network ||
         editingDemand.location.base !== project.location.base ||
-        editingDemand.location.environment !== project.location.environment
+        editingDemand.location.environment !== project.location.environment ||
+        editingDemand.location.cluster !== project.location.cluster
       ) : false;
 
       const hasDifferentOrganization = project ? (
@@ -82,6 +84,7 @@ export default function CreateDemandModal({
         network: editingDemand.location.network,
         base: editingDemand.location.base,
         environment: editingDemand.location.environment,
+        cluster: editingDemand.location.cluster,
         overrideOrganization: hasDifferentOrganization,
         center: editingDemand.centerName || '',
         branch: editingDemand.branchName || '',
@@ -201,6 +204,24 @@ export default function CreateDemandModal({
     form.environment
   ]);
 
+  const clusterOptions = useMemo(() => {
+    if (!form.network || !form.base || !form.environment) return [];
+    const relevantLocations = referenceData.locations.filter(
+      (l) => l.networkName === form.network && l.baseName === form.base && l.environmentName === form.environment
+    );
+    const relevantClusterNames = new Set(relevantLocations.map((l) => l.clusterName));
+    return referenceData.clusters
+      .filter((c) => relevantClusterNames.has(c.name) && (c.isActive !== false || c.name === form.cluster))
+      .map((v) => ({ value: v.name, label: v.displayName || v.name }));
+  }, [
+    referenceData.locations,
+    referenceData.clusters,
+    form.network,
+    form.base,
+    form.environment,
+    form.cluster
+  ]);
+
   // --- Handlers ---
 
   function setField(name: keyof typeof initialForm, value: any) {
@@ -222,11 +243,16 @@ export default function CreateDemandModal({
         updates.network = '';
         updates.base = '';
         updates.environment = '';
+        updates.cluster = '';
       } else if (name === 'network') {
         updates.base = '';
         updates.environment = '';
+        updates.cluster = '';
       } else if (name === 'base') {
         updates.environment = '';
+        updates.cluster = '';
+      } else if (name === 'environment') {
+        updates.cluster = '';
       } else if (name === 'center') {
         updates.branch = '';
         updates.section = '';
@@ -297,7 +323,8 @@ export default function CreateDemandModal({
         (l) =>
           l.baseName === form.base &&
           l.environmentName === form.environment &&
-          l.networkName === form.network
+          l.networkName === form.network &&
+          l.clusterName === form.cluster
       );
       if (location) {
         payload.locationId = location.id;
@@ -632,6 +659,31 @@ export default function CreateDemandModal({
               <input
                 type="text"
                 value={selectedProject?.location.environment ?? ''}
+                readOnly
+                disabled
+                className={`${inputClass} bg-gray-50 text-text-secondary`}
+              />
+            )}
+          </div>
+
+          {/* Cluster */}
+          <div>
+            <label className="block text-sm font-medium text-text-primary mb-1.5">
+              {t('projects.createProject.cluster')}{' '}
+              {form.overrideLocation && <span className="text-danger">*</span>}
+            </label>
+            {form.overrideLocation ? (
+              <Select
+                options={clusterOptions}
+                value={form.cluster}
+                onChange={(v) => setField('cluster', v)}
+                placeholder={placeholder}
+                disabled={!form.environment}
+              />
+            ) : (
+              <input
+                type="text"
+                value={selectedProject?.location.cluster ?? ''}
                 readOnly
                 disabled
                 className={`${inputClass} bg-gray-50 text-text-secondary`}

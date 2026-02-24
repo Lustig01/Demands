@@ -4,6 +4,7 @@ import {
     fetchBases,
     fetchEnvironments,
     fetchNetworks,
+    fetchClusters,
     fetchCenters,
     fetchBranches,
     fetchSections,
@@ -19,6 +20,7 @@ interface ReferenceDataState {
     bases: ReferenceItem[];
     environments: ReferenceItem[];
     networks: ReferenceItem[];
+    clusters: ReferenceItem[];
     centers: ReferenceItem[];
     branches: BranchItem[];
     sections: SectionItem[];
@@ -47,6 +49,7 @@ export function ReferenceDataProvider({ children }: { children: ReactNode }) {
     const [bases, setBases] = useState<ReferenceItem[]>([]);
     const [environments, setEnvironments] = useState<ReferenceItem[]>([]);
     const [networks, setNetworks] = useState<ReferenceItem[]>([]);
+    const [clusters, setClusters] = useState<ReferenceItem[]>([]);
     const [centers, setCenters] = useState<ReferenceItem[]>([]);
     const [branches, setBranches] = useState<BranchItem[]>([]);
     const [sections, setSections] = useState<SectionItem[]>([]);
@@ -61,10 +64,11 @@ export function ReferenceDataProvider({ children }: { children: ReactNode }) {
     const fetchData = useCallback(async () => {
         setIsLoading(true);
         try {
-            const [b, e, n, c, br, sec, loc, s, r, pk, eo] = await Promise.all([
+            const [b, e, n, cl, c, br, sec, loc, s, r, pk, eo] = await Promise.all([
                 fetchBases(),
                 fetchEnvironments(),
                 fetchNetworks(),
+                fetchClusters(),
                 fetchCenters(),
                 fetchBranches(),
                 fetchSections(),
@@ -78,6 +82,7 @@ export function ReferenceDataProvider({ children }: { children: ReactNode }) {
             setBases(b);
             setEnvironments(e);
             setNetworks(n);
+            setClusters(cl);
             setCenters(c);
             setBranches(br);
             setSections(sec);
@@ -105,6 +110,7 @@ export function ReferenceDataProvider({ children }: { children: ReactNode }) {
         bases,
         environments,
         networks,
+        clusters,
         centers,
         branches,
         sections,

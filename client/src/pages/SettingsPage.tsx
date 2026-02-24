@@ -5,11 +5,12 @@ import { useReferenceData } from '../hooks/useReferenceData';
 
 // Sub-components for each tab section
 function InfrastructureSettings({
-    baseOptions, envOptions, networkOptions, onSuccess
+    baseOptions, envOptions, networkOptions, clusterOptions, onSuccess
 }: {
     baseOptions: { value: string; label: string }[];
     envOptions: { value: string; label: string }[];
     networkOptions: { value: string; label: string }[];
+    clusterOptions: { value: string; label: string }[];
     onSuccess: () => void;
 }) {
     const { t } = useTranslation();
@@ -19,6 +20,7 @@ function InfrastructureSettings({
         { id: 'base', label: t('settings.tabs.base', 'Base') },
         { id: 'environment', label: t('settings.tabs.environment', 'Environment') },
         { id: 'network', label: t('settings.tabs.network', 'Network') },
+        { id: 'cluster', label: t('settings.tabs.cluster', 'Cluster') },
         { id: 'location', label: t('settings.tabs.location', 'Location') },
     ];
 
@@ -85,6 +87,22 @@ function InfrastructureSettings({
                     ]}
                 />
             )}
+            {subTab === 'cluster' && (
+                <EntityManager
+                    title={t('settings.cluster.title', 'Clusters')}
+                    endpoint="/clusters"
+                    onSuccess={onSuccess}
+                    columns={[
+                        { key: 'name', label: t('common.name', 'Name'), render: (item) => <span className="font-bold text-gray-900">{item.name}</span> },
+                        { key: 'displayName', label: t('common.displayName', 'Display Name') },
+                        { key: 'isActive', label: t('common.active', 'Active'), type: 'toggle' },
+                    ]}
+                    fields={[
+                        { key: 'name', label: t('common.name', 'Name'), type: 'text', required: true },
+                        { key: 'displayName', label: t('common.displayName', 'Display Name'), type: 'text' },
+                    ]}
+                />
+            )}
             {subTab === 'location' && (
                 <EntityManager
                     title={t('settings.location.title', 'Locations')}
@@ -95,12 +113,14 @@ function InfrastructureSettings({
                         { key: 'baseName', label: t('settings.location.base', 'Base') },
                         { key: 'environmentName', label: t('settings.location.environment', 'Environment') },
                         { key: 'networkName', label: t('settings.location.network', 'Network') },
+                        { key: 'clusterName', label: t('settings.location.cluster', 'Cluster') },
                         { key: 'isActive', label: t('common.active', 'Active'), type: 'toggle' },
                     ]}
                     fields={[
                         { key: 'baseName', label: t('settings.location.base', 'Base'), type: 'select', options: baseOptions, required: true },
                         { key: 'environmentName', label: t('settings.location.environment', 'Environment'), type: 'select', options: envOptions, required: true },
                         { key: 'networkName', label: t('settings.location.network', 'Network'), type: 'select', options: networkOptions, required: true },
+                        { key: 'clusterName', label: t('settings.location.cluster', 'Cluster'), type: 'select', options: clusterOptions, required: true },
                     ]}
                 />
             )}
@@ -368,13 +388,14 @@ export default function SettingsPage() {
 
     // Fetch all reference data for dropdowns
     const {
-        bases, environments, networks, centers, branches, services, refreshData
+        bases, environments, networks, clusters, centers, branches, services, refreshData
     } = useReferenceData();
 
     // -- Options Helpers --
     const baseOptions = useMemo(() => bases.map(b => ({ value: b.name, label: b.displayName || b.name })), [bases]);
     const envOptions = useMemo(() => environments.map(e => ({ value: e.name, label: e.displayName || e.name })), [environments]);
     const networkOptions = useMemo(() => networks.map(n => ({ value: n.name, label: n.displayName || n.name })), [networks]);
+    const clusterOptions = useMemo(() => clusters.map(c => ({ value: c.name, label: c.displayName || c.name })), [clusters]);
     const centerOptions = useMemo(() => centers.map(c => ({ value: c.name, label: c.displayName || c.name })), [centers]);
 
 
@@ -421,6 +442,7 @@ export default function SettingsPage() {
                         baseOptions={baseOptions}
                         envOptions={envOptions}
                         networkOptions={networkOptions}
+                        clusterOptions={clusterOptions}
                         onSuccess={refreshData}
                     />
                 )}

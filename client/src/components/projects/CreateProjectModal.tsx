@@ -26,6 +26,7 @@ const initialForm = {
   environment: '',
   network: '',
   base: '',
+  cluster: '',
   purpose: '',
   median: '',
   year: '' as unknown as number,
@@ -65,6 +66,7 @@ export default function CreateProjectModal({
         environment: editingProject.location.environment,
         network: editingProject.location.network,
         base: editingProject.location.base,
+        cluster: editingProject.location.cluster,
         purpose: editingProject.purpose,
         median: editingProject.median || '',
         year: editingProject.year || '' as unknown as number,
@@ -146,6 +148,22 @@ export default function CreateProjectModal({
       }));
   }, [referenceData.locations, referenceData.environments, form.network, form.base, form.environment]);
 
+  const clusterOptions = useMemo(() => {
+    if (!form.network || !form.base || !form.environment) return [];
+    // Filter available locations by network, base, and environment, then extract unique clusters
+    const relevantLocations = referenceData.locations.filter(
+      l => l.networkName === form.network && l.baseName === form.base && l.environmentName === form.environment
+    );
+    const relevantClusterNames = new Set(relevantLocations.map(l => l.clusterName));
+
+    return referenceData.clusters
+      .filter(c => relevantClusterNames.has(c.name) && (c.isActive !== false || c.name === form.cluster))
+      .map((v) => ({
+        value: v.name,
+        label: v.displayName || v.name,
+      }));
+  }, [referenceData.locations, referenceData.clusters, form.network, form.base, form.environment, form.cluster]);
+
 
   // --- Other Options ---
 
@@ -192,8 +210,12 @@ export default function CreateProjectModal({
       } else if (name === 'network') {
         updates.base = '';
         updates.environment = '';
+        updates.cluster = '';
       } else if (name === 'base') {
         updates.environment = '';
+        updates.cluster = '';
+      } else if (name === 'environment') {
+        updates.cluster = '';
       }
 
       return { ...prev, ...updates };
@@ -213,7 +235,8 @@ export default function CreateProjectModal({
       (l) =>
         l.baseName === form.base &&
         l.environmentName === form.environment &&
-        l.networkName === form.network
+        l.networkName === form.network &&
+        l.clusterName === form.cluster
     );
 
     if (!location) return;
@@ -480,6 +503,20 @@ export default function CreateProjectModal({
               onChange={(v) => setField('environment', v)}
               placeholder={placeholder}
               disabled={!form.base}
+            />
+          </div>
+
+          {/* Cluster */}
+          <div>
+            <label className="block text-sm font-medium text-text-primary mb-1.5">
+              {t('projects.createProject.cluster')} <span className="text-danger">*</span>
+            </label>
+            <Select
+              options={clusterOptions}
+              value={form.cluster}
+              onChange={(v) => setField('cluster', v)}
+              placeholder={placeholder}
+              disabled={!form.environment}
             />
           </div>
 

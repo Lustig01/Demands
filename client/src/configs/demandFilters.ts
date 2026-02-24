@@ -7,6 +7,7 @@ export type DemandFilterKey =
   | 'base'
   | 'environment'
   | 'network'
+  | 'cluster'
   | 'type'
   | 'status'
   | 'projectType'
@@ -78,6 +79,7 @@ export const demandFilterGroups: FilterGroupConfig<DemandFilterKey>[] = [
       { key: 'base', label: 'projects.columns.base', inputType: 'select' },
       { key: 'environment', label: 'projects.columns.environment', inputType: 'select' },
       { key: 'network', label: 'projects.columns.network', inputType: 'select' },
+      { key: 'cluster', label: 'projects.columns.cluster', inputType: 'select' },
     ],
   },
 ];
@@ -98,6 +100,7 @@ export const initialDemandFilters: Record<DemandFilterKey, string> = {
   base: '',
   environment: '',
   network: '',
+  cluster: '',
   type: '',
   status: '',
   projectType: '',

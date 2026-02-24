@@ -127,31 +127,40 @@ async function main() {
   ]);
   console.log(`Created ${networks.length} networks`);
 
+  const clusters = await Promise.all([
+    prisma.cluster.upsert({ where: { name: 'Cluster-A' }, update: {}, create: { name: 'Cluster-A', displayName: 'Primary Cluster', isActive: true } }),
+    prisma.cluster.upsert({ where: { name: 'Cluster-B' }, update: {}, create: { name: 'Cluster-B', displayName: 'Secondary Cluster', isActive: true } }),
+    prisma.cluster.upsert({ where: { name: 'Cluster-C' }, update: {}, create: { name: 'Cluster-C', displayName: 'Development Cluster', isActive: true } }),
+    prisma.cluster.upsert({ where: { name: 'Cluster-D' }, update: {}, create: { name: 'Cluster-D', displayName: 'DR Cluster', isActive: true } }),
+    prisma.cluster.upsert({ where: { name: 'Cluster-E' }, update: {}, create: { name: 'Cluster-E', displayName: 'Edge Cluster', isActive: true } }),
+  ]);
+  console.log(`Created ${clusters.length} clusters`);
+
   const locations = await Promise.all([
     prisma.location.upsert({
-      where: { baseName_environmentName_networkName: { baseName: 'Datacenter A', environmentName: 'Production', networkName: 'Internal' } },
+      where: { baseName_environmentName_networkName_clusterName: { baseName: 'Datacenter A', environmentName: 'Production', networkName: 'Internal', clusterName: 'Cluster-A' } },
       update: {},
-      create: { baseName: 'Datacenter A', environmentName: 'Production', networkName: 'Internal', isActive: true },
+      create: { baseName: 'Datacenter A', environmentName: 'Production', networkName: 'Internal', clusterName: 'Cluster-A', isActive: true },
     }),
     prisma.location.upsert({
-      where: { baseName_environmentName_networkName: { baseName: 'Datacenter A', environmentName: 'Staging', networkName: 'Internal' } },
+      where: { baseName_environmentName_networkName_clusterName: { baseName: 'Datacenter A', environmentName: 'Staging', networkName: 'Internal', clusterName: 'Cluster-B' } },
       update: {},
-      create: { baseName: 'Datacenter A', environmentName: 'Staging', networkName: 'Internal', isActive: true },
+      create: { baseName: 'Datacenter A', environmentName: 'Staging', networkName: 'Internal', clusterName: 'Cluster-B', isActive: true },
     }),
     prisma.location.upsert({
-      where: { baseName_environmentName_networkName: { baseName: 'Cloud AWS', environmentName: 'Production', networkName: 'Private VPC' } },
+      where: { baseName_environmentName_networkName_clusterName: { baseName: 'Cloud AWS', environmentName: 'Production', networkName: 'Private VPC', clusterName: 'Cluster-A' } },
       update: {},
-      create: { baseName: 'Cloud AWS', environmentName: 'Production', networkName: 'Private VPC', isActive: true },
+      create: { baseName: 'Cloud AWS', environmentName: 'Production', networkName: 'Private VPC', clusterName: 'Cluster-A', isActive: true },
     }),
     prisma.location.upsert({
-      where: { baseName_environmentName_networkName: { baseName: 'Cloud AWS', environmentName: 'Development', networkName: 'Private VPC' } },
+      where: { baseName_environmentName_networkName_clusterName: { baseName: 'Cloud AWS', environmentName: 'Development', networkName: 'Private VPC', clusterName: 'Cluster-C' } },
       update: {},
-      create: { baseName: 'Cloud AWS', environmentName: 'Development', networkName: 'Private VPC', isActive: true },
+      create: { baseName: 'Cloud AWS', environmentName: 'Development', networkName: 'Private VPC', clusterName: 'Cluster-C', isActive: true },
     }),
     prisma.location.upsert({
-      where: { baseName_environmentName_networkName: { baseName: 'Datacenter B', environmentName: 'DR', networkName: 'Isolated' } },
+      where: { baseName_environmentName_networkName_clusterName: { baseName: 'Datacenter B', environmentName: 'DR', networkName: 'Isolated', clusterName: 'Cluster-D' } },
       update: {},
-      create: { baseName: 'Datacenter B', environmentName: 'DR', networkName: 'Isolated', isActive: true },
+      create: { baseName: 'Datacenter B', environmentName: 'DR', networkName: 'Isolated', clusterName: 'Cluster-D', isActive: true },
     }),
   ]);
   console.log(`Created ${locations.length} locations`);

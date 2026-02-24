@@ -39,6 +39,7 @@ function mapDemand(raw: any): Demand {
       base: raw.location?.baseName ?? '',
       environment: raw.location?.environmentName ?? '',
       network: raw.location?.networkName ?? '',
+      cluster: raw.location?.clusterName ?? '',
     },
     status: raw.status,
     clusterName: raw.clusterName,
@@ -65,6 +66,7 @@ function mapProject(raw: any): Project {
       base: raw.location?.baseName ?? '',
       environment: raw.location?.environmentName ?? '',
       network: raw.location?.networkName ?? '',
+      cluster: raw.location?.clusterName ?? '',
     },
     year: raw.year ?? undefined,
     median: raw.median ?? undefined,
@@ -142,6 +144,7 @@ export async function fetchDemands(
     if (params.baseName) query.append('base', params.baseName);
     if (params.environmentName) query.append('environment', params.environmentName);
     if (params.networkName) query.append('network', params.networkName);
+    if (params.clusterName) query.append('cluster', params.clusterName);
     if (params.type) query.append('type', params.type);
     if (params.status) query.append('status', params.status);
     if (params.projectType) query.append('projectType', params.projectType);
@@ -155,7 +158,7 @@ export async function fetchDemands(
   const isFiltering = params && (
     params.projectName || params.serviceName || params.resourceName || params.resourceService ||
     params.locationId || params.baseName || params.environmentName ||
-    params.networkName || params.type || params.status ||
+    params.networkName || params.clusterName || params.type || params.status ||
     params.projectType || params.median || params.year || params.relatedTo || params.emergencyOption || params.projectPriority
   );
 
@@ -203,6 +206,11 @@ export async function fetchEnvironments(): Promise<ReferenceItem[]> {
 
 export async function fetchNetworks(): Promise<ReferenceItem[]> {
   const { data } = await api.get('/networks');
+  return data;
+}
+
+export async function fetchClusters(): Promise<ReferenceItem[]> {
+  const { data } = await api.get('/clusters');
   return data;
 }
 

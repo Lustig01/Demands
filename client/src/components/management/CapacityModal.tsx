@@ -30,6 +30,7 @@ export default function CapacityModal({ open, onClose, onSubmit, capacity, isLoa
     const [network, setNetwork] = useState('');
     const [base, setBase] = useState('');
     const [environment, setEnvironment] = useState('');
+    const [cluster, setCluster] = useState('');
     const [service, setService] = useState('');
     const [resource, setResource] = useState(''); // Just the resource name
     const [value, setValue] = useState<number>(0);
@@ -80,6 +81,21 @@ export default function CapacityModal({ open, onClose, onSubmit, capacity, isLoa
             }));
     }, [referenceData.locations, referenceData.environments, network, base]);
 
+    // Derived Options - Cluster (Filtered by Network, Base & Environment)
+    const clusterOptions = useMemo(() => {
+        if (!network || !base || !environment) return [];
+        const relevantLocations = referenceData.locations.filter(
+            l => l.networkName === network && l.baseName === base && l.environmentName === environment
+        );
+        const relevantClusterNames = new Set(relevantLocations.map(l => l.clusterName));
+        return referenceData.clusters
+            .filter(c => relevantClusterNames.has(c.name))
+            .map((v) => ({
+                value: v.name,
+                label: v.displayName || v.name,
+            }));
+    }, [referenceData.locations, referenceData.clusters, network, base, environment]);
+
     // Service Options
     const serviceOptions = useMemo(() => {
         let services = referenceData.services;
@@ -109,6 +125,7 @@ export default function CapacityModal({ open, onClose, onSubmit, capacity, isLoa
             setNetwork(capacity.location.networkName);
             setBase(capacity.location.baseName);
             setEnvironment(capacity.location.environmentName);
+            setCluster(capacity.location.clusterName);
             setService(capacity.resourceService);
             setResource(capacity.resourceName);
             setValue(capacity.value);
@@ -116,6 +133,7 @@ export default function CapacityModal({ open, onClose, onSubmit, capacity, isLoa
             setNetwork('');
             setBase('');
             setEnvironment('');
+            setCluster('');
             setService('');
             setResource('');
             setValue(0);
@@ -128,11 +146,18 @@ export default function CapacityModal({ open, onClose, onSubmit, capacity, isLoa
         setNetwork(val);
         setBase('');
         setEnvironment('');
+        setCluster('');
     };
 
     const handleBaseChange = (val: string) => {
         setBase(val);
         setEnvironment('');
+        setCluster('');
+    };
+
+    const handleEnvironmentChange = (val: string) => {
+        setEnvironment(val);
+        setCluster('');
     };
 
     const handleServiceChange = (val: string) => {
@@ -145,7 +170,7 @@ export default function CapacityModal({ open, onClose, onSubmit, capacity, isLoa
 
         // Resolve Location ID
         const location = referenceData.locations.find(
-            (l) => l.networkName === network && l.baseName === base && l.environmentName === environment
+            (l) => l.networkName === network && l.baseName === base && l.environmentName === environment && l.clusterName === cluster
         );
 
         if (!location) return;
@@ -209,9 +234,23 @@ export default function CapacityModal({ open, onClose, onSubmit, capacity, isLoa
                         <Select
                             options={environmentOptions}
                             value={environment}
-                            onChange={setEnvironment}
+                            onChange={handleEnvironmentChange}
                             placeholder={t('projects.createProject.selectOption')}
                             disabled={!!capacity || !base}
+                        />
+                    </div>
+
+                    {/* Cluster */}
+                    <div className="flex flex-col gap-1.5">
+                        <label className="text-sm font-medium text-text-primary">
+                            {t('projects.createProject.cluster')} <span className="text-danger">*</span>
+                        </label>
+                        <Select
+                            options={clusterOptions}
+                            value={cluster}
+                            onChange={setCluster}
+                            placeholder={t('projects.createProject.selectOption')}
+                            disabled={!!capacity || !environment}
                         />
                     </div>
                 </div>
@@ -280,7 +319,7 @@ export default function CapacityModal({ open, onClose, onSubmit, capacity, isLoa
                 <div className="flex justify-end pt-2">
                     <button
                         type="submit"
-                        disabled={isLoading || isSubmitting || (!capacity && (!network || !base || !environment || !service || !resource))}
+                        disabled={isLoading || isSubmitting || (!capacity && (!network || !base || !environment || !cluster || !service || !resource))}
                         className="px-6 py-2.5 bg-text-primary text-white rounded-xl text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer border-none disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isLoading && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>}

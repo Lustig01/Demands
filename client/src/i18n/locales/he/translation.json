@@ -22,6 +22,7 @@
         "base": "בסיס",
         "environment": "סביבה",
         "network": "רשת",
+        "cluster": "קלאסטר",
         "center": "מרכז",
         "value": "ערך",
         "actions": "פעולות"
@@ -51,6 +52,7 @@
         "base": "בסיס",
         "network": "רשת",
         "environment": "סביבה",
+        "cluster": "קלאסטר",
         "total": "קיבולת כוללת",
         "allocated": "מוקצה",
         "available": "זמין",
@@ -122,6 +124,7 @@
       "base": "בסיס",
       "environment": "סביבה",
       "network": "רשת",
+      "cluster": "קלאסטר",
       "location": "מיקום",
       "center": "מרכז",
       "branch": "ענף",
@@ -141,11 +144,15 @@
     "network": {
       "title": "רשתות"
     },
+    "cluster": {
+      "title": "קלאסטרות"
+    },
     "location": {
       "title": "מיקומים",
       "base": "בסיס",
       "environment": "סביבה",
-      "network": "רשת"
+      "network": "רשת",
+      "cluster": "קלאסטר"
     },
     "center": {
       "title": "מרכזים"
@@ -211,6 +218,7 @@
       "base": "בסיס",
       "environment": "סביבה",
       "network": "רשת",
+      "cluster": "קלאסטר",
       "status": "סטטוס",
       "approvedValue": "כמות מאושרת",
       "approvedDate": "תאריך אישור",
@@ -305,6 +313,7 @@
       "projectType": "סוג פרויקט",
       "environment": "סביבה",
       "network": "רשת",
+      "cluster": "קלאסטר",
       "base": "בסיס",
       "purpose": "ייעוד הפרויקט",
       "submit": "צור פרויקט",

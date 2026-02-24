@@ -89,6 +89,7 @@ export default function ProjectsTable({
               project.location.base,
               project.location.environment,
               project.location.network,
+              project.location.cluster,
             ]
               .filter(Boolean)
               .join(' / ')}
