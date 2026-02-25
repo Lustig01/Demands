@@ -142,6 +142,7 @@ export interface DemandFilterParams {
   branchName?: string;
   sectionName?: string;
   projectPriority?: Priority;
+  managed?: boolean;
 }
 
 export interface Capacity {

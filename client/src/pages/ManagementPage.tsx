@@ -87,6 +87,7 @@ export default function ManagementPage() {
       branchName: debouncedFilters.branch || undefined,
       sectionName: debouncedFilters.section || undefined,
       projectPriority: (debouncedFilters.priority as any) || undefined,
+      managed: true,
     },
     {
       page: currentPage,

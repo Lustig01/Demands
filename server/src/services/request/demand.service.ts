@@ -30,6 +30,7 @@ export const demandService = {
       type?: DemandType;
       status?: DemandStatus;
       createdBy?: string;
+      serviceNames?: string[];
       projectType?: ProjectType;
       projectMedian?: Median;
       projectYear?: number;
@@ -51,6 +52,7 @@ export const demandService = {
     if (filters.type) where.type = filters.type;
     if (filters.status) where.status = filters.status;
     if (filters.createdBy) where.createdBy = filters.createdBy;
+    if (filters.serviceNames) where.serviceName = { in: filters.serviceNames };
 
     if (filters.baseName || filters.environmentName || filters.networkName || filters.clusterName) {
       where.location = {};

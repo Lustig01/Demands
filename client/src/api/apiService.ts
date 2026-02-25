@@ -154,6 +154,7 @@ export async function fetchDemands(
     if (params.year) query.append('year', params.year.toString());
     if (params.relatedTo) query.append('relatedTo', params.relatedTo);
     if (params.emergencyOption) query.append('emergencyOption', params.emergencyOption);
+    if (params.managed) query.append('managed', 'true');
   }
 
   // If any filter is present (besides pagination), use /demands/filter, otherwise /demands
@@ -161,7 +162,8 @@ export async function fetchDemands(
     params.projectName || params.serviceName || params.resourceName || params.resourceService ||
     params.locationId || params.baseName || params.environmentName ||
     params.networkName || params.clusterName || params.type || params.status ||
-    params.projectType || params.median || params.year || params.relatedTo || params.emergencyOption || params.projectPriority
+    params.projectType || params.median || params.year || params.relatedTo || params.emergencyOption || params.projectPriority ||
+    params.managed
   );
 
   const endpoint = isFiltering ? '/demands/filter' : '/demands';

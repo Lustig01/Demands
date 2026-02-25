@@ -8,21 +8,22 @@ import prisma from "../../lib/prisma";
 
 function getUserContext(req: Request) {
   const user = req.auth!.user;
-  const isPrivileged = user.hasAnyRole([
-    settings.authAdminGroup,
-    settings.authModeratorGroup,
-  ]);
+  const isAdmin = user.hasAnyRole([settings.authAdminGroup]);
+  const isModerator = user.hasAnyRole([settings.authModeratorGroup]);
+  const isPrivileged = isAdmin || isModerator;
   return {
     username: user.username,
     fullName: user.fullName ?? user.username ?? user.email ?? "Unknown",
     isPrivileged,
+    isAdmin,
+    isModerator,
   };
 }
 
 export const demandController = {
   getAll: async (req: Request, res: Response) => {
     try {
-      const { username, isPrivileged } = getUserContext(req);
+      const { username, isAdmin } = getUserContext(req);
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 10;
 
@@ -30,7 +31,7 @@ export const demandController = {
 
       const result = await demandService.findByFilters(
         {
-          createdBy: isPrivileged ? undefined : username,
+          createdBy: isAdmin ? undefined : username,
         },
         {
           page,
@@ -65,7 +66,7 @@ export const demandController = {
 
   getByFilters: async (req: Request, res: Response) => {
     try {
-      const { username, isPrivileged } = getUserContext(req);
+      const { username, isAdmin, isModerator } = getUserContext(req);
       const {
         project,
         resource,
@@ -82,6 +83,7 @@ export const demandController = {
         year,
         relatedTo,
         emergencyOption,
+        managed,
         page: pageQuery,
         limit: limitQuery,
         sortBy,
@@ -90,6 +92,27 @@ export const demandController = {
 
       const page = Number(pageQuery) || 1;
       const limit = Number(limitQuery) || 10;
+      const isManagedView = managed === 'true';
+
+      let createdByFilter: string | undefined;
+      let serviceNamesFilter: string[] | undefined;
+
+      if (isManagedView) {
+        if (isModerator && !isAdmin) {
+          // Moderator on management page: scope to services they manage
+          const managedServices = await prisma.service.findMany({
+            where: { moderators: { has: username } },
+            select: { name: true },
+          });
+          serviceNamesFilter = managedServices.map((s) => s.name);
+        }
+        // Admin on management page: no restrictions (all demands visible)
+      } else {
+        // Demands page: everyone except admins sees only their own demands
+        if (!isAdmin) {
+          createdByFilter = username;
+        }
+      }
 
       const result = await demandService.findByFilters(
         {
@@ -103,7 +126,8 @@ export const demandController = {
           clusterName: cluster as string | undefined,
           type: type as DemandType | undefined,
           status: status as DemandStatus | undefined,
-          createdBy: isPrivileged ? undefined : username,
+          createdBy: createdByFilter,
+          serviceNames: serviceNamesFilter,
           projectType: projectType as ProjectType | undefined,
           projectMedian: median as Median | undefined,
           projectYear: year ? Number(year) : undefined,
