@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { MdEdit, MdCancel } from 'react-icons/md';
+import { MdEdit, MdCancel, MdGavel } from 'react-icons/md';
 import type { Demand, Project } from '../../types/domain';
 import type { ColumnConfig } from '../../types/table';
 import StatusBadge from './StatusBadge';
@@ -22,7 +22,7 @@ export type DemandColumnKey =
   | 'demandType'
   | 'clusterName'
   | 'approvedDate'
-  | 'decisionReason'
+  | 'reason'
   | 'createdBy'
   | 'createdAt'
   | 'actions';
@@ -33,6 +33,7 @@ export const demandColumnConfig: ColumnConfig<DemandColumnKey>[] = [
   { key: 'resource', label: 'projects.columns.resource', defaultVisible: true },
   { key: 'status', label: 'projects.columns.status', defaultVisible: true },
   { key: 'value', label: 'projects.columns.value', defaultVisible: true },
+  { key: 'unit', label: 'projects.columns.unit', defaultVisible: true },
   { key: 'approvedValue', label: 'projects.columns.approvedValue', defaultVisible: true },
   { key: 'location', label: 'projectsTable.columns.location', defaultVisible: true },
   { key: 'organization', label: 'projectsTable.columns.organization', defaultVisible: true },
@@ -40,11 +41,10 @@ export const demandColumnConfig: ColumnConfig<DemandColumnKey>[] = [
   { key: 'projectType', label: 'projects.columns.projectType', defaultVisible: true },
   { key: 'id', label: 'projects.columns.id', defaultVisible: false },
   { key: 'resourceService', label: 'projects.columns.resourceService', defaultVisible: false },
-  { key: 'unit', label: 'projects.columns.unit', defaultVisible: false },
   { key: 'demandType', label: 'projects.columns.type', defaultVisible: false },
   { key: 'clusterName', label: 'demandSidebar.clusterName', defaultVisible: false },
   { key: 'approvedDate', label: 'projects.columns.approvedDate', defaultVisible: false },
-  { key: 'decisionReason', label: 'projects.columns.decisionReason', defaultVisible: false },
+  { key: 'reason', label: 'projects.columns.reason', defaultVisible: false },
   { key: 'createdBy', label: 'projects.columns.createdBy', defaultVisible: false },
   { key: 'createdAt', label: 'projects.columns.createdAt', defaultVisible: false },
   { key: 'actions', label: 'common.actions', canHide: false },
@@ -56,9 +56,23 @@ interface DemandsTableProps {
   isLoading?: boolean;
   selectedDemand?: Demand | null;
   onSelectDemand: (demand: Demand) => void;
-  onEdit: (demand: Demand) => void;
-  onCancel: (demand: Demand) => void;
+  onEdit?: (demand: Demand) => void;
+  onCancel?: (demand: Demand) => void;
+  onMakeDecision?: (demand: Demand) => void;
   visibleColumns: ColumnConfig<DemandColumnKey>[];
+  hideActions?: boolean;
+  isModerator?: boolean;
+  totalValue?: number;
+  totalApprovedValue?: number;
+  // Bulk selection
+  showCheckboxes?: boolean;
+  selectedIds?: Set<number>;
+  onToggleSelect?: (id: number) => void;
+  isAllPageSelected?: boolean;
+  isSomePageSelected?: boolean;
+  onSelectAllPage?: (checked: boolean) => void;
+  isAllAcrossPagesSelected?: boolean;
+  excludedIds?: Set<number>;
 }
 
 export default function DemandsTable({
@@ -69,7 +83,20 @@ export default function DemandsTable({
   onSelectDemand,
   onEdit,
   onCancel,
+  onMakeDecision,
   visibleColumns,
+  hideActions = false,
+  isModerator = false,
+  totalValue,
+  totalApprovedValue,
+  showCheckboxes = false,
+  selectedIds,
+  onToggleSelect,
+  isAllPageSelected = false,
+  isSomePageSelected = false,
+  onSelectAllPage,
+  isAllAcrossPagesSelected = false,
+  excludedIds,
 }: DemandsTableProps) {
   const { t } = useTranslation();
 
@@ -104,7 +131,7 @@ export default function DemandsTable({
       case 'value':
         return (
           <td key={columnKey} className="px-4 py-3 whitespace-nowrap">
-            {demand.value} {demand.unit}
+            {demand.value}
           </td>
         );
       case 'approvedValue':
@@ -184,10 +211,10 @@ export default function DemandsTable({
             {demand.approvedDate ? new Date(demand.approvedDate).toLocaleDateString() : '-'}
           </td>
         );
-      case 'decisionReason':
+      case 'reason':
         return (
           <td key={columnKey} className="px-4 py-3 whitespace-nowrap">
-            {demand.decisionReasonName ?? '-'}
+            {demand.reason ?? '-'}
           </td>
         );
       case 'createdBy':
@@ -203,24 +230,39 @@ export default function DemandsTable({
           </td>
         );
       case 'actions':
+        if (hideActions) {
+          return <td key={columnKey} className="px-4 py-3 whitespace-nowrap"></td>;
+        }
         return (
           <td key={columnKey} className="px-4 py-3 whitespace-nowrap">
             {demand.status === 'Pending' && (
               <div className="flex items-center justify-center gap-1">
-                <button
-                  onClick={(e) => { e.stopPropagation(); onEdit(demand); }}
-                  className="p-1.5 text-text-secondary hover:text-primary transition-colors bg-transparent border-none cursor-pointer"
-                  title={t('common.edit')}
-                >
-                  <MdEdit size={18} />
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); onCancel(demand); }}
-                  className="p-1.5 text-text-secondary hover:text-danger transition-colors bg-transparent border-none cursor-pointer"
-                  title={t('demands.actions.cancel')}
-                >
-                  <MdCancel size={18} />
-                </button>
+                {isModerator ? (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onMakeDecision?.(demand); }}
+                    className="p-1.5 text-text-secondary hover:text-primary transition-colors bg-transparent border-none cursor-pointer"
+                    title={t('management.makeDecision')}
+                  >
+                    <MdGavel size={18} />
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onEdit?.(demand); }}
+                      className="p-1.5 text-text-secondary hover:text-primary transition-colors bg-transparent border-none cursor-pointer"
+                      title={t('common.edit')}
+                    >
+                      <MdEdit size={18} />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onCancel?.(demand); }}
+                      className="p-1.5 text-text-secondary hover:text-danger transition-colors bg-transparent border-none cursor-pointer"
+                      title={t('demands.actions.cancel')}
+                    >
+                      <MdCancel size={18} />
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </td>
@@ -251,6 +293,18 @@ export default function DemandsTable({
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-divider">
+            {showCheckboxes && (
+              <th className="px-4 py-3 w-10 bg-bg-default">
+                <input
+                  type="checkbox"
+                  checked={isAllPageSelected}
+                  ref={(el) => { if (el) el.indeterminate = isSomePageSelected && !isAllPageSelected; }}
+                  onChange={(e) => onSelectAllPage?.(e.target.checked)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="cursor-pointer accent-primary"
+                />
+              </th>
+            )}
             {visibleColumns.map((col) => (
               <th
                 key={col.key}
@@ -262,18 +316,75 @@ export default function DemandsTable({
           </tr>
         </thead>
         <tbody>
-          {demands.map((demand) => (
-            <tr
-              key={demand.id}
-              onClick={() => onSelectDemand(demand)}
-              className={`border-b border-divider last:border-b-0 hover:bg-primary-light/30 transition-colors cursor-pointer ${
-                selectedDemand?.id === demand.id ? 'bg-primary-light' : ''
-              }`}
-            >
-              {visibleColumns.map((col) => renderCell(demand, col.key))}
-            </tr>
-          ))}
+          {demands.map((demand) => {
+            const isChecked = isAllAcrossPagesSelected
+  ? demand.status === 'Pending' && !excludedIds?.has(demand.id)
+  : (selectedIds?.has(demand.id) ?? false);
+            return (
+              <tr
+                key={demand.id}
+                onClick={() => onSelectDemand(demand)}
+                className={`border-b border-divider last:border-b-0 hover:bg-primary-light/30 transition-colors cursor-pointer ${
+                  selectedDemand?.id === demand.id ? 'bg-primary-light' : ''
+                } ${isChecked ? 'bg-primary-light/50' : ''}`}
+              >
+                {showCheckboxes && (
+                  <td className="px-4 py-3 w-10">
+                    {demand.status === 'Pending' ? (
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => onToggleSelect?.(demand.id)}
+                        onClick={(e) => e.stopPropagation()}
+                        className="cursor-pointer accent-primary"
+                      />
+                    ) : (
+                      <input
+                        type="checkbox"
+                        disabled
+                        checked={false}
+                        onClick={(e) => e.stopPropagation()}
+                        className="opacity-20 cursor-not-allowed"
+                      />
+                    )}
+                  </td>
+                )}
+                {visibleColumns.map((col) => renderCell(demand, col.key))}
+              </tr>
+            );
+          })}
         </tbody>
+        {(totalValue !== undefined || totalApprovedValue !== undefined) && (
+          <tfoot>
+            <tr className="border-t-2 border-divider bg-bg-default">
+              {showCheckboxes && <td className="px-4 py-2.5" />}
+              {visibleColumns.map((col, index) => {
+                if (index === 0) {
+                  return (
+                    <td key={col.key} className="px-4 py-2.5 whitespace-nowrap text-xs font-semibold text-text-secondary uppercase tracking-wide">
+                      {t('common.total')}
+                    </td>
+                  );
+                }
+                if (col.key === 'value' && totalValue !== undefined) {
+                  return (
+                    <td key={col.key} className="px-4 py-2.5 whitespace-nowrap font-semibold text-primary">
+                      {totalValue.toLocaleString()}
+                    </td>
+                  );
+                }
+                if (col.key === 'approvedValue' && totalApprovedValue !== undefined) {
+                  return (
+                    <td key={col.key} className="px-4 py-2.5 whitespace-nowrap font-semibold text-primary">
+                      {totalApprovedValue.toLocaleString()}
+                    </td>
+                  );
+                }
+                return <td key={col.key} className="px-4 py-2.5" />;
+              })}
+            </tr>
+          </tfoot>
+        )}
       </table>
     </div>
   );

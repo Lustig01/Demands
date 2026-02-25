@@ -434,8 +434,20 @@ async function main() {
 
   // Need at least 50 demands
   const demandPromises = [];
-  const statuses = [DemandStatus.Pending, DemandStatus.Approved, DemandStatus.Rejected, DemandStatus.PartiallyApproved];
+  const statuses = [DemandStatus.Pending, DemandStatus.Approved, DemandStatus.Rejected, DemandStatus.PartiallyApproved, DemandStatus.ApprovedWithCondition];
   const types = [DemandType.New, DemandType.Extension];
+
+  // Sample reasons for seed data
+  const sampleReasons = [
+    'Budget constraints require reduced allocation',
+    'Resource availability limited in this location',
+    'Pending approval from finance department',
+    'Conditional on completion of security review',
+    'Approved with monitoring requirements',
+    'Requires quarterly review of usage',
+    'Limited availability due to other projects',
+    'Approved subject to capacity planning review',
+  ];
 
   for (let i = 0; i < 50; i++) {
     const project = projects[i % projects.length];
@@ -448,6 +460,7 @@ async function main() {
 
     let approvedValue = undefined;
     let approvedDate = undefined;
+    let reason = undefined;
 
     if (status === DemandStatus.Approved) {
       approvedValue = val;
@@ -455,6 +468,13 @@ async function main() {
     } else if (status === DemandStatus.PartiallyApproved) {
       approvedValue = Math.floor(val * 0.8);
       approvedDate = new Date();
+      reason = sampleReasons[i % sampleReasons.length];
+    } else if (status === DemandStatus.ApprovedWithCondition) {
+      approvedValue = val;
+      approvedDate = new Date();
+      reason = sampleReasons[(i + 3) % sampleReasons.length];
+    } else if (status === DemandStatus.Rejected) {
+      reason = sampleReasons[(i + 5) % sampleReasons.length];
     }
 
     demandPromises.push(
@@ -470,6 +490,7 @@ async function main() {
           status: status,
           approvedValue,
           approvedDate,
+          reason,
           centerName: project.centerName,
           branchName: project.branchName,
           sectionName: project.sectionName,
@@ -492,44 +513,6 @@ async function main() {
   `;
 
   console.log('Updated capacity allocated and available values');
-
-  // ============================================
-  // Decision Reason Models
-  // ============================================
-
-  const decisionReasons = await Promise.all([
-    prisma.decisionReason.upsert({
-      where: { name: 'Budget' },
-      update: {},
-      create: { name: 'Budget', displayName: 'Budget Constraints' },
-    }),
-    prisma.decisionReason.upsert({
-      where: { name: 'Capacity' },
-      update: {},
-      create: { name: 'Capacity', displayName: 'Capacity Constraints' },
-    }),
-    prisma.decisionReason.upsert({
-      where: { name: 'Strategic' },
-      update: {},
-      create: { name: 'Strategic', displayName: 'Strategic Decision' },
-    }),
-  ]);
-  console.log(`Created ${decisionReasons.length} decision reasons`);
-
-  // Link a demand to a decision reason
-  const demandToUpdate = await prisma.demand.findFirst({
-    where: {
-      status: DemandStatus.Rejected
-    }
-  });
-
-  if (demandToUpdate) {
-    await prisma.demand.update({
-      where: { id: demandToUpdate.id },
-      data: { decisionReasonName: 'Budget' }
-    });
-    console.log('Updated a demand with decision reason');
-  }
 
   console.log('Seeding completed.');
 }

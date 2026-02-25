@@ -10,6 +10,45 @@
     "demand": "Demand"
   },
   "management": {
+    "demandsTitle": "Demands Management",
+    "makeDecision": "Make Decision",
+    "decisionModal": {
+      "title": "Make Decision",
+      "decisionType": "Decision Type",
+      "Approved": "Approve",
+      "PartiallyApproved": "Partially Approve",
+      "ApprovedWithCondition": "Approve With Condition",
+      "Rejected": "Reject",
+      "approvedValue": "Approved Value",
+      "requestedValue": "Requested",
+      "reason": "Reason",
+      "reasonPlaceholder": "Enter reason for this decision...",
+      "submit": "Submit Decision"
+    },
+    "success": {
+      "approved": "Demand approved successfully",
+      "rejected": "Demand rejected successfully"
+    },
+    "error": {
+      "approveFailed": "Failed to approve demand",
+      "rejectFailed": "Failed to reject demand"
+    },
+    "bulk": {
+      "noneSelected": "Select demands to take bulk action",
+      "selected": "{{count}} demands selected",
+      "allSelected": "All {{count}} demands selected",
+      "pageSelected": "All {{pageCount}} demands on this page are selected.",
+      "selectAllAcrossPages": "Select all {{count}} demands",
+      "changeStatus": "Change Status",
+      "clearSelection": "Clear selection"
+    },
+    "bulkDecision": {
+      "title": "Bulk Status Change",
+      "summary": "Apply status change to {{count}} demands (only Pending demands will be affected)",
+      "submit": "Apply to All",
+      "successApproved": "{{count}} demands approved successfully",
+      "successRejected": "{{count}} demands rejected successfully"
+    },
     "tabs": {
       "capacity": "Capacity Management",
       "wallet": "Wallet Management"
@@ -83,6 +122,7 @@
     "filters": "Filters",
     "sortBy": "Sort by",
     "none": "None",
+    "total": "Total",
     "ascending": "Ascending",
     "descending": "Descending",
     "submitting": "Submitting...",
@@ -220,7 +260,7 @@
       "status": "Status",
       "approvedValue": "Approved Value",
       "approvedDate": "Approved Date",
-      "decisionReason": "Decision Reason",
+      "reason": "Reason",
       "createdAt": "Created At",
       "createdBy": "Created By",
       "resourceService": "Resource Service",
@@ -239,6 +279,7 @@
       "Approved": "Approved",
       "Rejected": "Rejected",
       "PartiallyApproved": "Partially Approved",
+      "ApprovedWithCondition": "Approved With Condition",
       "Cancelled": "Cancelled"
     },
     "editProject": {

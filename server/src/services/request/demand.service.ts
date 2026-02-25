@@ -30,6 +30,7 @@ export const demandService = {
       type?: DemandType;
       status?: DemandStatus;
       createdBy?: string;
+      serviceNames?: string[];
       projectType?: ProjectType;
       projectMedian?: Median;
       projectYear?: number;
@@ -51,6 +52,7 @@ export const demandService = {
     if (filters.type) where.type = filters.type;
     if (filters.status) where.status = filters.status;
     if (filters.createdBy) where.createdBy = filters.createdBy;
+    if (filters.serviceNames) where.serviceName = { in: filters.serviceNames };
 
     if (filters.baseName || filters.environmentName || filters.networkName || filters.clusterName) {
       where.location = {};
@@ -100,7 +102,7 @@ export const demandService = {
       orderBy = { createdAt: 'desc' };
     }
 
-    const [data, total] = await Promise.all([
+    const [data, total, totalPending, aggregates] = await Promise.all([
       prisma.demand.findMany({
         where,
         include: {
@@ -114,15 +116,20 @@ export const demandService = {
         take: limit,
       }),
       prisma.demand.count({ where }),
+      prisma.demand.count({ where: { ...where, status: "Pending" } }),
+      prisma.demand.aggregate({ where, _sum: { value: true, approvedValue: true } }),
     ]);
 
     return {
       data,
       meta: {
         total,
+        totalPending,
         page,
         limit,
         totalPages: Math.ceil(total / limit),
+        totalValue: aggregates._sum.value ?? 0,
+        totalApprovedValue: aggregates._sum.approvedValue ?? 0,
       },
     };
   },
@@ -207,11 +214,12 @@ export const demandService = {
     });
   },
 
-  reject: async (id: number) => {
+  reject: async (id: number, reason: string) => {
     return prisma.demand.update({
       where: { id },
       data: {
         status: "Rejected",
+        reason,
       },
       include: {
         project: true,
@@ -249,8 +257,9 @@ export const demandService = {
   approve: async (
     id: number,
     data: {
-      status: "Approved" | "PartiallyApproved";
+      status: "Approved" | "PartiallyApproved" | "ApprovedWithCondition";
       approvedValue?: number;
+      reason?: string;
     }
   ) => {
     return prisma.demand.update({
@@ -259,12 +268,42 @@ export const demandService = {
         status: data.status,
         approvedValue: data.approvedValue,
         approvedDate: new Date(),
+        reason: data.reason,
       },
       include: {
         project: true,
         service: true,
         resource: true,
         location: true,
+      },
+    });
+  },
+
+  bulkApprove: async (
+    where: any,
+    data: {
+      status: "Approved" | "PartiallyApproved" | "ApprovedWithCondition";
+      approvedValue?: number;
+      reason?: string;
+    }
+  ) => {
+    return prisma.demand.updateMany({
+      where: { ...where, status: "Pending" },
+      data: {
+        status: data.status,
+        approvedDate: new Date(),
+        ...(data.approvedValue !== undefined && { approvedValue: data.approvedValue }),
+        ...(data.reason !== undefined && { reason: data.reason }),
+      },
+    });
+  },
+
+  bulkReject: async (where: any, reason: string) => {
+    return prisma.demand.updateMany({
+      where: { ...where, status: "Pending" },
+      data: {
+        status: "Rejected",
+        reason,
       },
     });
   },

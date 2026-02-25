@@ -207,6 +207,7 @@ enum DemandStatus {
   Approved
   Rejected
   PartiallyApproved
+  ApprovedWithCondition
   Cancelled
 }
 
@@ -262,8 +263,7 @@ model Demand {
   clusterName        String?
   approvedValue      Float?
   approvedDate       DateTime?
-  decisionReasonName String?
-  decisionReason     DecisionReason?  @relation(fields: [decisionReasonName], references: [name])
+  reason             String?
   centerName         String
   branchName         String
   sectionName        String
@@ -276,14 +276,6 @@ model Demand {
   updatedAt          DateTime         @updatedAt
 
   @@index([createdBy])
-}
-
-model DecisionReason {
-  name        String   @id
-  displayName String
-  demands     Demand[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }
 
 model EmergencyOption {

@@ -32,7 +32,7 @@ export const demandFilterGroups: FilterGroupConfig<DemandFilterKey>[] = [
   {
     id: 'general',
     label: 'filters.groups.general',
-    defaultExpanded: true,
+    defaultExpanded: false,
     fields: [
       { key: 'type', label: 'projects.columns.type', inputType: 'select' },
       { key: 'status', label: 'projects.columns.status', inputType: 'select' },

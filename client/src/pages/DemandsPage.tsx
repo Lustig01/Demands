@@ -12,6 +12,7 @@ import { useDemands } from '../hooks/useDemands';
 import { useCachedProjects } from '../hooks/useCachedProjects';
 import { useReferenceData } from '../hooks/useReferenceData';
 import { useDebounce } from '../hooks/useDebounce';
+import { useDelayedLoading } from '../hooks/useDelayedLoading';
 import { useTableColumns } from '../hooks/useTableColumns';
 import type { CreateDemandPayload, UpdateDemandPayload } from '../api/types';
 import type { Demand, Project } from '../types/domain';
@@ -74,7 +75,7 @@ export default function DemandsPage() {
 
   const { showToast } = useToast();
 
-  const { demands, total, totalPages, isLoading, error, createDemand, updateDemand, cancelDemand } = useDemands(
+  const { demands, total, totalPages, totalValue, totalApprovedValue, isLoading, error, createDemand, updateDemand, cancelDemand } = useDemands(
     {
       ...debouncedFilters,
       baseName: debouncedFilters.base,
@@ -100,6 +101,8 @@ export default function DemandsPage() {
       sortDir: sortState.direction,
     }
   );
+
+  const showLoading = useDelayedLoading(isLoading);
 
   const { bases, environments, networks, clusters, services, resources, emergencyOptions, centers, branches, sections } =
     useReferenceData();
@@ -153,10 +156,12 @@ export default function DemandsPage() {
     ];
 
     const statusOptions = [
-      { value: 'Pending', label: 'Pending' },
-      { value: 'Approved', label: 'Approved' },
-      { value: 'PartiallyApproved', label: 'Partially Approved' },
-      { value: 'Rejected', label: 'Rejected' },
+      { value: 'Pending', label: t('projects.status.Pending') },
+      { value: 'Approved', label: t('projects.status.Approved') },
+      { value: 'PartiallyApproved', label: t('projects.status.PartiallyApproved') },
+      { value: 'ApprovedWithCondition', label: t('projects.status.ApprovedWithCondition') },
+      { value: 'Rejected', label: t('projects.status.Rejected') },
+      { value: 'Cancelled', label: t('projects.status.Cancelled') },
     ];
 
     const projectTypeOptions = [
@@ -299,17 +304,19 @@ export default function DemandsPage() {
           <>
             {/* Table */}
             <div
-              className={`overflow-x-auto transition-opacity duration-200 ${isFiltersPending ? 'opacity-50' : 'opacity-100'}`}
+              className={`overflow-x-auto transition-opacity duration-200 ${isFiltersPending || showLoading ? 'opacity-50' : 'opacity-100'}`}
             >
               <DemandsTable
                 demands={demands}
                 projectMap={projectMap}
-                isLoading={isLoading}
+                isLoading={false}
                 selectedDemand={selectedDemand}
                 onSelectDemand={setSelectedDemand}
                 onEdit={handleEditDemand}
                 onCancel={handleCancelDemand}
                 visibleColumns={orderedVisibleColumns}
+                totalValue={totalValue}
+                totalApprovedValue={totalApprovedValue}
               />
             </div>
 

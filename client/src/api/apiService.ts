@@ -21,6 +21,11 @@ import type {
   Wallet,
   CreateWalletPayload,
   UpdateWalletPayload,
+  ApproveDemandPayload,
+  RejectDemandPayload,
+  BulkApproveDemandPayload,
+  BulkRejectDemandPayload,
+  BulkDecisionResult,
 } from './types';
 
 // --- Response mappers ---
@@ -45,7 +50,7 @@ function mapDemand(raw: any): Demand {
     clusterName: raw.clusterName,
     approvedValue: raw.approvedValue,
     approvedDate: raw.approvedDate,
-    decisionReasonName: raw.decisionReasonName,
+    reason: raw.reason,
     createdBy: raw.createdBy ?? '',
     createdByName: raw.createdByName ?? '',
     createdAt: raw.createdAt,
@@ -152,6 +157,7 @@ export async function fetchDemands(
     if (params.year) query.append('year', params.year.toString());
     if (params.relatedTo) query.append('relatedTo', params.relatedTo);
     if (params.emergencyOption) query.append('emergencyOption', params.emergencyOption);
+    if (params.managed) query.append('managed', 'true');
   }
 
   // If any filter is present (besides pagination), use /demands/filter, otherwise /demands
@@ -159,7 +165,8 @@ export async function fetchDemands(
     params.projectName || params.serviceName || params.resourceName || params.resourceService ||
     params.locationId || params.baseName || params.environmentName ||
     params.networkName || params.clusterName || params.type || params.status ||
-    params.projectType || params.median || params.year || params.relatedTo || params.emergencyOption || params.projectPriority
+    params.projectType || params.median || params.year || params.relatedTo || params.emergencyOption || params.projectPriority ||
+    params.managed
   );
 
   const endpoint = isFiltering ? '/demands/filter' : '/demands';
@@ -190,6 +197,26 @@ export async function deleteDemand(id: number): Promise<void> {
 export async function cancelDemand(id: number): Promise<Demand> {
   const { data } = await api.patch(`/demands/${id}/cancel`);
   return mapDemand(data);
+}
+
+export async function approveDemand(id: number, payload: ApproveDemandPayload): Promise<Demand> {
+  const { data } = await api.patch(`/demands/${id}/approve`, payload);
+  return mapDemand(data);
+}
+
+export async function rejectDemand(id: number, payload: RejectDemandPayload): Promise<Demand> {
+  const { data } = await api.patch(`/demands/${id}/reject`, payload);
+  return mapDemand(data);
+}
+
+export async function bulkApproveDemands(payload: BulkApproveDemandPayload): Promise<BulkDecisionResult> {
+  const { data } = await api.patch('/demands/bulk/approve', payload);
+  return data;
+}
+
+export async function bulkRejectDemands(payload: BulkRejectDemandPayload): Promise<BulkDecisionResult> {
+  const { data } = await api.patch('/demands/bulk/reject', payload);
+  return data;
 }
 
 // --- Reference data ---

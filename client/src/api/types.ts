@@ -82,9 +82,12 @@ export interface PaginatedResponse<T> {
   data: T[];
   meta: {
     total: number;
+    totalPending?: number;
     page: number;
     limit: number;
     totalPages: number;
+    totalValue?: number;
+    totalApprovedValue?: number;
   };
 }
 
@@ -140,6 +143,7 @@ export interface DemandFilterParams {
   branchName?: string;
   sectionName?: string;
   projectPriority?: Priority;
+  managed?: boolean;
 }
 
 export interface Capacity {
@@ -201,4 +205,56 @@ export interface CreateWalletPayload {
 
 export interface UpdateWalletPayload {
   value: number;
+}
+
+export type ApprovalStatus = 'Approved' | 'PartiallyApproved' | 'ApprovedWithCondition';
+
+export interface ApproveDemandPayload {
+  status: ApprovalStatus;
+  approvedValue?: number;
+  reason?: string;
+}
+
+export interface RejectDemandPayload {
+  reason: string;
+}
+
+export interface BulkDemandFilters {
+  project?: string;
+  resource?: string;
+  resourceService?: string;
+  base?: string;
+  environment?: string;
+  network?: string;
+  cluster?: string;
+  type?: string;
+  status?: string;
+  projectType?: string;
+  median?: string;
+  year?: number;
+  relatedTo?: string;
+  emergencyOption?: string;
+  priority?: string;
+}
+
+export interface BulkApproveDemandPayload {
+  ids?: number[];
+  selectAll?: boolean;
+  filters?: BulkDemandFilters;
+  excludedIds?: number[];
+  status: ApprovalStatus;
+  approvedValue?: number;
+  reason?: string;
+}
+
+export interface BulkRejectDemandPayload {
+  ids?: number[];
+  selectAll?: boolean;
+  filters?: BulkDemandFilters;
+  excludedIds?: number[];
+  reason: string;
+}
+
+export interface BulkDecisionResult {
+  count: number;
 }
