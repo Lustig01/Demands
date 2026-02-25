@@ -100,7 +100,7 @@ export const demandService = {
       orderBy = { createdAt: 'desc' };
     }
 
-    const [data, total] = await Promise.all([
+    const [data, total, aggregates] = await Promise.all([
       prisma.demand.findMany({
         where,
         include: {
@@ -114,6 +114,7 @@ export const demandService = {
         take: limit,
       }),
       prisma.demand.count({ where }),
+      prisma.demand.aggregate({ where, _sum: { value: true, approvedValue: true } }),
     ]);
 
     return {
@@ -123,6 +124,8 @@ export const demandService = {
         page,
         limit,
         totalPages: Math.ceil(total / limit),
+        totalValue: aggregates._sum.value ?? 0,
+        totalApprovedValue: aggregates._sum.approvedValue ?? 0,
       },
     };
   },

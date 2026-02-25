@@ -69,7 +69,7 @@ export default function ManagementPage() {
 
   const { showToast } = useToast();
 
-  const { demands, total, totalPages, isLoading, error, approveDemand, rejectDemand } = useDemands(
+  const { demands, total, totalPages, totalValue, totalApprovedValue, isLoading, error, approveDemand, rejectDemand } = useDemands(
     {
       ...debouncedFilters,
       baseName: debouncedFilters.base,
@@ -296,6 +296,8 @@ export default function ManagementPage() {
                 visibleColumns={orderedVisibleColumns}
                 isModerator
                 onMakeDecision={handleMakeDecision}
+                totalValue={totalValue}
+                totalApprovedValue={totalApprovedValue}
               />
             </div>
 

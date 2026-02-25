@@ -75,7 +75,7 @@ export default function DemandsPage() {
 
   const { showToast } = useToast();
 
-  const { demands, total, totalPages, isLoading, error, createDemand, updateDemand, cancelDemand } = useDemands(
+  const { demands, total, totalPages, totalValue, totalApprovedValue, isLoading, error, createDemand, updateDemand, cancelDemand } = useDemands(
     {
       ...debouncedFilters,
       baseName: debouncedFilters.base,
@@ -315,6 +315,8 @@ export default function DemandsPage() {
                 onEdit={handleEditDemand}
                 onCancel={handleCancelDemand}
                 visibleColumns={orderedVisibleColumns}
+                totalValue={totalValue}
+                totalApprovedValue={totalApprovedValue}
               />
             </div>
 

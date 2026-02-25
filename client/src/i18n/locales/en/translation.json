@@ -106,6 +106,7 @@
     "filters": "Filters",
     "sortBy": "Sort by",
     "none": "None",
+    "total": "Total",
     "ascending": "Ascending",
     "descending": "Descending",
     "submitting": "Submitting...",

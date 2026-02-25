@@ -62,6 +62,8 @@ interface DemandsTableProps {
   visibleColumns: ColumnConfig<DemandColumnKey>[];
   hideActions?: boolean;
   isModerator?: boolean;
+  totalValue?: number;
+  totalApprovedValue?: number;
 }
 
 export default function DemandsTable({
@@ -76,6 +78,8 @@ export default function DemandsTable({
   visibleColumns,
   hideActions = false,
   isModerator = false,
+  totalValue,
+  totalApprovedValue,
 }: DemandsTableProps) {
   const { t } = useTranslation();
 
@@ -295,6 +299,36 @@ export default function DemandsTable({
             </tr>
           ))}
         </tbody>
+        {(totalValue !== undefined || totalApprovedValue !== undefined) && (
+          <tfoot>
+            <tr className="border-t-2 border-divider bg-bg-default">
+              {visibleColumns.map((col, index) => {
+                if (index === 0) {
+                  return (
+                    <td key={col.key} className="px-4 py-2.5 whitespace-nowrap text-xs font-semibold text-text-secondary uppercase tracking-wide">
+                      {t('common.total')}
+                    </td>
+                  );
+                }
+                if (col.key === 'value' && totalValue !== undefined) {
+                  return (
+                    <td key={col.key} className="px-4 py-2.5 whitespace-nowrap font-semibold text-primary">
+                      {totalValue.toLocaleString()}
+                    </td>
+                  );
+                }
+                if (col.key === 'approvedValue' && totalApprovedValue !== undefined) {
+                  return (
+                    <td key={col.key} className="px-4 py-2.5 whitespace-nowrap font-semibold text-primary">
+                      {totalApprovedValue.toLocaleString()}
+                    </td>
+                  );
+                }
+                return <td key={col.key} className="px-4 py-2.5" />;
+              })}
+            </tr>
+          </tfoot>
+        )}
       </table>
     </div>
   );

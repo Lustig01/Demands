@@ -10,6 +10,8 @@ interface UseDemandsResult {
   error: string | null;
   total: number;
   totalPages: number;
+  totalValue: number;
+  totalApprovedValue: number;
   createDemand: (payload: CreateDemandPayload) => Promise<void>;
   updateDemand: (id: number, payload: UpdateDemandPayload) => Promise<void>;
   cancelDemand: (id: number) => Promise<void>;
@@ -25,6 +27,8 @@ export function useDemands(
   const [demands, setDemands] = useState<Demand[]>([]);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalValue, setTotalValue] = useState(0);
+  const [totalApprovedValue, setTotalApprovedValue] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,6 +45,8 @@ export function useDemands(
         setDemands(data);
         setTotal(meta.total);
         setTotalPages(meta.totalPages);
+        setTotalValue(meta.totalValue ?? 0);
+        setTotalApprovedValue(meta.totalApprovedValue ?? 0);
       } catch (err: any) {
         if (err.name !== 'CanceledError' && err.message !== 'canceled') {
           setError(err.message ?? 'Failed to load demands');
@@ -81,5 +87,5 @@ export function useDemands(
     triggerRefreshDemands();
   }, [triggerRefreshDemands]);
 
-  return { demands, isLoading, error, total, totalPages, createDemand, updateDemand, cancelDemand, approveDemand, rejectDemand };
+  return { demands, isLoading, error, total, totalPages, totalValue, totalApprovedValue, createDemand, updateDemand, cancelDemand, approveDemand, rejectDemand };
 }
