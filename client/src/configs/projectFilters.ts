@@ -29,7 +29,7 @@ export const projectFilterGroups: FilterGroupConfig<ProjectFilterKey>[] = [
   {
     id: 'general',
     label: 'filters.groups.general',
-    defaultExpanded: true,
+    defaultExpanded: false,
     fields: [
       { key: 'name', label: 'common.name', inputType: 'text', placeholder: 'common.search' },
       { key: 'type', label: 'projects.columns.type', inputType: 'select' },

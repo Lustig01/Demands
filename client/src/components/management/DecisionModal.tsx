@@ -85,7 +85,11 @@ export default function DecisionModal({ open, onClose, onApprove, onReject, dema
                         </div>
                         <div>
                             <span className="text-text-secondary">{t('projects.columns.value')}:</span>{' '}
-                            <span className="font-medium">{demand.value} {demand.unit}</span>
+                            <span className="font-medium">{demand.value}</span>
+                        </div>
+                        <div>
+                            <span className="text-text-secondary">{t('projects.columns.unit')}:</span>{' '}
+                            <span className="font-medium">{demand.unit}</span>
                         </div>
                         <div>
                             <span className="text-text-secondary">{t('projects.columns.project')}:</span>{' '}
@@ -146,7 +150,7 @@ export default function DecisionModal({ open, onClose, onApprove, onReject, dema
                             <span className="text-sm text-text-secondary">{demand.unit}</span>
                         </div>
                         <span className="text-xs text-text-secondary">
-                            {t('management.decisionModal.requestedValue')}: {demand.value} {demand.unit}
+                            {t('management.decisionModal.requestedValue')}: {demand.value}
                         </span>
                     </div>
                 )}

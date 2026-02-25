@@ -19,7 +19,7 @@ export default function FilterSort<
   className = '',
 }: FilterSortProps<TFilterKey, TSortKey>) {
   const { t } = useTranslation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   // Calculate total active filters
   const totalActiveFilters = useMemo(

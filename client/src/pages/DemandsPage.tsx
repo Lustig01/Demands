@@ -153,10 +153,12 @@ export default function DemandsPage() {
     ];
 
     const statusOptions = [
-      { value: 'Pending', label: 'Pending' },
-      { value: 'Approved', label: 'Approved' },
-      { value: 'PartiallyApproved', label: 'Partially Approved' },
-      { value: 'Rejected', label: 'Rejected' },
+      { value: 'Pending', label: t('projects.status.Pending') },
+      { value: 'Approved', label: t('projects.status.Approved') },
+      { value: 'PartiallyApproved', label: t('projects.status.PartiallyApproved') },
+      { value: 'ApprovedWithCondition', label: t('projects.status.ApprovedWithCondition') },
+      { value: 'Rejected', label: t('projects.status.Rejected') },
+      { value: 'Cancelled', label: t('projects.status.Cancelled') },
     ];
 
     const projectTypeOptions = [

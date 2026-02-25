@@ -33,6 +33,7 @@ export const demandColumnConfig: ColumnConfig<DemandColumnKey>[] = [
   { key: 'resource', label: 'projects.columns.resource', defaultVisible: true },
   { key: 'status', label: 'projects.columns.status', defaultVisible: true },
   { key: 'value', label: 'projects.columns.value', defaultVisible: true },
+  { key: 'unit', label: 'projects.columns.unit', defaultVisible: true },
   { key: 'approvedValue', label: 'projects.columns.approvedValue', defaultVisible: true },
   { key: 'location', label: 'projectsTable.columns.location', defaultVisible: true },
   { key: 'organization', label: 'projectsTable.columns.organization', defaultVisible: true },
@@ -40,7 +41,6 @@ export const demandColumnConfig: ColumnConfig<DemandColumnKey>[] = [
   { key: 'projectType', label: 'projects.columns.projectType', defaultVisible: true },
   { key: 'id', label: 'projects.columns.id', defaultVisible: false },
   { key: 'resourceService', label: 'projects.columns.resourceService', defaultVisible: false },
-  { key: 'unit', label: 'projects.columns.unit', defaultVisible: false },
   { key: 'demandType', label: 'projects.columns.type', defaultVisible: false },
   { key: 'clusterName', label: 'demandSidebar.clusterName', defaultVisible: false },
   { key: 'approvedDate', label: 'projects.columns.approvedDate', defaultVisible: false },
@@ -110,7 +110,7 @@ export default function DemandsTable({
       case 'value':
         return (
           <td key={columnKey} className="px-4 py-3 whitespace-nowrap">
-            {demand.value} {demand.unit}
+            {demand.value}
           </td>
         );
       case 'approvedValue':
