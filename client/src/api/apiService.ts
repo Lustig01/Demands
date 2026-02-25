@@ -23,6 +23,9 @@ import type {
   UpdateWalletPayload,
   ApproveDemandPayload,
   RejectDemandPayload,
+  BulkApproveDemandPayload,
+  BulkRejectDemandPayload,
+  BulkDecisionResult,
 } from './types';
 
 // --- Response mappers ---
@@ -204,6 +207,16 @@ export async function approveDemand(id: number, payload: ApproveDemandPayload): 
 export async function rejectDemand(id: number, payload: RejectDemandPayload): Promise<Demand> {
   const { data } = await api.patch(`/demands/${id}/reject`, payload);
   return mapDemand(data);
+}
+
+export async function bulkApproveDemands(payload: BulkApproveDemandPayload): Promise<BulkDecisionResult> {
+  const { data } = await api.patch('/demands/bulk/approve', payload);
+  return data;
+}
+
+export async function bulkRejectDemands(payload: BulkRejectDemandPayload): Promise<BulkDecisionResult> {
+  const { data } = await api.patch('/demands/bulk/reject', payload);
+  return data;
 }
 
 // --- Reference data ---

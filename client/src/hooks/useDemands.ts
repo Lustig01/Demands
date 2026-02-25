@@ -1,14 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
-import { fetchDemands, createDemand as apiCreateDemand, updateDemand as apiUpdateDemand, cancelDemand as apiCancelDemand, approveDemand as apiApproveDemand, rejectDemand as apiRejectDemand } from '../api/apiService';
+import { fetchDemands, createDemand as apiCreateDemand, updateDemand as apiUpdateDemand, cancelDemand as apiCancelDemand, approveDemand as apiApproveDemand, rejectDemand as apiRejectDemand, bulkApproveDemands as apiBulkApprove, bulkRejectDemands as apiBulkReject } from '../api/apiService';
 import { useRefresh } from '../contexts/RefreshContext';
 import type { Demand } from '../types/domain';
-import type { PaginationParams, DemandFilterParams, CreateDemandPayload, UpdateDemandPayload, ApproveDemandPayload, RejectDemandPayload } from '../api/types';
+import type { PaginationParams, DemandFilterParams, CreateDemandPayload, UpdateDemandPayload, ApproveDemandPayload, RejectDemandPayload, BulkApproveDemandPayload, BulkRejectDemandPayload } from '../api/types';
 
 interface UseDemandsResult {
   demands: Demand[];
   isLoading: boolean;
   error: string | null;
   total: number;
+  totalPending: number;
   totalPages: number;
   totalValue: number;
   totalApprovedValue: number;
@@ -17,6 +18,8 @@ interface UseDemandsResult {
   cancelDemand: (id: number) => Promise<void>;
   approveDemand: (id: number, payload: ApproveDemandPayload) => Promise<void>;
   rejectDemand: (id: number, payload: RejectDemandPayload) => Promise<void>;
+  bulkApproveDemands: (payload: BulkApproveDemandPayload) => Promise<number>;
+  bulkRejectDemands: (payload: BulkRejectDemandPayload) => Promise<number>;
 }
 
 export function useDemands(
@@ -26,6 +29,7 @@ export function useDemands(
   const { demandsRefreshTrigger, triggerRefreshDemands } = useRefresh();
   const [demands, setDemands] = useState<Demand[]>([]);
   const [total, setTotal] = useState(0);
+  const [totalPending, setTotalPending] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
   const [totalApprovedValue, setTotalApprovedValue] = useState(0);
@@ -44,6 +48,7 @@ export function useDemands(
 
         setDemands(data);
         setTotal(meta.total);
+        setTotalPending(meta.totalPending ?? 0);
         setTotalPages(meta.totalPages);
         setTotalValue(meta.totalValue ?? 0);
         setTotalApprovedValue(meta.totalApprovedValue ?? 0);
@@ -87,5 +92,17 @@ export function useDemands(
     triggerRefreshDemands();
   }, [triggerRefreshDemands]);
 
-  return { demands, isLoading, error, total, totalPages, totalValue, totalApprovedValue, createDemand, updateDemand, cancelDemand, approveDemand, rejectDemand };
+  const bulkApproveDemands = useCallback(async (payload: BulkApproveDemandPayload): Promise<number> => {
+    const result = await apiBulkApprove(payload);
+    triggerRefreshDemands();
+    return result.count;
+  }, [triggerRefreshDemands]);
+
+  const bulkRejectDemands = useCallback(async (payload: BulkRejectDemandPayload): Promise<number> => {
+    const result = await apiBulkReject(payload);
+    triggerRefreshDemands();
+    return result.count;
+  }, [triggerRefreshDemands]);
+
+  return { demands, isLoading, error, total, totalPending, totalPages, totalValue, totalApprovedValue, createDemand, updateDemand, cancelDemand, approveDemand, rejectDemand, bulkApproveDemands, bulkRejectDemands };
 }

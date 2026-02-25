@@ -33,6 +33,22 @@
       "approveFailed": "אישור הדרישה נכשל",
       "rejectFailed": "דחיית הדרישה נכשלה"
     },
+    "bulk": {
+      "noneSelected": "בחר דרישות לביצוע פעולה קבוצתית",
+      "selected": "{{count}} דרישות נבחרו",
+      "allSelected": "כל {{count}} הדרישות נבחרו",
+      "pageSelected": "כל {{pageCount}} הדרישות בדף זה נבחרו.",
+      "selectAllAcrossPages": "בחר את כל {{count}} הדרישות",
+      "changeStatus": "שנה סטטוס",
+      "clearSelection": "נקה בחירה"
+    },
+    "bulkDecision": {
+      "title": "שינוי סטטוס מרובה",
+      "summary": "החל שינוי סטטוס על {{count}} דרישות (רק דרישות ממתינות יושפעו)",
+      "submit": "החל על הכל",
+      "successApproved": "{{count}} דרישות אושרו בהצלחה",
+      "successRejected": "{{count}} דרישות נדחו בהצלחה"
+    },
     "tabs": {
       "capacity": "ניהול קיבולת משאבים",
       "wallet": "ניהול ארנקים"

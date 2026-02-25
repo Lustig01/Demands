@@ -82,6 +82,7 @@ export interface PaginatedResponse<T> {
   data: T[];
   meta: {
     total: number;
+    totalPending?: number;
     page: number;
     limit: number;
     totalPages: number;
@@ -216,4 +217,44 @@ export interface ApproveDemandPayload {
 
 export interface RejectDemandPayload {
   reason: string;
+}
+
+export interface BulkDemandFilters {
+  project?: string;
+  resource?: string;
+  resourceService?: string;
+  base?: string;
+  environment?: string;
+  network?: string;
+  cluster?: string;
+  type?: string;
+  status?: string;
+  projectType?: string;
+  median?: string;
+  year?: number;
+  relatedTo?: string;
+  emergencyOption?: string;
+  priority?: string;
+}
+
+export interface BulkApproveDemandPayload {
+  ids?: number[];
+  selectAll?: boolean;
+  filters?: BulkDemandFilters;
+  excludedIds?: number[];
+  status: ApprovalStatus;
+  approvedValue?: number;
+  reason?: string;
+}
+
+export interface BulkRejectDemandPayload {
+  ids?: number[];
+  selectAll?: boolean;
+  filters?: BulkDemandFilters;
+  excludedIds?: number[];
+  reason: string;
+}
+
+export interface BulkDecisionResult {
+  count: number;
 }

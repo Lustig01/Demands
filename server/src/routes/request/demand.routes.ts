@@ -10,6 +10,8 @@ const requireModerator = requireRoles(settings.authAdminGroup, settings.authMode
 
 router.get("/", authenticate, requireAuth, demandController.getAll);
 router.get("/filter", authenticate, requireAuth, demandController.getByFilters);
+router.patch("/bulk/approve", authenticate, requireModerator, demandController.bulkApprove);
+router.patch("/bulk/reject", authenticate, requireModerator, demandController.bulkReject);
 router.get("/:id", authenticate, requireAuth, demandController.getById);
 router.post("/", authenticate, requireAuth, demandController.create);
 router.patch("/:id", authenticate, requireAuth, demandController.update);

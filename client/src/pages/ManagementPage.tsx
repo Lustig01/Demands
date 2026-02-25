@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import DemandsTable, { demandColumnConfig, type DemandColumnKey } from '../components/projects/DemandsTable';
 import DemandDetailSidebar from '../components/demands/DemandDetailSidebar';
 import DecisionModal from '../components/management/DecisionModal';
+import BulkDecisionModal from '../components/management/BulkDecisionModal';
 import PageHeader from '../components/layout/PageHeader';
 import ColumnSettingsDropdown from '../components/common/ColumnSettingsDropdown';
 import { FilterSort } from '../components/common/filters';
@@ -12,7 +13,7 @@ import { useReferenceData } from '../hooks/useReferenceData';
 import { useDebounce } from '../hooks/useDebounce';
 import { useDelayedLoading } from '../hooks/useDelayedLoading';
 import { useTableColumns } from '../hooks/useTableColumns';
-import type { ApproveDemandPayload, RejectDemandPayload } from '../api/types';
+import type { ApproveDemandPayload, RejectDemandPayload, BulkDemandFilters } from '../api/types';
 import type { Demand, Project } from '../types/domain';
 import { useToast } from '../components/common/Toast';
 import Pagination from '../components/common/Pagination';
@@ -67,9 +68,16 @@ export default function ManagementPage() {
   const [decisionDemand, setDecisionDemand] = useState<Demand | null>(null);
   const [isDecisionModalLoading, setIsDecisionModalLoading] = useState(false);
 
+  // Bulk Selection State
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [excludedIds, setExcludedIds] = useState<Set<number>>(new Set());
+  const [isAllAcrossPagesSelected, setIsAllAcrossPagesSelected] = useState(false);
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+  const [isBulkLoading, setIsBulkLoading] = useState(false);
+
   const { showToast } = useToast();
 
-  const { demands, total, totalPages, totalValue, totalApprovedValue, isLoading, error, approveDemand, rejectDemand } = useDemands(
+  const { demands, total, totalPending, totalPages, totalValue, totalApprovedValue, isLoading, error, approveDemand, rejectDemand, bulkApproveDemands, bulkRejectDemands } = useDemands(
     {
       ...debouncedFilters,
       baseName: debouncedFilters.base,
@@ -115,6 +123,40 @@ export default function ManagementPage() {
     if (!selectedDemand) return null;
     return allProjects.find((p) => p.name === selectedDemand.projectName) || null;
   }, [selectedDemand, allProjects]);
+
+  // Bulk selection derived state — only Pending demands are selectable
+  const currentPageIds = useMemo(() => demands.filter((d) => d.status === 'Pending').map((d) => d.id), [demands]);
+
+  const isAllPageSelected = isAllAcrossPagesSelected
+    ? currentPageIds.length > 0 && currentPageIds.every((id) => !excludedIds.has(id))
+    : currentPageIds.length > 0 && currentPageIds.every((id) => selectedIds.has(id));
+  const isSomePageSelected = isAllAcrossPagesSelected
+    ? currentPageIds.some((id) => !excludedIds.has(id))
+    : currentPageIds.some((id) => selectedIds.has(id));
+  const selectedCount = isAllAcrossPagesSelected ? totalPending - excludedIds.size : selectedIds.size;
+  const hasSelection = isAllAcrossPagesSelected || selectedIds.size > 0;
+
+  // When filters/page change, clear "all across pages" flag but keep explicit selections
+  // that are still on the current page
+  const handleFilterChange = useCallback((key: DemandFilterKey, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+    setCurrentPage(1);
+    setIsAllAcrossPagesSelected(false);
+    setSelectedIds(new Set());
+    setExcludedIds(new Set());
+  }, []);
+
+  const handleClearAllFilters = useCallback(() => {
+    setFilters(initialDemandFilters);
+    setCurrentPage(1);
+    setIsAllAcrossPagesSelected(false);
+    setSelectedIds(new Set());
+    setExcludedIds(new Set());
+  }, []);
+
+  const handleSortChange = useCallback((field: DemandSortKey | null, direction: SortDirection) => {
+    setSortState({ field, direction });
+  }, []);
 
   // Build filter groups with dynamic options
   const filterGroupsWithOptions = useMemo((): FilterGroupConfig<DemandFilterKey>[] => {
@@ -205,6 +247,73 @@ export default function ManagementPage() {
     }));
   }, [allProjects, services, resources, bases, environments, networks, clusters, centers, branches, sections, emergencyOptions]);
 
+  // Bulk selection handlers
+  const handleToggleSelect = useCallback((id: number) => {
+    if (isAllAcrossPagesSelected) {
+      setExcludedIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        return next;
+      });
+    } else {
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        return next;
+      });
+    }
+  }, [isAllAcrossPagesSelected]);
+
+  const handleSelectAllPage = useCallback((checked: boolean) => {
+    if (isAllAcrossPagesSelected) {
+      setExcludedIds((prev) => {
+        const next = new Set(prev);
+        if (checked) currentPageIds.forEach((id) => next.delete(id));
+        else currentPageIds.forEach((id) => next.add(id));
+        return next;
+      });
+    } else {
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        if (checked) currentPageIds.forEach((id) => next.add(id));
+        else currentPageIds.forEach((id) => next.delete(id));
+        return next;
+      });
+    }
+  }, [isAllAcrossPagesSelected, currentPageIds]);
+
+  const handleSelectAllAcrossPages = useCallback(() => {
+    setIsAllAcrossPagesSelected(true);
+    setExcludedIds(new Set());
+  }, []);
+
+  const handleClearSelection = useCallback(() => {
+    setSelectedIds(new Set());
+    setExcludedIds(new Set());
+    setIsAllAcrossPagesSelected(false);
+  }, []);
+
+  // Build filters payload for "select all" bulk operations
+  const bulkFilters = useMemo((): BulkDemandFilters => ({
+    project: debouncedFilters.projectName || undefined,
+    resource: debouncedFilters.resourceName || undefined,
+    resourceService: debouncedFilters.serviceName || undefined,
+    base: debouncedFilters.base || undefined,
+    environment: debouncedFilters.environment || undefined,
+    network: debouncedFilters.network || undefined,
+    cluster: debouncedFilters.cluster || undefined,
+    type: debouncedFilters.type || undefined,
+    status: debouncedFilters.status || undefined,
+    projectType: debouncedFilters.projectType || undefined,
+    median: debouncedFilters.median || undefined,
+    year: debouncedFilters.year ? Number(debouncedFilters.year) : undefined,
+    relatedTo: debouncedFilters.relatedTo || undefined,
+    emergencyOption: debouncedFilters.emergencyOption || undefined,
+    priority: debouncedFilters.priority || undefined,
+  }), [debouncedFilters]);
+
   function handleMakeDecision(demand: Demand) {
     setDecisionDemand(demand);
     setSelectedDemand(null);
@@ -238,19 +347,39 @@ export default function ManagementPage() {
     }
   }
 
-  const handleFilterChange = useCallback((key: DemandFilterKey, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-    setCurrentPage(1);
-  }, []);
+  async function handleBulkApprove(payload: ApproveDemandPayload) {
+    setIsBulkLoading(true);
+    try {
+      const count = await bulkApproveDemands(
+        isAllAcrossPagesSelected
+          ? { selectAll: true, filters: bulkFilters, excludedIds: excludedIds.size > 0 ? Array.from(excludedIds) : undefined, ...payload }
+          : { ids: Array.from(selectedIds), ...payload }
+      );
+      showToast(t('management.bulkDecision.successApproved', { count }), 'success');
+      handleClearSelection();
+    } catch (err: any) {
+      showToast(err?.response?.data?.error || t('management.error.approveFailed'), 'error');
+    } finally {
+      setIsBulkLoading(false);
+    }
+  }
 
-  const handleClearAllFilters = useCallback(() => {
-    setFilters(initialDemandFilters);
-    setCurrentPage(1);
-  }, []);
-
-  const handleSortChange = useCallback((field: DemandSortKey | null, direction: SortDirection) => {
-    setSortState({ field, direction });
-  }, []);
+  async function handleBulkReject(payload: RejectDemandPayload) {
+    setIsBulkLoading(true);
+    try {
+      const count = await bulkRejectDemands(
+        isAllAcrossPagesSelected
+          ? { selectAll: true, filters: bulkFilters, excludedIds: excludedIds.size > 0 ? Array.from(excludedIds) : undefined, reason: payload.reason }
+          : { ids: Array.from(selectedIds), reason: payload.reason }
+      );
+      showToast(t('management.bulkDecision.successRejected', { count }), 'success');
+      handleClearSelection();
+    } catch (err: any) {
+      showToast(err?.response?.data?.error || t('management.error.rejectFailed'), 'error');
+    } finally {
+      setIsBulkLoading(false);
+    }
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -278,6 +407,43 @@ export default function ManagementPage() {
         onSortChange={handleSortChange}
       />
 
+      {/* Bulk Action Bar */}
+      {(hasSelection || totalPending > 0) && (
+        <div className="flex items-center gap-3 px-4 py-3 bg-primary/5 border border-primary/20 rounded-xl">
+          <span className="text-sm font-medium text-primary flex-1">
+            {hasSelection
+              ? isAllAcrossPagesSelected && excludedIds.size === 0
+                ? t('management.bulk.allSelected', { count: totalPending })
+                : t('management.bulk.selected', { count: selectedCount })
+              : t('management.bulk.noneSelected')}
+          </span>
+          {selectedCount < totalPending && totalPending > 0 && (
+            <button
+              onClick={handleSelectAllAcrossPages}
+              className="px-4 py-1.5 bg-transparent text-primary border border-primary rounded-lg text-sm font-medium hover:bg-primary/5 transition-colors cursor-pointer"
+            >
+              {t('management.bulk.selectAllAcrossPages', { count: totalPending })}
+            </button>
+          )}
+          {hasSelection && (
+            <>
+              <button
+                onClick={() => setIsBulkModalOpen(true)}
+                className="px-4 py-1.5 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors cursor-pointer border-none"
+              >
+                {t('management.bulk.changeStatus')}
+              </button>
+              <button
+                onClick={handleClearSelection}
+                className="px-4 py-1.5 bg-gray-100 text-text-primary rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors cursor-pointer border-none"
+              >
+                {t('management.bulk.clearSelection')}
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
       {/* Table Card */}
       <div className="bg-bg-paper rounded-2xl border border-divider shadow-sm overflow-hidden">
         {error ? (
@@ -299,6 +465,14 @@ export default function ManagementPage() {
                 onMakeDecision={handleMakeDecision}
                 totalValue={totalValue}
                 totalApprovedValue={totalApprovedValue}
+                showCheckboxes
+                selectedIds={selectedIds}
+                onToggleSelect={handleToggleSelect}
+                isAllPageSelected={isAllPageSelected}
+                isSomePageSelected={isSomePageSelected}
+                onSelectAllPage={handleSelectAllPage}
+                isAllAcrossPagesSelected={isAllAcrossPagesSelected}
+                excludedIds={excludedIds}
               />
             </div>
 
@@ -332,6 +506,15 @@ export default function ManagementPage() {
         onReject={handleReject}
         demand={decisionDemand}
         isLoading={isDecisionModalLoading}
+      />
+
+      <BulkDecisionModal
+        open={isBulkModalOpen}
+        onClose={() => setIsBulkModalOpen(false)}
+        onApprove={handleBulkApprove}
+        onReject={handleBulkReject}
+        selectedCount={selectedCount}
+        isLoading={isBulkLoading}
       />
     </div>
   );

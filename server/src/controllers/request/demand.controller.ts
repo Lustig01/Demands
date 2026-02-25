@@ -441,6 +441,145 @@ export const demandController = {
     }
   },
 
+  bulkApprove: async (req: Request, res: Response) => {
+    try {
+      const { username, isAdmin, isModerator } = getUserContext(req);
+      const { ids, selectAll, filters, excludedIds, status, approvedValue, reason } = req.body;
+
+      const validStatuses = [DemandStatus.Approved, DemandStatus.PartiallyApproved, DemandStatus.ApprovedWithCondition];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({ error: "status must be Approved, PartiallyApproved, or ApprovedWithCondition" });
+      }
+
+      const requiresValueAndReason = status === DemandStatus.PartiallyApproved || status === DemandStatus.ApprovedWithCondition;
+      if (requiresValueAndReason && (approvedValue === undefined || approvedValue === null)) {
+        return res.status(400).json({ error: "approvedValue is required for PartiallyApproved and ApprovedWithCondition status" });
+      }
+      if (requiresValueAndReason && (!reason || typeof reason !== 'string' || reason.trim() === '')) {
+        return res.status(400).json({ error: "reason is required for PartiallyApproved and ApprovedWithCondition status" });
+      }
+
+      let where: any = {};
+
+      if (ids && Array.isArray(ids) && ids.length > 0) {
+        where.id = { in: ids };
+      } else if (selectAll && filters) {
+        // Apply moderator scoping
+        let serviceNamesFilter: string[] | undefined;
+        if (isModerator && !isAdmin) {
+          const managedServices = await prisma.service.findMany({
+            where: { moderators: { has: username } },
+            select: { name: true },
+          });
+          serviceNamesFilter = managedServices.map((s) => s.name);
+        }
+
+        if (filters.project) where.projectName = filters.project;
+        if (filters.resource) where.resourceName = filters.resource;
+        if (filters.resourceService) where.resourceService = filters.resourceService;
+        if (filters.type) where.type = filters.type;
+        if (serviceNamesFilter) where.serviceName = { in: serviceNamesFilter };
+        else if (filters.serviceName) where.serviceName = filters.serviceName;
+
+        if (filters.base || filters.environment || filters.network || filters.cluster) {
+          where.location = {};
+          if (filters.base) where.location.baseName = filters.base;
+          if (filters.environment) where.location.environmentName = filters.environment;
+          if (filters.network) where.location.networkName = filters.network;
+          if (filters.cluster) where.location.clusterName = filters.cluster;
+        }
+
+        if (filters.projectType || filters.median || filters.year || filters.relatedTo || filters.emergencyOption || filters.priority) {
+          where.project = {};
+          if (filters.projectType) where.project.type = filters.projectType;
+          if (filters.median) where.project.median = filters.median;
+          if (filters.year) where.project.year = Number(filters.year);
+          if (filters.relatedTo) where.project.relatedTo = { contains: filters.relatedTo, mode: 'insensitive' };
+          if (filters.emergencyOption) where.project.emergencyOptionName = filters.emergencyOption;
+          if (filters.priority) where.project.priority = filters.priority;
+        }
+        if (excludedIds && Array.isArray(excludedIds) && excludedIds.length > 0) {
+          where.id = { notIn: excludedIds };
+        }
+      } else {
+        return res.status(400).json({ error: "Either ids or selectAll+filters must be provided" });
+      }
+
+      const result = await demandService.bulkApprove(where, {
+        status,
+        approvedValue: requiresValueAndReason ? approvedValue : undefined,
+        reason: requiresValueAndReason ? reason?.trim() : undefined,
+      });
+
+      res.json({ count: result.count });
+    } catch (error) {
+      console.error("demandController.bulkApprove error:", error);
+      res.status(500).json({ error: "Failed to bulk approve demands" });
+    }
+  },
+
+  bulkReject: async (req: Request, res: Response) => {
+    try {
+      const { username, isAdmin, isModerator } = getUserContext(req);
+      const { ids, selectAll, filters, excludedIds, reason } = req.body;
+
+      if (!reason || typeof reason !== 'string' || reason.trim() === '') {
+        return res.status(400).json({ error: "reason is required for rejection" });
+      }
+
+      let where: any = {};
+
+      if (ids && Array.isArray(ids) && ids.length > 0) {
+        where.id = { in: ids };
+      } else if (selectAll && filters) {
+        let serviceNamesFilter: string[] | undefined;
+        if (isModerator && !isAdmin) {
+          const managedServices = await prisma.service.findMany({
+            where: { moderators: { has: username } },
+            select: { name: true },
+          });
+          serviceNamesFilter = managedServices.map((s) => s.name);
+        }
+
+        if (filters.project) where.projectName = filters.project;
+        if (filters.resource) where.resourceName = filters.resource;
+        if (filters.resourceService) where.resourceService = filters.resourceService;
+        if (filters.type) where.type = filters.type;
+        if (serviceNamesFilter) where.serviceName = { in: serviceNamesFilter };
+        else if (filters.serviceName) where.serviceName = filters.serviceName;
+
+        if (filters.base || filters.environment || filters.network || filters.cluster) {
+          where.location = {};
+          if (filters.base) where.location.baseName = filters.base;
+          if (filters.environment) where.location.environmentName = filters.environment;
+          if (filters.network) where.location.networkName = filters.network;
+          if (filters.cluster) where.location.clusterName = filters.cluster;
+        }
+
+        if (filters.projectType || filters.median || filters.year || filters.relatedTo || filters.emergencyOption || filters.priority) {
+          where.project = {};
+          if (filters.projectType) where.project.type = filters.projectType;
+          if (filters.median) where.project.median = filters.median;
+          if (filters.year) where.project.year = Number(filters.year);
+          if (filters.relatedTo) where.project.relatedTo = { contains: filters.relatedTo, mode: 'insensitive' };
+          if (filters.emergencyOption) where.project.emergencyOptionName = filters.emergencyOption;
+          if (filters.priority) where.project.priority = filters.priority;
+        }
+        if (excludedIds && Array.isArray(excludedIds) && excludedIds.length > 0) {
+          where.id = { notIn: excludedIds };
+        }
+      } else {
+        return res.status(400).json({ error: "Either ids or selectAll+filters must be provided" });
+      }
+
+      const result = await demandService.bulkReject(where, reason.trim());
+      res.json({ count: result.count });
+    } catch (error) {
+      console.error("demandController.bulkReject error:", error);
+      res.status(500).json({ error: "Failed to bulk reject demands" });
+    }
+  },
+
   approve: async (req: Request, res: Response) => {
     try {
       const { status, approvedValue, reason } = req.body;

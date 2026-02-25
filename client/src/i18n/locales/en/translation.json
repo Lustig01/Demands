@@ -33,6 +33,22 @@
       "approveFailed": "Failed to approve demand",
       "rejectFailed": "Failed to reject demand"
     },
+    "bulk": {
+      "noneSelected": "Select demands to take bulk action",
+      "selected": "{{count}} demands selected",
+      "allSelected": "All {{count}} demands selected",
+      "pageSelected": "All {{pageCount}} demands on this page are selected.",
+      "selectAllAcrossPages": "Select all {{count}} demands",
+      "changeStatus": "Change Status",
+      "clearSelection": "Clear selection"
+    },
+    "bulkDecision": {
+      "title": "Bulk Status Change",
+      "summary": "Apply status change to {{count}} demands (only Pending demands will be affected)",
+      "submit": "Apply to All",
+      "successApproved": "{{count}} demands approved successfully",
+      "successRejected": "{{count}} demands rejected successfully"
+    },
     "tabs": {
       "capacity": "Capacity Management",
       "wallet": "Wallet Management"
