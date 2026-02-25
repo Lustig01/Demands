@@ -10,6 +10,7 @@ import { useDemands } from '../hooks/useDemands';
 import { useCachedProjects } from '../hooks/useCachedProjects';
 import { useReferenceData } from '../hooks/useReferenceData';
 import { useDebounce } from '../hooks/useDebounce';
+import { useDelayedLoading } from '../hooks/useDelayedLoading';
 import { useTableColumns } from '../hooks/useTableColumns';
 import type { ApproveDemandPayload, RejectDemandPayload } from '../api/types';
 import type { Demand, Project } from '../types/domain';
@@ -94,6 +95,8 @@ export default function ManagementPage() {
       sortDir: sortState.direction,
     }
   );
+
+  const showLoading = useDelayedLoading(isLoading);
 
   const { bases, environments, networks, clusters, services, resources, emergencyOptions, centers, branches, sections } =
     useReferenceData();
@@ -282,12 +285,12 @@ export default function ManagementPage() {
           <>
             {/* Table */}
             <div
-              className={`overflow-x-auto transition-opacity duration-200 ${isFiltersPending ? 'opacity-50' : 'opacity-100'}`}
+              className={`overflow-x-auto transition-opacity duration-200 ${isFiltersPending || showLoading ? 'opacity-50' : 'opacity-100'}`}
             >
               <DemandsTable
                 demands={demands}
                 projectMap={projectMap}
-                isLoading={isLoading}
+                isLoading={false}
                 selectedDemand={selectedDemand}
                 onSelectDemand={setSelectedDemand}
                 visibleColumns={orderedVisibleColumns}

@@ -10,6 +10,7 @@ import { FilterSort } from '../components/common/filters';
 import { useProjects } from '../hooks/useProjects';
 import { useReferenceData } from '../hooks/useReferenceData';
 import { useDebounce } from '../hooks/useDebounce';
+import { useDelayedLoading } from '../hooks/useDelayedLoading';
 import { useTableColumns } from '../hooks/useTableColumns';
 import { useToast } from '../components/common/Toast';
 import type { CreateProjectPayload, UpdateProjectPayload } from '../api/types';
@@ -64,6 +65,8 @@ export default function ProjectsPage() {
     () => JSON.stringify(filters) !== JSON.stringify(debouncedFilters),
     [filters, debouncedFilters]
   );
+
+  const showLoading = useDelayedLoading(isLoading);
 
   const { showToast } = useToast();
   const { bases, environments, networks, clusters, projectKinds, emergencyOptions, centers, branches, sections } = useReferenceData();
@@ -349,10 +352,10 @@ export default function ProjectsPage() {
 
       {/* Table Card */}
       <div className="bg-bg-paper rounded-2xl border border-divider shadow-sm overflow-hidden">
-        <div className={`overflow-x-auto transition-opacity duration-200 ${isFiltersPending ? 'opacity-50' : 'opacity-100'}`}>
+        <div className={`overflow-x-auto transition-opacity duration-200 ${isFiltersPending || showLoading ? 'opacity-50' : 'opacity-100'}`}>
           <ProjectsTable
             projects={paginatedProjects}
-            isLoading={isLoading}
+            isLoading={false}
             selectedProject={selectedProject}
             onSelectProject={setSelectedProject}
             onEdit={handleEditProject}
